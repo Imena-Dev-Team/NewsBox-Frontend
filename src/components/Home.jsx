@@ -3,6 +3,7 @@ import './home.css';
 import logo from './logo.png';
 import { Link } from "react-router-dom";
 
+
 export default function LandingPage() {
   const [dotCount, setDotCount] = useState(1);
 
@@ -15,6 +16,7 @@ export default function LandingPage() {
 
   return (
     <div className="whole">
+     
       
       <div className="svg-background">
         <div className="svg-bg">
@@ -46,8 +48,8 @@ export default function LandingPage() {
 
       
       <div id="log-sign">
-        <Link to="/footer" id="text1" className="font-sans">LOGIN</Link>
-        < Link to="/all" id="text2" className="font-sans">SIGNUP</Link>
+        <a href="|" id="text1" className="font-sans">LOGIN</a>
+        < a href="" id="text2" className="font-sans">SIGNUP</a>
       </div>
 
       
