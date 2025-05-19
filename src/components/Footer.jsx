@@ -221,7 +221,7 @@ function NewsletterFooter() {
             `}
            </style>
            </div>
-           <div className="image"
+           {/* <div className="image"
            style={{
 
             position:"absolute",
@@ -231,9 +231,9 @@ function NewsletterFooter() {
             height:"20px",
             width: "100px", height: "80px",
             transform: "rotate(-5deg)"
-           }}> <img src={Blur} alt="" /></div>
+           }}> <img src={Blur} alt="" /></div> */}
 
-            <div className="image"
+            {/* <div className="image"
            style={{
 
             position:"absolute",
@@ -243,7 +243,7 @@ function NewsletterFooter() {
             height:"20px",
             width: "100px", height: "80px",
             transform: "rotate(-5deg)"
-           }}> <img src={Image} alt="" /></div>
+           }}> <img src={Image} alt="" /></div> */}
            
           <div style={{ ...styles.footer, marginTop: "80px" }}>
           <div style={styles.container}>

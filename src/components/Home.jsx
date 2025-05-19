@@ -47,7 +47,7 @@ export default function LandingPage() {
       
       <div id="log-sign">
         <Link to="/footer" id="text1" className="font-sans">LOGIN</Link>
-        <a href="#" id="text2" className="font-sans">SIGNUP</a>
+        < Link to="/all" id="text2" className="font-sans">SIGNUP</Link>
       </div>
 
       
