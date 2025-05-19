@@ -2,6 +2,7 @@
 import { useState } from "react"
 import kaneza from "./dp.png"
 import NewsletterFooter from "./Footer"
+import Header from "./Header"
 
 
 const pageContent = [
@@ -430,8 +431,10 @@ function Duplicates() {
 
   return (
     <div style={{ backgroundColor: "#FAFAFA", paddingBottom: "100px" }}>
+      <Header/>
       {currentPageContent.map((card, index) => (
         <div key={index} style={{ position: "relative", marginBottom: "40px" }}>
+          
           <div style={cardStyle}>
             <div
               style={{
@@ -442,6 +445,7 @@ function Duplicates() {
                 maxWidth: "600px",
               }}
             >
+              
               <div
                 style={{
                   alignSelf: "flex-start",
