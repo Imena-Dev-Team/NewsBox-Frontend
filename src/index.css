@@ -1,0 +1,9 @@
+@import "tailwindcss";
+*{
+  font-family: 'poppins';
+  background-color: #fafafa;
+}
+
+.bg-transparent-blue {
+  background-color: rgba(26, 116, 237, 0.05); /* #1A74ED with ~5% opacity */
+}
