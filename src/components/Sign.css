@@ -1,0 +1,21 @@
+.navbar {
+  background-color: #f3eeee; 
+  padding: 16px;
+  justify-content: space-between; 
+  align-items: center; 
+}
+
+.txt1 {
+  color: #fffdfd; 
+  font-size: 18px; 
+  margin: 0; 
+  font: 'poppins, senserif'; 
+}
+.txt2 {
+  color: white;
+  background-color: #337ab7; 
+  padding: 4px 8px;
+  border-radius: 4px; 
+  font-weight: bold; 
+  margin: 0;
+}
