@@ -7,7 +7,7 @@ function Header() {
   const location = useLocation();
   const Links = [
     { name: "HOME", href: "/Home" },
-    { name: "BLOGS", href: "/Blogs" },
+    { name: "BLOGS", href: "/All" },
     { name: "PUBLISH ARTICLES", href: "/Articles" },
     { name: "GALLERY", href: "/Gallery" },
     { name: "UPCOMING BIRTHDAYS", href: "/Birthdays" },

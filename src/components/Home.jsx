@@ -48,8 +48,8 @@ export default function LandingPage() {
 
       
       <div id="log-sign">
-        <a href="|" id="text1" className="font-sans">LOGIN</a>
-        < a href="" id="text2" className="font-sans">SIGNUP</a>
+        < Link to="/Login" id="text1" className="font-sans">LOGIN</Link>
+        < Link to="/signup" id="text2" className="font-sans">SIGNUP</Link>
       </div>
 
       
