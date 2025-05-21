@@ -11,7 +11,7 @@ const Head = () => {
       title: "Embracing Togetherness ! Embarking Togetherness!!",
       content:
         "Our itinerary is brimming with activities that cater to every family member's interests, ensuring that each moment is as special as the bonds we share. From heart-warming conversations over home-cooked meals to exploring the local attractions hand in hand, this visit is a celebration of the ties that bind us.",
-        profile: "\src\assets\image2.jpg",
+        profile: "src/assets/image2.jpg",
         user: "Devon Lane",
         time: "May 31, 2023"
     },
@@ -21,7 +21,7 @@ const Head = () => {
       title: "Let's Celebrate Togetherness ! Embarking Togetherness!!",
       content:
         "Our itinerary is brimming with activities that cater to every family member's interests, ensuring that each moment is as special as the bonds we share. From heart-warming conversations over home-cooked meals to exploring the local attractions hand in hand, this visit is a celebration of the ties that bind us.",
-        profile: "\src\assets\image2.jpg",
+        profile: "src/assets/image2.jpg",
         user: "Devon Lane",
         time: "May 31, 2023"
     },
@@ -31,7 +31,7 @@ const Head = () => {
       title: "Fly Over Dangers, because you are light!!",
       content:
         "Our itinerary is brimming with activities that cater to every family member's interests, ensuring that each moment is as special as the bonds we share. From heart-warming conversations over home-cooked meals to exploring the local attractions hand in hand, this visit is a celebration of the ties that bind us.",
-        profile: "\src\assets\image2.jpg",
+        profile: "src/assets/image2.jpg",
         user: "Devon Lane",
         time: "May 31, 2023"
     },
@@ -53,7 +53,7 @@ const Head = () => {
 
 return (
     <>
-      <div className="flex align-center justify-center w-[100%] mt-7  bg-[./public/vite.svg] bg-no-repeat bg-cover bg-center h-screen">
+      <div className="flex align-center justify-center w-[100%] mt-7">
           <img src="\src\assets\party1.png" alt="" className="h-15 w-15 mt-10" />
           <div className="p-5 w-[40%] mt-[80px]">
             <img src={Header[index].image} alt="" className="rounded-2xl max-w-100 max-h-100" />
@@ -72,11 +72,11 @@ return (
           <div className="flex mt-5 gap-2.5">
             <img
               className="w-10 h-10 rounded-full object-cover"
-              src={Header[index].image}
+              src={Header[index].profile}
               alt=""
             />
             <h3>
-              {Header.user} <br />
+              {Header[index].user} <br />
               <span className="font-extralight text-[#98A0A2] text-xs">
                 {Header[index].time}
               </span>
@@ -108,8 +108,8 @@ return (
       </div>
   
       
-      <div className="flex mt-[100px] justify-between">
-        <h1 className="font-semibold ml-7  mb-10 text-xl">Featured news</h1>
+      <div className="flex mt-[100px]  justify-between">
+        <h1 className="font-semibold ml-7 mb-10 text-xl">Featured news</h1>
         <button className="bg-transparent-blue p-0 text-[#1A74ED] mr-20 px-5 py-1 rounded-full text-center font-semibold">
           See more
         </button>
