@@ -1,12 +1,11 @@
-import { useState } from 'react'
-import Head from './components/head'
+import Head from './components/Head';
 
 function App() {
-return(
-  <div>
-  <Head />
-  </div>
-)
+  return (
+    <div>
+      <Head />
+    </div>
+  );
 }
 
-export default App
+export default App;
