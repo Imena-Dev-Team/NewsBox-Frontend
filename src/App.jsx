@@ -8,6 +8,8 @@ import Gallery from "./Gallery";
 import { LogIn } from "lucide-react";
 
 
+
+
 function App() {
   return (
     <Router>
