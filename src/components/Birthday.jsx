@@ -1,64 +1,71 @@
 import React from "react";
 
-
-
-
-const Birthday = ({name}) => {
+const Birthday = () => {
   return (
-    <div className="w-[100%] flex align-items-center justify-center mt-[150px]">
-      
-      <div className="w-[60%] ml-20">
-        <h2 className="text-[#1A74ED] font-semibold w-[50%] text-4xl tracking-wider mb-7 ">WISHING AMAZING BIRTHDAYS !</h2>
-        <span className="text-[#808080]">
-          Amidst the hustle and bustle of our daily lives, this family<br /> reunion
-          serves as a reminder of the importance of taking a pause <br /> and relishing
+    <div className="flex flex-col lg:flex-row gap-8 mt-">
+      {/* Left Section */}
+      <div className="lg:w-1/2">
+        <h1 className="text-4xl font-semibold text-[#1A74ED] w-90">
+          WISHING AMAZING BIRTHDAYS!
+        </h1>
+        <p className="mt-5 w-100 text-sm">
+          Amidst the hustle and bustle of our daily lives, this family reunion
+          serves as a reminder of the importance of taking a pause and relishing
           the company of those who matter most.{" "}
-        </span>
-        <div className="bg-white shadow-md rounded-3xl w-120 mt-10">
-          <h2 className="font-bold text-xl p-5 pt-5">HOPE FAMILY WISHES A BLAZING <br /> ANNIVERSARY TO YOU ALL !!</h2>
-          <img src="/src/assets/party.png" alt="" srcset="" className="h-90" />
-          <p className="p-5 text-sm text-[#808080]">
+        </p>
+
+        <div className="bg-white rounded-xl shadow-lg p-4 mt-7 w-[345px] transform hover:scale-105 transition-transform duration-300">
+          <h2 className="font-bold text-sm sm:text-base">
+            HOPE FAMILY WISHES A BLAZING ANNIVERSARY TO YOU ALL
+          </h2>
+          <div className="mt-5">
+            <img
+              src="/src/assets/party.png"
+              alt="Birthday"
+              className="ml-10 h-[180px] sm:h-[200px] object-cover"
+            />
+          </div>
+          <p className="text-xs sm:text-sm text-[#808080] line-clamp-3">
             Amidst the hustle and bustle of our daily lives, this family reunion
             serves as a reminder of the importance of taking a pause and
             relishing the company of those who matter most.
           </p>
         </div>
       </div>
-    <div className="block space-y-10 mt-30">
-      
-          <div className="max-h-50 max-w-110 shadow-xl rounded-3xl relative transform hover:scale-105 transition-transform duration-300">
-            <img src="/src/assets/image.png" alt="" className="h-18  w-20 ml-95  "/>
-        <h1 className="font-bold text-center pt-4">HAPPY BIRTHDAY {"Kelia"}!!</h1>
 
-        <p className="p-5 text-sm text-[#808080]">
-          Amidst the hustle and bustle of our daily lives, this family reunion
-          serves as a reminder of the importance of taking a pause and relishing
-          the company of those who matter most.{" "}
-        </p>
+      {/* Right Section - Zigzag Cards */}
+      <div className="lg:w-1/2 flex flex-col gap-7">
+        {/* First Card - Aligned Right */}
+        <div className="lg:ml-auto w-[345px] h-[150px] bg-white rounded-xl shadow-lg p-4 transform hover:scale-105 transition-transform duration-300">
+          <h2 className="font-bold">Happy Birthday Mike !!</h2>
+          <p className="text-xs mt-5 text-[#808080]">
+            Amidst the hustle and bustle of our daily lives, this family reunion
+            serves as a reminder of the importance of taking a pause and
+            relishing the company of those who matter most.{" "}
+          </p>
+        </div>
+
+        {/* Second Card - Aligned Left */}
+        <div className="lg:mr-auto w-[345px] h-[150px] bg-white rounded-xl shadow-lg p-4 transform hover:scale-105 transition-transform duration-300">
+          <h2 className="font-bold">Happy Birthday Mike !!</h2>
+          <p className="text-xs mt-5 text-[#808080]">
+            Amidst the hustle and bustle of our daily lives, this family reunion
+            serves as a reminder of the importance of taking a pause and
+            relishing the company of those who matter most.{" "}
+          </p>
+        </div>
+
+        {/* Third Card - Aligned Right */}
+        <div className="lg:ml-auto w-[345px] h-[150px] bg-white rounded-xl shadow-lg p-4 transform hover:scale-105 transition-transform duration-300">
+          <h2 className="font-bold">Happy Birthday Mike !!</h2>
+          <p className="text-xs mt-5 text-[#808080]">
+            Amidst the hustle and bustle of our daily lives, this family reunion
+            serves as a reminder of the importance of taking a pause and
+            relishing the company of those who matter most.{" "}
+          </p>
+        </div>
       </div>
-    
-      <div className="max-h-50 max-w-110 shadow-2xl rounded-2xl relative  transform hover:scale-105 transition-transform duration-300">
-        <img src="/src/assets/image.png" alt="" className="h-20  w-20 mr-[200px] z-[-1]"/>
-        <h1 className="font-bold text-center pt-4">HAPPY BIRTHDAY {"Mike"}!!</h1>
-        <p className="p-5 text-sm text-[#808080]">
-          Amidst the hustle and bustle of our daily lives, this family reunion
-          serves as a reminder of the importance of taking a pause and relishing
-          the company of those who matter most.{" "}
-        </p>
-      </div>
-      <div className="max-h-50 max-w-110 shadow-2xl  relative mr-10  transform hover:scale-105 transition-transform duration-300">
-        <h1 className="font-bold text-center pt-4">HAPPY BIRTHDAY {"John"}!!</h1>
-        <p className="p-5 text-sm text-[#808080]">
-          Amidst the hustle and bustle of our daily lives, this family reunion
-          serves as a reminder of the importance of taking a pause and relishing
-          the company of those who matter most.
-        </p>
-         <img src="/src/assets/image.png" alt="" className="h-18 w-20 mb-0"/>
-      </div>
-      
-      </div>
- 
-    </div> 
+    </div>
   );
 };
 
