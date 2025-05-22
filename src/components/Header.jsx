@@ -81,7 +81,7 @@ function Header() {
           border: "1px solid rgba(128, 123, 123, 0.1)",
         }}
       >
-        <button
+        {/* <button
           style={{
             background: "none",
             border: "none",
@@ -91,15 +91,22 @@ function Header() {
           }}
         >
           <Menu style={{ width: "28px", height: "28px", color: "black" }} />
-        </button>
-        <div>
+        </button> */}
+        <div style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}>
           <ul
             style={{
               listStyleType: "none",
               margin: 0,
               padding: 0,
-              display: "inline-flex",
-              gap: "20px",
+              display: "flex",
+              width: "100%",
+              maxWidth: "1200px",
+              justifyContent: "space-evenly",
               alignItems: "center",
               color: "gray",
               fontSize: "16px",
@@ -115,7 +122,7 @@ function Header() {
                   style={{
                     textDecoration: "none",
                     color: "gray",
-                    margin: "0px 45px",
+                    margin: "opx 45px",
                     ...(location.pathname === link.href && {
                       backgroundColor: "#eaf4ff",
                       color: "#2aa2ff",
@@ -130,16 +137,6 @@ function Header() {
             ))}
           </ul>
         </div>
-        <button
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            marginRight: "35px",
-          }}
-        >
-          <Search style={{ width: "28px", height: "28px", color: "black" }} />
-        </button>
       </div>
     </div>
   );
