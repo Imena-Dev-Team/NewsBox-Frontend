@@ -17,60 +17,34 @@ const Birthdays = () => {
       }]);
       setNewMessage('');
       setClicked(true);
-      // Reset clicked state after 1 second
       setTimeout(() => setClicked(false), 1000);
     }
   };
 
   return (
-    <div style={{
-      fontFamily: 'Poppins, sans-serif',
-      padding: '40px',
-      marginLeft: "14px",
-      boxSizing: 'border-box'
-    }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '30px',
-        position: 'relative',
-      }}>
-        <h2 style={{ fontSize: '24px', fontWeight: '600', marginLeft:"20px" }}>UPCOMING BIRTHDAY</h2>
+    <div className="font-['Poppins',sans-serif] p-10 ml-[14px] box-border">
+      <div className="flex justify-between items-center mb-[30px] relative">
+        <h2 className="text-2xl font-semibold ml-5">UPCOMING BIRTHDAY</h2>
       </div>
 
-      <div style={{ position: 'relative' }}>
-        <img src={Image} 
-         style={{
-            position: 'absolute',
-            right: '0px',
-            top: '-170px',
-            fontSize: '70px',
-            zIndex: -1,
-            opacity: 0.9,
-         }}
+      <div className="relative">
+        <img 
+          src={Image} 
+          className="absolute right-0 -top-[170px] text-[70px] -z-10 opacity-90"
         />        
         
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '30px',
-            justifyContent: 'space-between',
-            width: '100%',
-          }}
-        >
+        <div className="flex flex-wrap gap-[30px] justify-between w-full">
           {messages.length === 0 ? (
-            <div style={getCardStyle()}>
-              <h3 style={titleStyle}>No messages yet</h3>
-              <p style={textStyle}>Be the first to wish someone a happy birthday!</p>
+            <div className="bg-white flex-[30%] p-5 rounded-[15px] box-border shadow-[0px_4px_10px_rgba(0,0,0,0.1)]">
+              <h3 className="text-lg font-semibold mb-2.5">No messages yet</h3>
+              <p className="text-sm text-[#555] leading-normal">Be the first to wish someone a happy birthday!</p>
             </div>
           ) : (
             messages.map((message) => (
-              <div key={message.id} style={getCardStyle()}>
-                <h3 style={titleStyle}>Birthday Wish</h3>
-                <p style={textStyle}>{message.text}</p>
-                <p style={{...textStyle, fontSize: '12px', color: '#888', marginTop: '10px'}}>
+              <div key={message.id} className="bg-white flex-[30%] p-5 rounded-[15px] box-border shadow-[0px_4px_10px_rgba(0,0,0,0.1)]">
+                <h3 className="text-lg font-semibold mb-2.5">Birthday Wish</h3>
+                <p className="text-sm text-[#555] leading-normal">{message.text}</p>
+                <p className="text-xs text-[#888] mt-2.5 leading-normal">
                   Posted on: {message.timestamp}
                 </p>
               </div>
@@ -80,91 +54,33 @@ const Birthdays = () => {
         <img
           src={MyImage}
           alt="Gift"
-          style={{
-              position: 'absolute',
-              top:"250px",
-              left: '-112px',
-              width: '120px',
-              zIndex: -1,
-              opacity: 0.9,
-              transform: 'translateY(-20%)',
-              marginLeft:"15px",
-              marginBottom:'90px'
-          }}
+          className="absolute top-[250px] -left-[112px] w-[120px] -z-10 opacity-90 -translate-y-[20%] ml-[15px] mb-[90px]"
         />
-      </div>
+      
         <form 
-            onSubmit={handleSubmit}
-            style={{
-             marginTop: '5px',
-             position: 'relative',
-             fontFamily: 'Poppins, sans-serif',
-            }}>
+          onSubmit={handleSubmit}
+          className="mt-[5px] relative font-['Poppins',sans-serif]"
+        >
           <input
             type='text' 
             placeholder='Birthday wishes to the born baby' 
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            style={{
-                width: "70%",
-                height: "50px",
-                fontSize: "24px",
-                fontWeight: "500",
-                fontFamily: "Poppins, sans-serif",
-                border: "none",
-                borderLeft: "3px solid #d3d3d3", 
-                outline: "none",
-                padding: "10px 20px",
-                margin: "150px auto",
-                display: "block",
-                color: "#333",
-                backgroundColor: "#fff",
-            }} 
+            className="w-[70%] h-[50px] text-2xl font-medium font-['Poppins',sans-serif] border-none border-l-3 border-[#d3d3d3] outline-none px-5 py-2.5 mx-auto my-[150px] block text-[#333] bg-white"
           />
 
           <button
             type="submit"
-            style={{
-              backgroundColor: clicked ? '#2aa2ff' : '#fff',
-              color: clicked ? '#fff' : '#2aa2ff',
-              border: "1px solid #2aa2ff",
-              borderRadius: '40px',
-              width:'200px',
-              height: '50px',
-              position: 'absolute',
-              right:'20px',
-              cursor: 'pointer',
-              fontSize: '20px',
-              top: '100px',
-              transition: 'all 0.3s ease'
-            }}>
+            className={`absolute right-5 top-[100px] w-[200px] h-[50px] rounded-[40px] cursor-pointer text-xl transition-all duration-300 ease-in-out border border-[#2aa2ff] ${
+              clicked ? 'bg-[#2aa2ff] text-white' : 'bg-white text-[#2aa2ff]'
+            }`}
+          >
             POST
           </button>
         </form>
+      </div>
     </div>
   );
-};
-
-// Shared styles
-const getCardStyle = () => ({
-  backgroundColor: '#fff',
-  flexBasis: '30%',
-  padding: '20px',
-  borderRadius: '15px',
-  boxSizing: 'border-box',
-  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-});
-
-const titleStyle = {
-  fontSize: '18px',
-  fontWeight: '600',
-  marginBottom: '10px',
-};
-
-const textStyle = {
-  fontSize: '14px',
-  color: '#555',
-  lineHeight: '1.5',
 };
 
 export default Birthdays;

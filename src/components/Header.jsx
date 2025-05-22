@@ -17,119 +17,37 @@ function Header() {
 
   return (
     <div>
-      <div
-        style={{
-          margin: "0",
-          padding: "0",
-          backgroundColor: "rgb(245, 245, 246)",
-          display: "flex",
-          justifyContent: "space-around",
-          fontFamily: "Poppins, sans-serif",
-          color: "gray",
-        }}
-      >
-        <h3
-          style={{
-            marginRight: "190px",
-            marginLeft: "40px",
-            padding: 0,
-            font: "Poppins, sans-serif",
-          }}
-        >
+      <div className="m-0 p-0 bg-[rgb(245,245,246)] flex justify-around font-['Poppins',sans-serif] text-gray-500">
+        <h3 className="mr-[190px] ml-10 p-0 font-['Poppins',sans-serif]">
           HOPE FAMILY COURTESY
         </h3>
         <img
           src={MyImage}
-          style={{
-            marginLeft: "70px",
-            color: "gray",
-          }}
+          className="ml-[70px] text-gray-500"
         />
         <a
           href="Sign In"
-          style={{
-            textDecoration: "none",
-            marginLeft: "290px",
-            right: "10px",
-            color: "gray",
-            fontFamily: "Poppins, sans-serif",
-            alignItems: "center",
-            display: "flex",
-            lineHeight: "1",
-            fontWeight: "bold",
-            fontSize: "18px",
-          }}
+          className="no-underline ml-[290px] right-[10px] text-gray-500 font-['Poppins',sans-serif] flex items-center leading-none font-bold text-[18px]"
         >
           <UserCircle
-            style={{
-              width: "75px",
-              height: "50px",
-              color: "#2aa2ff",
-            }}
+            className="w-[75px] h-[50px] text-[#2aa2ff]"
           />
           SIGN IN
         </a>
       </div>
 
-      <div
-        style={{
-          margin: "40px 0px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "12px 20px",
-          border: "1px solid rgba(128, 123, 123, 0.1)",
-        }}
-      >
-        {/* <button
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            borderRight: "1px solid rgba(128, 123, 123, 0.1)",
-            marginRight: "50px",
-          }}
-        >
-          <Menu style={{ width: "28px", height: "28px", color: "black" }} />
-        </button> */}
-        <div style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}>
-          <ul
-            style={{
-              listStyleType: "none",
-              margin: 0,
-              padding: 0,
-              display: "flex",
-              width: "100%",
-              maxWidth: "1200px",
-              justifyContent: "space-evenly",
-              alignItems: "center",
-              color: "gray",
-              fontSize: "16px",
-              fontWeight: "bold",
-              lineHeight: "1.5",
-              fontFamily: "Poppins, sans-serif",
-            }}
-          >
+      <div className="my-10 flex justify-between items-center px-5 py-3 border border-[rgba(128,123,123,0.1)]">
+        <div className="w-full flex justify-center items-center">
+          <ul className="list-none m-0 p-0 flex w-full max-w-[1200px] justify-evenly items-center text-gray-500 text-base font-bold leading-normal font-['Poppins',sans-serif]">
             {Links.map((link) => (
               <li key={link.name}>
                 <Link
                   to={link.href}
-                  style={{
-                    textDecoration: "none",
-                    color: "gray",
-                    margin: "opx 45px",
-                    ...(location.pathname === link.href && {
-                      backgroundColor: "#eaf4ff",
-                      color: "#2aa2ff",
-                      padding: "6px 16px",
-                      borderRadius: "999px",
-                    }),
-                  }}
+                  className={`no-underline text-gray-500 mx-[45px] ${
+                    location.pathname === link.href
+                      ? "bg-[#eaf4ff] text-[#2aa2ff] px-4 py-1.5 rounded-full"
+                      : ""
+                  }`}
                 >
                   {link.name}
                 </Link>
