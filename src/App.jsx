@@ -1,10 +1,13 @@
-import Head from './components/Head';
+import { BrowserRouter } from "react-router-dom";
+import Head from "./components/Head";
 
 function App() {
   return (
-    <div>
-      <Head />
-    </div>
+    <BrowserRouter>
+      <div className="min-h-screen bg-[#fafafa]">
+        <Head />
+      </div>
+    </BrowserRouter>
   );
 }
 
