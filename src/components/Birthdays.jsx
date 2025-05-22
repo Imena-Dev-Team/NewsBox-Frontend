@@ -1,9 +1,26 @@
 import React, { useState } from 'react';
-import MyImage from '../bd.png'
-import Image from '../pt.png'
+import MyImage from '../bd.png';
+import Image from '../pt.png';
 
 const Birthdays = () => {
   const [clicked, setClicked] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (newMessage.trim()) {
+      setMessages([...messages, {
+        id: Date.now(),
+        text: newMessage,
+        timestamp: new Date().toLocaleDateString()
+      }]);
+      setNewMessage('');
+      setClicked(true);
+      // Reset clicked state after 1 second
+      setTimeout(() => setClicked(false), 1000);
+    }
+  };
 
   return (
     <div style={{
@@ -39,61 +56,58 @@ const Birthdays = () => {
             display: 'flex',
             flexWrap: 'wrap',
             gap: '30px',
-            justifyContent: 'flex-start',
+            justifyContent: 'space-between',
             width: '100%',
           }}
         >
-          <div style={getCardStyle()}>
-            <h3 style={titleStyle}>HAPPY BIRTHDAY MIKE !!</h3>
-            <p style={textStyle}>Amidst the hustle and bustle of our daily lives...</p>
-          </div>
-          <div style={getCardStyle()}>
-            <h3 style={titleStyle}>HAPPY BIRTHDAY MIKE !!</h3>
-            <p style={textStyle}>Amidst the hustle and bustle of our daily lives...</p>
-          </div>
-          <div style={getCardStyle()}>
-            <h3 style={titleStyle}>HAPPY BIRTHDAY MIKE !!</h3>
-            <p style={textStyle}>Amidst the hustle and bustle of our daily lives...</p>
-          </div>
-          <div style={getCardStyle()}>
-            <h3 style={titleStyle}>HAPPY BIRTHDAY MIKE !!</h3>
-            <p style={textStyle}>Amidst the hustle and bustle of our daily lives...</p>
-          </div>
-          <div style={getCardStyle()}>
-            <h3 style={titleStyle}>HAPPY BIRTHDAY MIKE !!</h3>
-            <p style={textStyle}>Amidst the hustle and bustle of our daily lives...</p>
-          </div>
-          <div style={getCardStyle()}>
-            <h3 style={titleStyle}>HAPPY BIRTHDAY MIKE !!</h3>
-            <p style={textStyle}>Amidst the hustle and bustle of our daily lives...</p>
-          </div>
+          {messages.length === 0 ? (
+            <div style={getCardStyle()}>
+              <h3 style={titleStyle}>No messages yet</h3>
+              <p style={textStyle}>Be the first to wish someone a happy birthday!</p>
+            </div>
+          ) : (
+            messages.map((message) => (
+              <div key={message.id} style={getCardStyle()}>
+                <h3 style={titleStyle}>Birthday Wish</h3>
+                <p style={textStyle}>{message.text}</p>
+                <p style={{...textStyle, fontSize: '12px', color: '#888', marginTop: '10px'}}>
+                  Posted on: {message.timestamp}
+                </p>
+              </div>
+            ))
+          )}
         </div>
         <img
-        src={MyImage}
-        alt="Gift"
-        style={{
-            position: 'absolute',
-            top:"250px",
-            left: '-80px',
-            width: '120px',
-            zIndex: -1,
-            opacity: 0.9,
-            transform: 'translateY(-20%)',
-            marginLeft:"15px",
-            marginBottom:'90px'
-        }}
+          src={MyImage}
+          alt="Gift"
+          style={{
+              position: 'absolute',
+              top:"250px",
+              left: '-112px',
+              width: '120px',
+              zIndex: -1,
+              opacity: 0.9,
+              transform: 'translateY(-20%)',
+              marginLeft:"15px",
+              marginBottom:'90px'
+          }}
         />
       </div>
-        <div 
+        <form 
+            onSubmit={handleSubmit}
             style={{
              marginTop: '5px',
              position: 'relative',
              fontFamily: 'Poppins, sans-serif',
             }}>
-           <input type='text' placeholder='Birthday wishes to the born baby' 
+          <input
+            type='text' 
+            placeholder='Birthday wishes to the born baby' 
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
             style={{
                 width: "70%",
-                height: "20px",
+                height: "50px",
                 fontSize: "24px",
                 fontWeight: "500",
                 fontFamily: "Poppins, sans-serif",
@@ -106,26 +120,27 @@ const Birthdays = () => {
                 color: "#333",
                 backgroundColor: "#fff",
             }} 
-            />
+          />
 
-            <button
-              onClick={() => setClicked(true)}
-              style={{
-                backgroundColor: clicked ? '#2aa2ff' : '#fff',
-                color: clicked ? '#fff' : '#2aa2ff',
-                border: "1px solid #2aa2ff",
-                borderRadius: '40px',
-                width:'200px',
-                height: '50px',
-                position: 'absolute',
-                right:'20px',
-                cursor: 'pointer',
-                fontSize: '20px',
-                top: '100px',
+          <button
+            type="submit"
+            style={{
+              backgroundColor: clicked ? '#2aa2ff' : '#fff',
+              color: clicked ? '#fff' : '#2aa2ff',
+              border: "1px solid #2aa2ff",
+              borderRadius: '40px',
+              width:'200px',
+              height: '50px',
+              position: 'absolute',
+              right:'20px',
+              cursor: 'pointer',
+              fontSize: '20px',
+              top: '100px',
+              transition: 'all 0.3s ease'
             }}>
-              POST
-            </button>
-        </div>
+            POST
+          </button>
+        </form>
     </div>
   );
 };
@@ -133,12 +148,10 @@ const Birthdays = () => {
 // Shared styles
 const getCardStyle = () => ({
   backgroundColor: '#fff',
-  width: '30%',
-  minWidth: '300px',
+  flexBasis: '30%',
   padding: '20px',
   borderRadius: '15px',
   boxSizing: 'border-box',
-  marginLeft: '20px',
   boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
 });
 
