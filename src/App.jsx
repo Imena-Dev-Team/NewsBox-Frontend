@@ -6,11 +6,12 @@ import Duplicates from "./components/All";
 import Gallery from "./Gallery";
 import { LogIn } from "lucide-react";
 import Head from "./components/Head";
+import Header from "./components/Header";
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        {/* <Route path="/" element={<LandingPage />} /> */}
         <Route path="/footer" element={<NewsletterFooter />} />
            <Route path="/all" element={< Duplicates />} />
            <Route path="/gallery" element={ <Gallery/>} />
@@ -20,6 +21,8 @@ function App() {
            
       </Routes>
       <div className="min-h-screen bg-[#fafafa]">
+        <Header />
+
         <Head />
       </div>
     </Router>
