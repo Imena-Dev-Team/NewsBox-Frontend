@@ -24,7 +24,7 @@ const Birthdays = () => {
   return (
     <div className="font-['Poppins',sans-serif] p-10 ml-[14px] box-border">
       <div className="flex justify-between items-center mb-[30px] relative">
-        <h2 className="text-2xl font-semibold ml-5">UPCOMING BIRTHDAY</h2>
+        <h2 className="text-2xl font-semibold ml-5">UPCOMING BIRTHDAYS</h2>
       </div>
 
       <div className="relative">
