@@ -6,7 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 function Header() {
   const location = useLocation();
   const Links = [
-    { name: "HOME", href: "/Home" },
+    { name: "HOME", href: "/Head" },
     { name: "BLOGS", href: "/All" },
     { name: "PUBLISH ARTICLES", href: "/Articles" },
     { name: "GALLERY", href: "/Gallery" },
