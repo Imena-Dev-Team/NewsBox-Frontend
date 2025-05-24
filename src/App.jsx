@@ -6,6 +6,8 @@ import Duplicates from "./components/All";
 import Gallery from "./Gallery";
 import { LogIn } from "lucide-react";
 import Head from "./components/Head";
+import Articles from './components/Articles';
+import Birthdays from './components/Birthdays';
 import Header from "./components/Header";
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
            <Route path="/gallery" element={ <Gallery/>} />
            <Route path="/login" element={ <LogIn/>}/>
            <Route path="/signup" element={ <signUp/>}/>
+            <Route path='/Birthdays' element={<Birthdays />} />
+          <Route path="/Articles" element={<Articles />} />
 
            
       </Routes>
@@ -27,6 +31,8 @@ function App() {
       </div>
     </Router>
   )
+
+
 }
 
-export default App;
+export default App
