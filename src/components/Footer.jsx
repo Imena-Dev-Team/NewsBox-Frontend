@@ -204,7 +204,9 @@ function NewsletterFooter() {
             .eyo::placeholder{
              color:rgb(81, 113, 177) ;
             }
-
+              .eyo{
+              margin-top: 30px;
+              }
             .custom-input {
              height: 40px;
              width: 250px;
