@@ -161,14 +161,14 @@ function NewsletterFooter() {
   return (
     <div className="outer">
 
-           <footer style={{
+      <footer style={{
         backgroundColor:"#3b82f6",
         padding: "20px",
         fontSize: "18px",
         borderRadius: "10px",
         height: "200px",
-        width: "1180.5px",
-        marginLeft:"140px",
+        width: "1250.5px",
+        marginLeft:"125px",
         marginTop:"50px"
     }}>
         
@@ -187,11 +187,11 @@ function NewsletterFooter() {
         
         <div style={
             {
-                marginLeft:"200px"
+                marginLeft:"200px",
 
             }
-        }>  <input type="text" placeholder="First name" className="eyo" required style={{ height: "40px", width:"250px", borderRadius:"5px", border:"none", paddingLeft:"15px"}} />  
-            <input type="text" placeholder="Email Address" className="eyo" required style={{ height: "40px", marginLeft:"10px", width:"250px", borderRadius:"5px", border:"none", paddingLeft:"15px"}}/>
+        }>  <input type="text" placeholder="First name" className="eyo" required style={{ height: "40px", width:"250px", borderRadius:"5px", border:"none", paddingLeft:"15px", marginRight:"20px"}} />  
+            <input type="text" placeholder="Email Address" className="eyo" required style={{ height: "40px", marginLeft:"10px", width:"250px", borderRadius:"5px", border:"none", paddingLeft:"15px", marginRight:"20px"}}/>
             <input
              type="text"
              placeholder="Subscribe Now"

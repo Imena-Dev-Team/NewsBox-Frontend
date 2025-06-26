@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Card from "./Card";
-import Birthday from "./Birthday";
-
+import Birthday from "./birthday_Card";
+import NewsletterFooter from "./Footer";
 const Head = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const Header = [
     {
       image: "src/assets/image6.png",
@@ -116,23 +117,23 @@ const Head = () => {
           <div className="w-full lg:w-[40%] mt-6 lg:mt-[100px] space-y-4">
             {loading ? (
               <>
-                {/* Activity Button Skeleton */}
+               
                 <div className="w-28 h-9 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-2xl"></div>
 
-                {/* Title Skeleton */}
+               
                 <div className="space-y-2">
                   <div className="w-3/4 h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg"></div>
                   <div className="w-1/2 h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg"></div>
                 </div>
 
-                {/* Content Skeleton */}
+               
                 <div className="space-y-2">
                   <div className="w-full h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
                   <div className="w-5/6 h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
                   <div className="w-4/6 h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
                 </div>
 
-                {/* Profile Section Skeleton */}
+                
                 <div className="flex items-center gap-3 mt-6">
                   <div className="w-10 h-10 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
                   <div className="space-y-2">
@@ -141,10 +142,10 @@ const Head = () => {
                   </div>
                 </div>
 
-                {/* Decoration Image Skeleton */}
+               
                 <div className="w-12 h-12 sm:w-15 sm:h-15 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
 
-                {/* Dots Skeleton */}
+              
                 <div className="flex gap-2 mt-8">
                   <div className="w-8 h-2 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
                   <div className="w-2 h-2 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
@@ -216,7 +217,10 @@ const Head = () => {
               <h1 className="font-semibold text-lg sm:text-xl mb-4 sm:mb-0">
                 Featured news
               </h1>
-              <button className="bg-transparent-blue px-5 py-2 text-[#1A74ED] rounded-full text-center font-semibold text-sm sm:text-base hover:bg-[#F5F9FF] transition-colors">
+              <button
+                className="bg-transparent-blue px-5 py-2 text-[#1A74ED] rounded-full text-center font-semibold text-sm sm:text-base hover:bg-[#F5F9FF] transition-colors"
+                onClick={() => navigate("/all")}
+              >
                 See more
               </button>
             </>
@@ -232,20 +236,20 @@ const Head = () => {
                   {/* Card Image Skeleton */}
                   <div className="w-full aspect-[4/3] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-2xl mb-4"></div>
 
-                  {/* Card Title Skeleton */}
+                  
                   <div className="space-y-2 mb-4">
                     <div className="w-5/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
                     <div className="w-4/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
                   </div>
 
-                  {/* Card Content Skeleton */}
+                  
                   <div className="space-y-2 mb-4">
                     <div className="w-full h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
                     <div className="w-5/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
                     <div className="w-4/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
                   </div>
 
-                  {/* Read More Button Skeleton */}
+                  
                   <div className="w-32 h-9 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
                 </div>
               </div>
@@ -306,6 +310,7 @@ const Head = () => {
           )}
         </div>
       </div>
+      <NewsletterFooter />
     </>
   );
 };

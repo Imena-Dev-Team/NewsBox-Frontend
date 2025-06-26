@@ -1,38 +1,52 @@
 import React from "react";
-import LandingPage from "./components/Home";
 import NewsletterFooter from "./components/Footer";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import Duplicates from "./components/All";
 import Gallery from "./Gallery";
-import { LogIn } from "lucide-react";
 import Head from "./components/Head";
-import Articles from './components/Articles';
-import Birthdays from './components/Birthdays';
+import Articles from "./components/Articles";
+import Birthdays from "./components/Birthdays";
 import Header from "./components/Header";
+import SignUp from "./components/SignUp";
+import Login from "./components/Login";
+import FamilyReunion from "./components/Singleb";
+
+function AppRoutes() {
+  const location = useLocation();
+  const hideHeader =
+    location.pathname === "/login" || location.pathname === "/signup" || location.pathname === "/union";
+  return (
+    <>
+      {!hideHeader && <Header />}
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/union" element={<FamilyReunion />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/" element={<Head />} />
+        <Route path="/footer" element={<NewsletterFooter />} />
+        <Route path="/all" element={<Duplicates />} />
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/Birthdays" element={<Birthdays />} />
+        <Route path="/Articles" element={<Articles />} />
+        {/* Catch-all: redirect unknown routes to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
+  );
+}
+
 function App() {
   return (
     <Router>
-      <Routes>
-        {/* <Route path="/" element={<LandingPage />} /> */}
-        <Route path="/footer" element={<NewsletterFooter />} />
-           <Route path="/all" element={< Duplicates />} />
-           <Route path="/gallery" element={ <Gallery/>} />
-           <Route path="/login" element={ <LogIn/>}/>
-           <Route path="/signup" element={ <signUp/>}/>
-            <Route path='/Birthdays' element={<Birthdays />} />
-          <Route path="/Articles" element={<Articles />} />
-
-           
-      </Routes>
-      <div className="min-h-screen bg-[#fafafa]">
-        <Header />
-
-        <Head />
-      </div>
+      <AppRoutes />
     </Router>
-  )
-
-
+  );
 }
 
-export default App
+export default App;

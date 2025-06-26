@@ -4,6 +4,7 @@ import logo from './logo.png';
 import { Link } from "react-router-dom";
 
 
+
 export default function LandingPage() {
   const [dotCount, setDotCount] = useState(1);
 
@@ -80,6 +81,7 @@ export default function LandingPage() {
       >
         {".".repeat(dotCount)}
       </div>
+     
     </div>
   );
 }

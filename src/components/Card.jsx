@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Card = ({ title, image }) => {
+  const navigate = useNavigate();
+  const [pending, setPending] = useState(false);
   return (
     <div className="w-full max-w-[350px]">
       <div className="bg-white rounded-xl shadow-lg p-4 mt-7 transform hover:scale-105 transition-transform duration-300">
@@ -22,14 +25,29 @@ const Card = ({ title, image }) => {
         </p>
         <div className="mt-4">
           <a
-            className="inline-block text-sm bg-white rounded-3xl px-4 py-2 text-[#1A74ED] shadow-sm hover:bg-[#F5F9FF] transition-colors"
-            href=""
+            className="inline-block text-sm bg-white rounded-3xl px-4 py-2 text-[#1A74ED] shadow-sm hover:bg-[#F5F9FF] transition-colors cursor-pointer"
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setPending(true);
+              setTimeout(() => {
+                setPending(false);
+                navigate("/union");
+              }, 1500);
+            }}
           >
             Read more &rarr;
           </a>
         </div>
+        {pending && (
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-100">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
+            <p className="text-lg text-blue-600 font-semibold bg-white px-6 py-3 rounded shadow">
+              Loading blog...
+            </p>
+          </div>
+        )}
       </div>
-      
     </div>
   );
 };
