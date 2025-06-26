@@ -13,7 +13,7 @@ import Head from "./components/Head";
 import Articles from "./components/Articles";
 import Birthdays from "./components/Birthdays";
 import Header from "./components/Header";
-import SignUp from "./components/SignUp";
+import SignUp from "./components/Signup";
 import Login from "./components/Login";
 import FamilyReunion from "./components/Singleb";
 
