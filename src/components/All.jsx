@@ -1,8 +1,8 @@
-"use client"
-import kaneza from "./dp.png"
-import NewsletterFooter from "./Footer"
-import Header from "./Header"
-import { useState, useEffect } from "react"
+"use client";
+import kaneza from "./dp.png";
+import NewsletterFooter from "./Footer";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 // Skeleton component for loading state
 const CardSkeleton = () => {
@@ -166,8 +166,8 @@ const CardSkeleton = () => {
         }}
       ></div>
     </div>
-  )
-}
+  );
+};
 
 const pageContent = [
   [
@@ -176,7 +176,8 @@ const pageContent = [
       tag: "ACTIVITY",
       tagColor: "#1E88E5",
       tagBg: "#E3F2FD",
-      title: "A Heart-warming Family Reunion: Embracing Togetherness ! Embarking cherished Moments together",
+      title:
+        "A Heart-warming Family Reunion: Embracing Togetherness ! Embarking cherished Moments together",
       description:
         "Amidst The Hustle And Bustle Of Our Daily Lives, This Family Reunion Serves As A Reminder Of The Importance Of Taking A Pause And Relishing The Company Of Those Who Matter Most.",
       author: "KANEZA A",
@@ -186,7 +187,8 @@ const pageContent = [
       tag: "ACTIVITY",
       tagColor: "#1E88E5",
       tagBg: "#E3F2FD",
-      title: "A Heart-warming Family Reunion: Embracing Togetherness ! Embarking cherished Moments together",
+      title:
+        "A Heart-warming Family Reunion: Embracing Togetherness ! Embarking cherished Moments together",
       description:
         "Amidst The Hustle And Bustle Of Our Daily Lives, This Family Reunion Serves As A Reminder Of The Importance Of Taking A Pause And Relishing The Company Of Those Who Matter Most.",
       author: "KANEZA A",
@@ -196,7 +198,8 @@ const pageContent = [
       tag: "ACTIVITY",
       tagColor: "#1E88E5",
       tagBg: "#E3F2FD",
-      title: "A Heart-warming Family Reunion: Embracing Togetherness ! Embarking cherished Moments together",
+      title:
+        "A Heart-warming Family Reunion: Embracing Togetherness ! Embarking cherished Moments together",
       description:
         "Amidst The Hustle And Bustle Of Our Daily Lives, This Family Reunion Serves As A Reminder Of The Importance Of Taking A Pause And Relishing The Company Of Those Who Matter Most.",
       author: "KANEZA A",
@@ -206,7 +209,8 @@ const pageContent = [
       tag: "ACTIVITY",
       tagColor: "#1E88E5",
       tagBg: "#E3F2FD",
-      title: "A Heart-warming Family Reunion: Embracing Togetherness ! Embarking cherished Moments together",
+      title:
+        "A Heart-warming Family Reunion: Embracing Togetherness ! Embarking cherished Moments together",
       description:
         "Amidst The Hustle And Bustle Of Our Daily Lives, This Family Reunion Serves As A Reminder Of The Importance Of Taking A Pause And Relishing The Company Of Those Who Matter Most.",
       author: "KANEZA A",
@@ -216,7 +220,8 @@ const pageContent = [
       tag: "ACTIVITY",
       tagColor: "#1E88E5",
       tagBg: "#E3F2FD",
-      title: "A Heart-warming Family Reunion: Embracing Togetherness ! Embarking cherished Moments together",
+      title:
+        "A Heart-warming Family Reunion: Embracing Togetherness ! Embarking cherished Moments together",
       description:
         "Amidst The Hustle And Bustle Of Our Daily Lives, This Family Reunion Serves As A Reminder Of The Importance Of Taking A Pause And Relishing The Company Of Those Who Matter Most.",
       author: "KANEZA A",
@@ -226,7 +231,8 @@ const pageContent = [
       tag: "ACTIVITY",
       tagColor: "#1E88E5",
       tagBg: "#E3F2FD",
-      title: "A Heart-warming Family Reunion: Embracing Togetherness ! Embarking cherished Moments together",
+      title:
+        "A Heart-warming Family Reunion: Embracing Togetherness ! Embarking cherished Moments together",
       description:
         "Amidst The Hustle And Bustle Of Our Daily Lives, This Family Reunion Serves As A Reminder Of The Importance Of Taking A Pause And Relishing The Company Of Those Who Matter Most.",
       author: "KANEZA A",
@@ -249,7 +255,8 @@ const pageContent = [
       tag: "MERGER",
       tagColor: "#43A047",
       tagBg: "#E8F5E9",
-      title: "AERG and GAERG Merge into One Organization to Strengthen Survivors' Voice",
+      title:
+        "AERG and GAERG Merge into One Organization to Strengthen Survivors' Voice",
       description:
         "In December 2024, AERG and GAERG merged with IBUKA to form a unified entity, aiming to strengthen the support and advocacy for genocide survivors.",
       author: "AERG News Desk",
@@ -259,7 +266,8 @@ const pageContent = [
       tag: "COMMUNITY",
       tagColor: "#F4511E",
       tagBg: "#FBE9E7",
-      title: "Youth Survivors Recognize Genocide Rescuers with Acts of Gratitude",
+      title:
+        "Youth Survivors Recognize Genocide Rescuers with Acts of Gratitude",
       description:
         "AERG and GAERG honored individuals who rescued Tutsis during the genocide by gifting them cows, acknowledging their bravery and humanity.",
       author: "BERWA S",
@@ -378,7 +386,8 @@ const pageContent = [
       tag: "MERGER",
       tagColor: "#43A047",
       tagBg: "#E8F5E9",
-      title: "AERG and GAERG Merge into One Organization to Strengthen Survivors' Voice",
+      title:
+        "AERG and GAERG Merge into One Organization to Strengthen Survivors' Voice",
       description:
         "In December 2024, AERG and GAERG merged with IBUKA to form a unified entity, aiming to strengthen the support and advocacy for genocide survivors.",
       author: "AERG News Desk",
@@ -388,7 +397,8 @@ const pageContent = [
       tag: "COMMUNITY",
       tagColor: "#F4511E",
       tagBg: "#FBE9E7",
-      title: "Youth Survivors Recognize Genocide Rescuers with Acts of Gratitude",
+      title:
+        "Youth Survivors Recognize Genocide Rescuers with Acts of Gratitude",
       description:
         "AERG and GAERG honored individuals who rescued Tutsis during the genocide by gifting them cows, acknowledging their bravery and humanity.",
       author: "AERG Outreach Team",
@@ -475,7 +485,8 @@ const pageContent = [
       tagColor: "#3F51B5",
       tagBg: "#E8EAF6",
       title: "AERG New Year Celebration",
-      description: "A lively event welcoming the new year with music, dance, and reflections on hopes for the future.",
+      description:
+        "A lively event welcoming the new year with music, dance, and reflections on hopes for the future.",
       author: "AERG Events Committee",
       date: "January 1, 2024",
     },
@@ -520,7 +531,8 @@ const pageContent = [
       tag: "MERGER",
       tagColor: "#43A047",
       tagBg: "#E8F5E9",
-      title: "AERG and GAERG Merge into One Organization to Strengthen Survivors' Voice",
+      title:
+        "AERG and GAERG Merge into One Organization to Strengthen Survivors' Voice",
       description:
         "In December 2024, AERG and GAERG merged with IBUKA to form a unified entity, aiming to strengthen the support and advocacy for genocide survivors.",
       author: "AERG News Desk",
@@ -530,7 +542,8 @@ const pageContent = [
       tag: "COMMUNITY",
       tagColor: "#F4511E",
       tagBg: "#FBE9E7",
-      title: "Youth Survivors Recognize Genocide Rescuers with Acts of Gratitude",
+      title:
+        "Youth Survivors Recognize Genocide Rescuers with Acts of Gratitude",
       description:
         "AERG and GAERG honored individuals who rescued Tutsis during the genocide by gifting them cows, acknowledging their bravery and humanity.",
       author: "AERG Outreach Team",
@@ -557,16 +570,18 @@ const pageContent = [
       date: "Ongoing since 2011",
     },
   ],
-]
+];
 
 function Duplicates() {
-  const [currentPage, setCurrentPage] = useState(1)
-  const totalPages = pageContent.length
-  const [loading, setLoading] = useState(true)
-  const [progress, setProgress] = useState(0)
-  const [contentLoading, setContentLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = pageContent.length;
+  const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [contentLoading, setContentLoading] = useState(true);
+  const [pending, setPending] = useState(false);
+  const navigate = useNavigate();
 
-  const currentPageContent = pageContent[currentPage - 1] || []
+  const currentPageContent = pageContent[currentPage - 1] || [];
 
   const cardStyle = {
     backgroundColor: "white",
@@ -574,7 +589,7 @@ function Duplicates() {
     marginLeft: "70px",
     borderRadius: "25px",
     width: "87%",
-  }
+  };
 
   const sideBoxStyle = {
     backgroundColor: "#E9E9E9",
@@ -584,7 +599,7 @@ function Duplicates() {
     top: "30px",
     borderRadius: "25px",
     width: "35%",
-  }
+  };
 
   const buttonBaseStyle = {
     backgroundColor: "white",
@@ -593,275 +608,324 @@ function Duplicates() {
     fontWeight: "600",
     fontSize: "20px",
     cursor: "pointer",
-  }
+  };
 
   useEffect(() => {
-    
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
-          clearInterval(progressInterval)
-          
-          setLoading(false)
-          
-          setContentLoading(false)
-          return 100
+          clearInterval(progressInterval);
+
+          setLoading(false);
+
+          setContentLoading(false);
+          return 100;
         }
-        return prev + 3 
-      })
-    }, 50) 
+        return prev + 3;
+      });
+    }, 50);
 
     return () => {
-      clearInterval(progressInterval)
-    }
-  }, [])
+      clearInterval(progressInterval);
+    };
+  }, []);
 
-  
   useEffect(() => {
     if (!loading) {
-      
-      setContentLoading(true)
+      setContentLoading(true);
 
-            setProgress(0)
-      setLoading(true)
+      setProgress(0);
+      setLoading(true);
 
       const progressInterval = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 100) {
-            clearInterval(progressInterval)
-            setLoading(false)
-            setContentLoading(false)
-            return 100
+            clearInterval(progressInterval);
+            setLoading(false);
+            setContentLoading(false);
+            return 100;
           }
-          return prev + 5
-        })
-      }, 50) 
+          return prev + 5;
+        });
+      }, 50);
 
       return () => {
-        clearInterval(progressInterval)
-      }
+        clearInterval(progressInterval);
+      };
     }
-  }, [currentPage])
+  }, [currentPage]);
 
-  
   useEffect(() => {
-    const style = document.createElement("style")
+    const style = document.createElement("style");
     style.textContent = `
       @keyframes pulse {
         0% { opacity: 0.6; }
         50% { opacity: 1; }
         100% { opacity: 0.6; }
       }
-    `
-    document.head.appendChild(style)
+    `;
+    document.head.appendChild(style);
 
     return () => {
-      document.head.removeChild(style)
-    }
-  }, [])
+      document.head.removeChild(style);
+    };
+  }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, [currentPage]);
 
+  const handleCardClick = () => {
+    setPending(true);
+    setTimeout(() => {
+      setPending(false);
+      navigate("/union");
+    }, 1500); // 1.5 seconds pending
+  };
+
   return (
     <div style={{ backgroundColor: "#FAFAFA", paddingBottom: "100px" }}>
-      <Header />
-
-      {loading && (
-        <div style={{ height: "6px", backgroundColor: "#e0e0e0", margin: "0", marginBottom: "30px" }}>
-          <div
-            style={{
-              width: `${progress}%`,
-              height: "100%",
-              backgroundColor: "#1474ED",
-              transition: "width 0.3s",
-            }}
-          />
+      {pending ? (
+        <div
+          style={{
+            minHeight: "80vh",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
+          <p className="text-lg text-blue-600 font-semibold">Loading Blog...</p>
         </div>
-      )}
+      ) : (
+        <>
+          {loading && (
+            <div
+              style={{
+                height: "6px",
+                backgroundColor: "#e0e0e0",
+                margin: "0",
+                marginBottom: "30px",
+              }}
+            >
+              <div
+                style={{
+                  width: `${progress}%`,
+                  height: "100%",
+                  backgroundColor: "#1474ED",
+                  transition: "width 0.3s",
+                }}
+              />
+            </div>
+          )}
 
-    
-      {contentLoading
-        ? 
-          Array.from({ length: 6 }).map((_, index) => <CardSkeleton key={`skeleton-${index}`} />)
-        : 
-          currentPageContent.map((card, index) => (
-            <div key={index} style={{ position: "relative", marginBottom: "40px" }}>
-              <div style={cardStyle}>
+          {contentLoading
+            ? Array.from({ length: 6 }).map((_, index) => (
+                <CardSkeleton key={`skeleton-${index}`} />
+              ))
+            : currentPageContent.map((card, index) => (
                 <div
+                  key={index}
                   style={{
-                    padding: "24px",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "16px",
-                    maxWidth: "600px",
+                    position: "relative",
+                    marginBottom: "40px",
+                    cursor: "pointer",
                   }}
+                  onClick={handleCardClick}
                 >
-                  <div
-                    style={{
-                      alignSelf: "flex-start",
-                      backgroundColor: card.tagBg,
-                      color: card.tagColor,
-                      fontSize: "14px",
-                      fontWeight: 600,
-                      padding: "8px 16px",
-                      borderRadius: "20px",
-                      marginBottom: "8px",
-                      fontFamily: '"Poppins", sans-serif',
-                    }}
-                  >
-                    {card.tag}
-                  </div>
-
-                  <h2
-                    style={{
-                      fontSize: "20px",
-                      fontWeight: 700,
-                      lineHeight: 1.3,
-                      margin: "0 0 8px 0",
-                      fontFamily: '"Poppins", sans-serif',
-                    }}
-                  >
-                    {card.title}
-                  </h2>
-
-                  <p
-                    style={{
-                      color: "#6B7280",
-                      fontSize: "16px",
-                      lineHeight: 1.6,
-                      margin: "0 0 16px 0",
-                      fontFamily: '"Poppins", sans-serif',
-                    }}
-                  >
-                    {card.description}
-                  </p>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginTop: "8px",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <img
-                        src={kaneza || "/placeholder.svg"}
-                        alt="Author avatar"
+                  <div style={cardStyle}>
+                    <div
+                      style={{
+                        padding: "24px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "16px",
+                        maxWidth: "600px",
+                      }}
+                    >
+                      <div
                         style={{
-                          width: "48px",
-                          height: "48px",
-                          borderRadius: "50%",
-                          marginRight: "12px",
+                          alignSelf: "flex-start",
+                          backgroundColor: card.tagBg,
+                          color: card.tagColor,
+                          fontSize: "14px",
+                          fontWeight: 600,
+                          padding: "8px 16px",
+                          borderRadius: "20px",
+                          marginBottom: "8px",
+                          fontFamily: '"Poppins", sans-serif',
                         }}
-                      />
-                      <div>
-                        <div
-                          style={{
-                            fontSize: "16px",
-                            fontWeight: 600,
-                            fontFamily: '"Poppins", sans-serif',
-                          }}
-                        >
-                          {card.author}
+                      >
+                        {card.tag}
+                      </div>
+
+                      <h2
+                        style={{
+                          fontSize: "20px",
+                          fontWeight: 700,
+                          lineHeight: 1.3,
+                          margin: "0 0 8px 0",
+                          fontFamily: '"Poppins", sans-serif',
+                        }}
+                      >
+                        {card.title}
+                      </h2>
+
+                      <p
+                        style={{
+                          color: "#6B7280",
+                          fontSize: "16px",
+                          lineHeight: 1.6,
+                          margin: "0 0 16px 0",
+                          fontFamily: '"Poppins", sans-serif',
+                        }}
+                      >
+                        {card.description}
+                      </p>
+
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          marginTop: "8px",
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <img
+                            src={kaneza || "/placeholder.svg"}
+                            alt="Author avatar"
+                            style={{
+                              width: "48px",
+                              height: "48px",
+                              borderRadius: "50%",
+                              marginRight: "12px",
+                            }}
+                          />
+                          <div>
+                            <div
+                              style={{
+                                fontSize: "16px",
+                                fontWeight: 600,
+                                fontFamily: '"Poppins", sans-serif',
+                              }}
+                            >
+                              {card.author}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "14px",
+                                color: "#9CA3AF",
+                                fontFamily: '"Poppins", sans-serif',
+                              }}
+                            >
+                              {card.date}
+                            </div>
+                          </div>
                         </div>
-                        <div
-                          style={{
-                            fontSize: "14px",
-                            color: "#9CA3AF",
-                            fontFamily: '"Poppins", sans-serif',
-                          }}
+
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
-                          {card.date}
-                        </div>
+                          <path
+                            d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 5.12548 15.0077 5.24917 15.0227 5.37061L8.08261 9.84066C7.54305 9.32015 6.80891 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15C6.80891 15 7.54305 14.6798 8.08261 14.1593L15.0227 18.6294C15.0077 18.7508 15 18.8745 15 19C15 20.6569 16.3431 22 18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C17.1911 16 16.457 16.3202 15.9174 16.8407L8.97733 12.3706C8.99229 12.2492 9 12.1255 9 12C9 11.8745 8.99229 11.7508 8.97733 11.6294L15.9174 7.15934C16.457 7.67985 17.1911 8 18 8Z"
+                            stroke="#9CA3AF"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
                       </div>
                     </div>
-
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 5.12548 15.0077 5.24917 15.0227 5.37061L8.08261 9.84066C7.54305 9.32015 6.80891 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15C6.80891 15 7.54305 14.6798 8.08261 14.1593L15.0227 18.6294C15.0077 18.7508 15 18.8745 15 19C15 20.6569 16.3431 22 18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C17.1911 16 16.457 16.3202 15.9174 16.8407L8.97733 12.3706C8.99229 12.2492 9 12.1255 9 12C9 11.8745 8.99229 11.7508 8.97733 11.6294L15.9174 7.15934C16.457 7.67985 17.1911 8 18 8Z"
-                        stroke="#9CA3AF"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
                   </div>
+
+                  <div style={sideBoxStyle}></div>
                 </div>
-              </div>
+              ))}
 
-              <div style={sideBoxStyle}></div>
-            </div>
-          ))}
-
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "20px",
-          justifyContent: "center",
-          marginTop: "40px",
-          flexWrap: "wrap",
-        }}
-      >
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1 || contentLoading}
-          style={{
-            ...buttonBaseStyle,
-            height: "50px",
-            width: "150px",
-            borderRadius: "20px",
-            color: "#1E88E5",
-            opacity: currentPage === 1 || contentLoading ? 0.5 : 1,
-          }}
-        >
-          Previous
-        </button>
-
-        {Array.from({ length: totalPages }, (_, index) => index + 1).map((num) => (
-          <button
-            key={num}
-            onClick={() => setCurrentPage(num)}
-            disabled={contentLoading}
+          <div
             style={{
-              ...buttonBaseStyle,
-              height: "60px",
-              width: "60px",
-              borderRadius: "50%",
-              color: currentPage === num ? "#1E88E5" : "#6B7280",
-              fontWeight: currentPage === num ? "bold" : "normal",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-              opacity: contentLoading ? 0.7 : 1,
+              display: "flex",
+              alignItems: "center",
+              gap: "20px",
+              justifyContent: "center",
+              marginTop: "40px",
+              flexWrap: "wrap",
             }}
           >
-            {num}
-          </button>
-        ))}
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1 || contentLoading}
+              style={{
+                ...buttonBaseStyle,
+                height: "50px",
+                width: "150px",
+                borderRadius: "20px",
+                color: "#1E88E5",
+                opacity: currentPage === 1 || contentLoading ? 0.5 : 1,
+              }}
+            >
+              Previous
+            </button>
 
-        <button
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages || contentLoading}
-          style={{
-            ...buttonBaseStyle,
-            height: "50px",
-            width: "100px",
-            borderRadius: "20px",
-            color: "#1E88E5",
-            opacity: currentPage === totalPages || contentLoading ? 0.5 : 1,
-          }}
-        >
-          Next
-        </button>
-      </div>
-      <section style={{ marginTop: "130px", backgroundColor: "white", height: "590px" }}>
-        {" "}
-        <NewsletterFooter />
-      </section>
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+              (num) => (
+                <button
+                  key={num}
+                  onClick={() => setCurrentPage(num)}
+                  disabled={contentLoading}
+                  style={{
+                    ...buttonBaseStyle,
+                    height: "60px",
+                    width: "60px",
+                    borderRadius: "50%",
+                    color: currentPage === num ? "#1E88E5" : "#6B7280",
+                    fontWeight: currentPage === num ? "bold" : "normal",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                    opacity: contentLoading ? 0.7 : 1,
+                  }}
+                >
+                  {num}
+                </button>
+              )
+            )}
+
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages || contentLoading}
+              style={{
+                ...buttonBaseStyle,
+                height: "50px",
+                width: "100px",
+                borderRadius: "20px",
+                color: "#1E88E5",
+                opacity: currentPage === totalPages || contentLoading ? 0.5 : 1,
+              }}
+            >
+              Next
+            </button>
+          </div>
+          <section
+            style={{
+              marginTop: "130px",
+              backgroundColor: "white",
+              height: "590px",
+            }}
+          >
+            {" "}
+            <NewsletterFooter />
+          </section>
+        </>
+      )}
     </div>
-  )
+  );
 }
 
-export default Duplicates
+export default Duplicates;

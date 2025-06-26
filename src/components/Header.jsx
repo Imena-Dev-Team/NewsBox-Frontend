@@ -1,39 +1,52 @@
-import React from "react";
+import React, { useState } from "react";
 import MyImage from "../Header.png";
 import { UserCircle } from "lucide-react";
 import { Menu, Search } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [pending, setPending] = useState(false);
 
   const Links = [
-    { name: "HOME", href: "/Home" },
-    { name: "BLOGS", href: "/Blogs" },
+    { name: "HOME", href: "/" },
+    { name: "BLOGS", href: "/all" },
     { name: "PUBLISH ARTICLES", href: "/Articles" },
-    { name: "GALLERY", href: "/Gallery" },
-    { name: "UPCOMING BIRTHDAYS", href: "/Birthdays" },
+    { name: "GALLERY", href: "/gallery" },
+    { name: "MEMBERS' BIRTHDAYS", href: "/Birthdays" },
   ];
 
   return (
     <div>
       <div className="m-0 p-0 bg-[rgb(245,245,246)] flex justify-around font-['Poppins',sans-serif] text-gray-500">
-        <h3 className="mr-[190px] ml-10 p-0 font-['Poppins',sans-serif]">
+        <h3 className="mr-[190px] ml-10 p-0 font-['Poppins',sans-serif] font-bold text-lg mt-6">
           HOPE FAMILY COURTESY
         </h3>
-        <img
-          src={MyImage}
-          className="ml-[70px] text-gray-500"
-        />
+        <img src={MyImage} className="ml-[70px] text-gray-500" />
         <a
-          href="Sign In"
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            setPending(true);
+            setTimeout(() => {
+              setPending(false);
+              navigate("/login");
+            }, 1500);
+          }}
           className="no-underline ml-[290px] right-[10px] text-gray-500 font-['Poppins',sans-serif] flex items-center leading-none font-bold text-[18px]"
         >
-          <UserCircle
-            className="w-[75px] h-[50px] text-[#2aa2ff]"
-          />
-          SIGN IN
+          <UserCircle className="w-[75px] h-[50px] text-[#2aa2ff] text-sm font-medium" />
+          Log Out
         </a>
+        {pending && (
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-40">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
+            <p className="text-lg text-blue-600 font-semibold bg-white px-6 py-3 rounded shadow">
+              Logging out...
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="my-10 flex justify-between items-center px-5 py-3 border border-[rgba(128,123,123,0.1)]">

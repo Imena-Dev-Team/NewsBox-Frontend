@@ -1,28 +1,39 @@
 import React, { useState, useEffect } from "react";
-import './gallery.css';
-import Img1 from './photos/blur.jpg';
-import Img2 from './photos/img.png';
-import Img3 from './photos/candle.jpg';
-import Img4 from './photos/dp.jpg';
-import Img5 from './photos/logo.jpg';
-import Img6 from './photos/eyo.png';
+import "./gallery.css";
+import Img1 from "./photos/blur.jpg";
+import Img2 from "./photos/img.png";
+import Img3 from "./photos/candle.jpg";
+import Img4 from "./photos/dp.jpg";
+import Img5 from "./photos/logo.jpg";
+import Img6 from "./photos/eyo.png";
 import NewsletterFooter from "./components/Footer";
-import Header from "./components/Header";
 
 const Gallery = () => {
   let data = [
-    { id: 1, imgSrc: Img1 }, { id: 2, imgSrc: Img2 },
-    { id: 3, imgSrc: Img3 }, { id: 4, imgSrc: Img4 },
-    { id: 5, imgSrc: Img5 }, { id: 6, imgSrc: Img6 },
-    { id: 7, imgSrc: Img1 }, { id: 8, imgSrc: Img2 },
-    { id: 9, imgSrc: Img3 }, { id: 10, imgSrc: Img4 },
-    { id: 11, imgSrc: Img5 }, { id: 12, imgSrc: Img6 },
-     { id: 5, imgSrc: Img5 }, { id: 6, imgSrc: Img6 },
-    { id: 7, imgSrc: Img1 }, { id: 8, imgSrc: Img2 },
-    { id: 9, imgSrc: Img3 }, { id: 10, imgSrc: Img4 },
-    { id: 11, imgSrc: Img5 }, { id: 12, imgSrc: Img6 },
-    { id: 9, imgSrc: Img3 }, { id: 10, imgSrc: Img4 },
-    { id: 11, imgSrc: Img5 }, { id: 12, imgSrc: Img6 },
+    { id: 1, imgSrc: Img1 },
+    { id: 2, imgSrc: Img2 },
+    { id: 3, imgSrc: Img3 },
+    { id: 4, imgSrc: Img4 },
+    { id: 5, imgSrc: Img5 },
+    { id: 6, imgSrc: Img6 },
+    { id: 7, imgSrc: Img1 },
+    { id: 8, imgSrc: Img2 },
+    { id: 9, imgSrc: Img3 },
+    { id: 10, imgSrc: Img4 },
+    { id: 11, imgSrc: Img5 },
+    { id: 12, imgSrc: Img6 },
+    { id: 5, imgSrc: Img5 },
+    { id: 6, imgSrc: Img6 },
+    { id: 7, imgSrc: Img1 },
+    { id: 8, imgSrc: Img2 },
+    { id: 9, imgSrc: Img3 },
+    { id: 10, imgSrc: Img4 },
+    { id: 11, imgSrc: Img5 },
+    { id: 12, imgSrc: Img6 },
+    { id: 9, imgSrc: Img3 },
+    { id: 10, imgSrc: Img4 },
+    { id: 11, imgSrc: Img5 },
+    { id: 12, imgSrc: Img6 },
     { id: 12, imgSrc: Img6 },
   ];
 
@@ -51,9 +62,8 @@ const Gallery = () => {
   };
 
   useEffect(() => {
-
     const interval = setInterval(() => {
-      setProgress(prev => {
+      setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           setLoading(false);
@@ -65,11 +75,24 @@ const Gallery = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Keyboard navigation for modal
+  useEffect(() => {
+    if (!model) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+        nextImage();
+      } else if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
+        prevImage();
+      } else if (e.key === "Escape") {
+        setModel(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [model, currentIndex]);
+
   return (
     <div style={{ backgroundColor: "#FAFAFA" }}>
-      <Header />
-
-      
       {loading && (
         <div style={{ height: "6px", backgroundColor: "#e0e0e0", margin: "0" }}>
           <div
@@ -109,20 +132,24 @@ const Gallery = () => {
         </p>
 
         <div className={model ? "model open" : "model"}>
-          <span className="close-btn" onClick={() => setModel(false)}>&times;</span>
-          <button className="arrow prev" onClick={prevImage}>&#10094;</button>
+          <span className="close-btn" onClick={() => setModel(false)}>
+            &times;
+          </span>
+          <button className="arrow prev" onClick={prevImage}>
+            &#10094;
+          </button>
           <img src={tempimgSrc} alt="expanded" />
-          <button className="arrow next" onClick={nextImage}>&#10095;</button>
+          <button className="arrow next" onClick={nextImage}>
+            &#10095;
+          </button>
         </div>
 
         <div className="gallery">
           {loading
-            ? 
-              Array.from({ length: 25 }).map((_, index) => (
+            ? Array.from({ length: 25 }).map((_, index) => (
                 <div className="skeleton-box" key={index}></div>
               ))
-            : 
-              data.map((item, index) => (
+            : data.map((item, index) => (
                 <div
                   className="pics"
                   key={index}
@@ -151,7 +178,9 @@ const Gallery = () => {
           </button>
         </div>
 
-        <div style={{ position: "relative", left: "-90px", marginTop: "100px" }}>
+        <div
+          style={{ position: "relative", left: "-90px", marginTop: "100px" }}
+        >
           <NewsletterFooter />
         </div>
       </div>
