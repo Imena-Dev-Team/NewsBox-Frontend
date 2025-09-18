@@ -1,112 +1,176 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import eyo from "./eyo.png";
-import img from "./img.png";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import axios from "axios";
 
-const Login = ({ onLogin }) => {
-  const images = [eyo, img, eyo];
-  const [current, setCurrent] = useState(0);
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % images.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [images.length]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // You can add real authentication here
-    if (onLogin) onLogin();
+  const validateForm = () => {
+    const newErrors = {};
+    if (!email) newErrors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Invalid email format";
+    if (!password) newErrors.password = "Password is required";
+    return newErrors;
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    const newErrors = validateForm();
+    setFieldErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) return;
+
+    setIsLoading(true);
+    try {
+      const response = await axios.post("http://localhost:3008/api/login", { email, password });
+      const data = response.data;
+      localStorage.setItem("token", data.token);
+      navigate("/");
+    } catch (err) {
+      setError("Invalid email or password");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const isFormValid = email && password && Object.keys(fieldErrors).length === 0;
+
+  const carouselImages = [
+    { url: "https://source.unsplash.com/random/800x600/?education,library", text: "Welcome to Our School" },
+    { url: "https://source.unsplash.com/random/800x600/?classroom,students", text: "Empowering Students Every Day" },
+    { url: "https://source.unsplash.com/random/800x600/?books,learning", text: "A Place to Grow and Learn" },
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-0">
-      <div className="flex flex-col md:flex-row w-full max-w-full min-h-[95vh] bg-white rounded-xl overflow-hidden shadow-lg">
-        <div className="w-full md:w-1/2 p-8 flex flex-col gap-6 justify-center min-h-[95vh]">
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-7 h-7 bg-blue-200 rounded flex items-center justify-center text-blue-700 font-bold">
-              N
+    <div className="min-h-screen flex flex-col md:flex-row">
+      {/* Left Side - Image Carousel */}
+      <div className="md:w-1/2 w-full relative overflow-hidden h-72 md:h-auto">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="absolute inset-0"
+        >
+          {carouselImages.map((img, index) => (
+            <motion.div
+              key={index}
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: index === 0 ? 1 : 0 }}
+              transition={{ duration: 1 }}
+            >
+              <img
+                src={img.url}
+                alt={img.text}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 flex flex-col justify-end p-10 text-white bg-black/30">
+                <h2 className="text-3xl font-bold">{img.text}</h2>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Right Side - Login Form */}
+      <div className="md:w-1/2 w-full flex items-center justify-center p-8 bg-gray-50">
+        <div className="max-w-md w-full">
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">Sign In</h1>
+          <p className="text-gray-600 mb-8">
+            Welcome back! Please sign in to your account.
+          </p>
+
+          {error && (
+            <div className="bg-red-100 text-red-600 p-3 rounded-lg mb-4 text-sm">
+              {error}
             </div>
-            <span className="font-semibold text-blue-700 text-xl">
-              News Box
-            </span>
-          </div>
+          )}
 
-          <div>
-            <h2 className="text-2xl font-bold">
-              Welcome back to Hope News Box,
-            </h2>
-            <p className="text-gray-500 mt-1">
-              We are delighted to have you onboard! Such an amazing experience
-              we are looking forward to!
-            </p>
-          </div>
-
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email */}
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700">
-                Email <span className="text-red-500">*</span>
+              <label
+                htmlFor="email"
+                className="block text-gray-700 font-medium mb-1"
+              >
+                Email Address
               </label>
               <input
+                id="email"
                 type="email"
-                placeholder="Enter the email"
-                className="w-full border rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500"
-                required
+                placeholder="you@example.com"
+                className={`w-full p-3 border rounded-xl focus:outline-none focus:ring-2 ${
+                  fieldErrors.email ? "border-red-500" : "focus:ring-blue-400"
+                }`}
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (fieldErrors.email) setFieldErrors({ ...fieldErrors, email: "" });
+                }}
               />
+              {fieldErrors.email && (
+                <p className="text-red-500 text-sm mt-1">{fieldErrors.email}</p>
+              )}
             </div>
+
+            {/* Password */}
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700">
-                Password <span className="text-red-500">*</span>
+              <label
+                htmlFor="password"
+                className="block text-gray-700 font-medium mb-1"
+              >
+                Password
               </label>
               <input
+                id="password"
                 type="password"
-                placeholder="Enter the password"
-                className="w-full border rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500"
-                required
+                placeholder="••••••••"
+                className={`w-full p-3 border rounded-xl focus:outline-none focus:ring-2 ${
+                  fieldErrors.password ? "border-red-500" : "focus:ring-blue-400"
+                }`}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (fieldErrors.password) setFieldErrors({ ...fieldErrors, password: "" });
+                }}
               />
+              {fieldErrors.password && (
+                <p className="text-red-500 text-sm mt-1">{fieldErrors.password}</p>
+              )}
             </div>
-            <button className="mt-2 py-3 w-full bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-base transition">
-              LOGIN
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={isLoading || !isFormValid}
+              className={`w-full py-3 rounded-xl font-semibold transition ${
+                isLoading
+                  ? "bg-gray-400 text-white"
+                  : isFormValid
+                  ? "bg-blue-600 text-white hover:opacity-90"
+                  : "bg-gray-300 text-gray-600"
+              }`}
+            >
+              {isLoading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
-          <div className="text-xs text-gray-500 mt-2 text-center">
-            Do not have an account?{" "}
+          <p className="text-center mt-6 text-gray-600">
+            Don’t have an account?{" "}
             <Link
-              to="/signup"
-              className="text-blue-600 font-medium hover:underline"
+              to="/Signup"
+              className="text-blue-600 font-bold hover:underline"
             >
-              Register
+              Create one
             </Link>
-          </div>
-        </div>
-
-        <div className="hidden md:flex w-full md:w-1/2 relative items-center justify-center min-h-[95vh]">
-          <img
-            src={images[current]}
-            alt="Group"
-            className="object-cover w-full h-full transition duration-700"
-          />
-          <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/60 to-transparent text-white">
-            <h2 className="text-2xl font-bold mb-2">
-              Welcome back to Hope News Box
-            </h2>
-            <p>
-              We are delighted to have you onboard! Such an amazing experience
-              we are looking forward to!
-            </p>
-            <div className="flex items-center gap-2 mt-4 justify-center">
-              {images.map((_, i) => (
-                <span
-                  key={i}
-                  className={`inline-block w-2 h-2 rounded-full ${
-                    i === current ? "bg-white" : "bg-white/50"
-                  }`}
-                ></span>
-              ))}
-            </div>
-          </div>
+          </p>
         </div>
       </div>
     </div>

@@ -1,12 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import eyo from "./eyo.png";
-import img from "./img.png";
-import logo from "./logo.png";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const Signup = ({ onSignUp }) => {
-  const images = [eyo, img, eyo];
+const Signup = () => {
+  // Mix of gradients + background images for visual clarity
+  const backgroundStyles = [
+    {
+      background: "url('https://source.unsplash.com/1200x900/?family,celebration') center/cover no-repeat",
+      overlay: "linear-gradient(135deg, rgba(102,126,234,0.7), rgba(118,75,162,0.7))",
+      title: "Join the Family",
+      subtitle: "Start your journey today"
+    },
+    {
+      background: "url('https://source.unsplash.com/1200x900/?community,together') center/cover no-repeat",
+      overlay: "linear-gradient(135deg, rgba(240,147,251,0.7), rgba(245,87,108,0.7))",
+      title: "Build Connections",
+      subtitle: "Share amazing stories"
+    },
+    {
+      background: "url('https://source.unsplash.com/1200x900/?friendship,smile') center/cover no-repeat",
+      overlay: "linear-gradient(135deg, rgba(79,172,254,0.7), rgba(0,242,254,0.7))",
+      title: "Create Memories",
+      subtitle: "Bonds that last forever"
+    }
+  ];
+
   const [current, setCurrent] = useState(0);
+  const navigate = useNavigate();
 
   const allowedNames = [
     "BERWA",
@@ -17,252 +37,237 @@ const Signup = ({ onSignUp }) => {
     "MFURA",
     "RWANDA",
   ];
+  
   const [formData, setFormData] = useState({
-  name: "",
-  birthday: "",
-  email: "",
-  password: "",
-});
+    name: "",
+    birthday: "",
+    email: "",
+    password: "",
+  });
 
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
 
+  // Carousel auto-switch
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % images.length);
+      setCurrent((prev) => (prev + 1) % backgroundStyles.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, [images.length]);
+  }, [backgroundStyles.length]);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  // Form validation
+  useEffect(() => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isEmailValid = emailRegex.test(formData.email);
+    const isPasswordValid = formData.password.length >= 6;
+    const isNameValid = formData.name.trim() !== "";
+    const isBirthdayValid = formData.birthday !== "";
+    setIsFormValid(isEmailValid && isPasswordValid && isNameValid && isBirthdayValid);
+  }, [formData]);
 
-  const nameUpper = formData.name.trim().toUpperCase();
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setError("");
+    setFieldErrors(prev => ({ ...prev, [name]: "" }));
+  };
 
-  if (!allowedNames.includes(nameUpper)) {
-    setError("invalid");
-    setFormData({
-      name: "",
-      birthday: "",
-      email: "",
-      password: "",
-    });
-    return;
-  }
-
-  try {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
     setError("");
 
-    const response = await axios.post('http://10.11.73.185:3008/api/signup', {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      birthday: formData.birthday,
-    });
+    const nameUpper = formData.name.trim().toUpperCase();
 
-    if (response.status === 200 || response.status === 201) {
-      console.log("Signup successful:", response.data);
-      if (onSignUp) onSignUp();
-    } else {
-      setError("Signup failed. Please try again.");
+    if (!allowedNames.includes(nameUpper)) {
+      setError("Please select a valid family name from the allowed list.");
+      setIsLoading(false);
+      return;
     }
 
-  } catch (error) {
-    console.error("Signup error:", error);
-    setError(error.response?.data?.message || "An error occurred during signup.");
-  }
-};
+    try {
+      const response = await axios.post('http://localhost:3008/api/signup', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        birthday: formData.birthday,
+      });
 
+      if (response.status === 200 || response.status === 201) {
+        console.log("Signup successful:", response.data);
+        // After successful signup, redirect to login
+        navigate('/login');
+      } else {
+        setError("Signup failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      setError(error.response?.data?.message || "An error occurred during signup. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const InputField = ({ type, name, placeholder, label, showToggle, isSelect, options }) => {
+    const hasError = fieldErrors[name];
+    const hasValue = formData[name];
+    const isValid = hasValue && !hasError;
+
+    if (isSelect) {
+      return (
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold text-gray-700">{label}</label>
+          <div className="relative group">
+            <select
+              name={name}
+              value={formData[name]}
+              onChange={handleInputChange}
+              className={`w-full border rounded-xl px-4 py-3 focus:outline-none transition-all duration-300 ${
+                hasError
+                  ? "border-red-400 bg-red-50 focus:ring-2 focus:ring-red-300"
+                  : isValid
+                  ? "border-green-400 bg-green-50 focus:ring-2 focus:ring-green-300"
+                  : "border-gray-300 bg-white focus:ring-2 focus:ring-blue-300"
+              }`}
+              required
+            >
+              <option value="">Select your family name</option>
+              {options.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-2">
+        <label className="block text-sm font-semibold text-gray-700">{label}</label>
+        <div className="relative group">
+          <input
+            type={type === "password" && showPassword ? "text" : type}
+            name={name}
+            value={formData[name]}
+            onChange={handleInputChange}
+            placeholder={placeholder}
+            className={`w-full border rounded-xl px-4 py-3 focus:outline-none transition-all duration-300 ${
+              hasError
+                ? "border-red-400 bg-red-50 focus:ring-2 focus:ring-red-300"
+                : isValid
+                ? "border-green-400 bg-green-50 focus:ring-2 focus:ring-green-300"
+                : "border-gray-300 bg-white focus:ring-2 focus:ring-blue-300"
+            }`}
+            required
+          />
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="flex flex-col md:flex-row w-full max-w-5xxl bg-white rounded-xl overflow-hidden shadow-lg">
-        <div className="w-full md:w-1/2 p-10 flex flex-col gap-6">
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-7 h-7 bg-blue-200 rounded flex items-center justify-center text-blue-700 font-bold">
-              <img src={logo} alt="" />
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-bold">
-              Welcome back to Hope News Box,
-            </h2>
-            <p className="text-gray-500 mt-1">
-              We are delighted to have you onboard! Such an amazing experience
-              we are looking forward to!
-            </p>
-          </div>
-
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700">
-                Family Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                  type="text"
-                  placeholder="Enter your name .."
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  className="w-full border rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500"
-                  required
-              />
-
-              {error === "invalid" && (
-                <div className="flex items-center gap-2 text-red-500 text-xs mt-1">
-                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                    <path
-                      fill="currentColor"
-                      d="M12 17a1.25 1.25 0 0 1-1.25-1.25v-3.5a1.25 1.25 0 0 1 2.5 0v3.5A1.25 1.25 0 0 1 12 17Zm0 4.75A1.25 1.25 0 1 1 12 19.25 1.25 1.25 0 0 1 12 21.75Zm0-19.5A9.25 9.25 0 1 0 21.25 12 9.261 9.261 0 0 0 12 2.25ZM12 20A8 8 0 1 1 20 12 8.009 8.009 0 0 1 12 20Z"
-                    ></path>
-                  </svg>
-                  Fill in valid data!
-                </div>
-              )}
-              <br></br>
-              <br />
-              <label className="block text-sm font-medium mb-1 text-gray-700">
-                Date of Birth <span className="text-red-500">*</span>
-              </label>
-              <input
-                  type="date"
-                  value={formData.birthday}
-                  onChange={(e) =>
-                    setFormData({ ...formData, birthday: e.target.value })
-                  }
-                  placeholder="Enter your birthday..."
-                  className="w-full border rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500"
-                  required
-              />
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col lg:flex-row">
+        {/* Left side - Form */}
+        <div className="w-full lg:w-1/2 p-10 flex flex-col justify-center">
+          <div className="max-w-md mx-auto">
+            {/* Title */}
+            <div className="flex flex-col items-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-800">
+                Hope News Box
+              </h1>
+              <p className="text-gray-500 text-sm">Your family's digital hub</p>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700">
-                Email <span className="text-red-500">*</span>
-              </label>
-              <input
+            {/* Welcome Text */}
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                Join the Family!
+              </h2>
+              <p className="text-gray-600">
+                We're excited to have you join our family newsletter community!
+              </p>
+            </div>
+
+            {/* Error */}
+            {error && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded-lg">
+                <span className="text-red-700">{error}</span>
+              </div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <InputField
+                type="text"
+                name="name"
+                label="Family Name"
+                isSelect={true}
+                options={allowedNames}
+              />
+              <InputField
+                type="date"
+                name="birthday"
+                label="Date of Birth"
+              />
+              <InputField
                 type="email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                placeholder="Enter the email"
-                className="w-full border rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500"
-                required
+                name="email"
+                label="Email Address"
+                placeholder="Enter your email"
               />
-            </div>
+              <InputField
+                type="password"
+                name="password"
+                label="Password"
+                placeholder="Create a strong password"
+                showToggle
+              />
 
-            <div className="relative">
-              <label className="block text-sm font-medium mb-1 text-gray-700">
-                Password <span className="text-red-500">*</span>
-              </label>
-              <input
-                type={showPassword ? "text" : "password"}
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                placeholder="Enter the password"
-                className="w-full border rounded px-3 py-2 pr-10 text-gray-800 focus:outline-none focus:border-blue-500"
-                required
-              />
               <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute top-9 right-3 text-gray-500"
-                tabIndex={-1}
+                type="submit"
+                disabled={isLoading || !isFormValid}
+                className={`w-full py-3 rounded-xl font-semibold transition ${
+                  isLoading
+                    ? "bg-gray-400 text-white"
+                    : isFormValid
+                    ? "bg-blue-600 text-white hover:opacity-90"
+                    : "bg-gray-300 text-gray-600"
+                }`}
               >
-                {showPassword ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.05 10.05 0 012.133-3.362m3.108-2.518A9.963 9.963 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.953 9.953 0 01-4.06 5.099M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 3l18 18"
-                    />
-                  </svg>
-                )}
+                {isLoading ? "Creating Account..." : "Create Account"}
               </button>
-            </div>
+            </form>
 
-            <button
-              type="submit"
-              className="mt-2 py-3 w-full bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-base transition"
-            >
-              CREATE ACCOUNT
-            </button>
-          </form>
-
-          <div className="text-xs text-gray-500 mt-2 text-center">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="text-blue-600 font-medium hover:underline"
-            >
-              Login
-            </Link>
+            <p className="text-center mt-6 text-gray-600">
+              Already have an account?{" "}
+              <Link to="/login" className="text-blue-600 font-bold hover:underline">
+                Sign in here
+              </Link>
+            </p>
           </div>
         </div>
 
-        <div className="hidden md:flex w-full md:w-1/2 w relative">
-          <img
-            src={images[current]}
-            alt="Group"
-            className="object-cover w-full h-full transition duration-700"
-          />
-          <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/60 to-transparent text-white">
-            <h2 className="text-2xl font-bold mb-2">
-              Welcome back to Hope News Box
-            </h2>
-            <p>
-              We are delighted to have you onboard! Such an amazing experience
-              we are looking forward to!
-            </p>
-            <div className="flex items-center gap-2 mt-4 justify-center">
-              {images.map((_, i) => (
-                <span
-                  key={i}
-                  className={`inline-block w-2 h-2 rounded-full ${
-                    i === current ? "bg-white" : "bg-white/50"
-                  }`}
-                ></span>
-              ))}
-            </div>
+        {/* Right side - Carousel */}
+        <div className="hidden lg:flex w-full lg:w-1/2 relative">
+          {backgroundStyles.map((style, i) => (
+            <div
+              key={i}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                i === current ? "opacity-100" : "opacity-0"
+              }`}
+              style={{ background: `${style.overlay}, ${style.background}` }}
+            />
+          ))}
+          <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
+            <h2 className="text-4xl font-bold">{backgroundStyles[current].title}</h2>
+            <p className="text-xl">{backgroundStyles[current].subtitle}</p>
           </div>
         </div>
       </div>

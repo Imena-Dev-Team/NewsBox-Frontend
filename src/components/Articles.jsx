@@ -1,52 +1,50 @@
 import { useState, useRef, useEffect } from "react";
-import { Plus, Image, Video, MoreHorizontal } from "lucide-react";
+import { Plus, Image, Video } from "lucide-react";
 import NewsletterFooter from "./Footer";
+import axios from "axios";
 
-// Loading skeleton that matches the Articles page structure
+const validCategories = [
+  "Family Time",
+  "Community",
+  "Activity",
+  "Social",
+  "History Time",
+];
+
 const ArticleSkeleton = () => (
-  <div className="relative py-8 border border-gray-500 rounded-xl h-[350px] w-[90%] max-w-[850px] mx-auto my-[60px] bg-[#f8fafc] shadow-[0_4px_24px_0_rgba(0,0,0,0.07)] flex flex-col justify-center">
-    {/* Top buttons */}
-    <div className="absolute top-5 left-5">
-      <div className="w-[150px] h-[50px] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-[40px]" />
-    </div>
-    <div className="absolute top-5 right-5">
-      <div className="w-[150px] h-[50px] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-[40px]" />
-    </div>
-    {/* Attachments row (reduced to 2 for better spacing) */}
-    <div className="flex gap-6 mb-2.5 mt-0 justify-start ml-32 mt-20">
+  <div className="relative py-8 border border-gray-500 rounded-xl h-[350px] w-[90%] max-w-[850px] mx-auto my-[60px] bg-[#f8fafc] shadow-lg flex flex-col justify-center">
+    <div className="absolute top-5 left-5 w-[150px] h-[50px] bg-gray-200 animate-pulse rounded-[40px]" />
+    <div className="absolute top-5 right-5 w-[150px] h-[50px] bg-gray-200 animate-pulse rounded-[40px]" />
+    <div className="flex gap-6 mt-20 ml-32">
       {Array.from({ length: 2 }).map((_, idx) => (
         <div
           key={idx}
-          className="w-[70px] h-[70px] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-xl"
+          className="w-[70px] h-[70px] bg-gray-200 animate-pulse rounded-xl"
         />
       ))}
     </div>
-    {/* Input skeleton */}
-    <div className="w-[80%] h-[100px] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg mx-auto mt-4" />
-    {/* Plus button skeleton (refined, no border, just gray circle, more space to the right) */}
-    <div className="absolute bottom-5 left-5" style={{ marginRight: "40px" }}>
-      <div className="w-[80px] h-[80px] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full" />
-    </div>
-    <style>{`
-      @keyframes pulse {
-        0% { opacity: 0.6; }
-        50% { opacity: 1; }
-        100% { opacity: 0.6; }
-      }
-    `}</style>
+    <div className="w-[80%] h-[100px] bg-gray-200 animate-pulse rounded-lg mx-auto mt-4" />
+    <div className="absolute bottom-5 left-5 w-[80px] h-[80px] bg-gray-200 animate-pulse rounded-full" />
   </div>
 );
 
 const Articles = () => {
-  const [active, setActive] = useState("Publish");
-  const [showOptions, setShowOptions] = useState(false);
   const [attachments, setAttachments] = useState([]);
-  const [videoModal, setVideoModal] = useState({ open: false, url: null });
+  const [coverImg, setCoverImg] = useState(null);
+  const [coverPreview, setCoverPreview] = useState(null);
+
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
+  const coverInputRef = useRef(null);
+
   const [progress, setProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(true);
   const [loading, setLoading] = useState(true);
+
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [category, setCategory] = useState(validCategories[0]);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     setProgress(0);
@@ -56,8 +54,8 @@ const Articles = () => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(() => setShowProgress(false), 300); // Hide after short delay
-          setTimeout(() => setLoading(false), 300); // Show content after progress bar
+          setTimeout(() => setShowProgress(false), 300);
+          setTimeout(() => setLoading(false), 300);
           return 100;
         }
         return prev + 10;
@@ -66,17 +64,12 @@ const Articles = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Handle multiple attachments (images/videos)
   const handleAttachmentChange = (event, type) => {
     const files = Array.from(event.target.files);
     const newAttachments = files.map((file) => ({
       file,
       url: URL.createObjectURL(file),
-      type: file.type.startsWith("image")
-        ? "image"
-        : file.type.startsWith("video")
-        ? "video"
-        : "other",
+      type: file.type.startsWith("image") ? "image" : "video",
     }));
     setAttachments((prev) => [...prev, ...newAttachments]);
   };
@@ -85,192 +78,213 @@ const Articles = () => {
     setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleImageClick = () => fileInputRef.current.click();
-  const handleVideoClick = () => videoInputRef.current.click();
+  const handleCoverChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setCoverImg(file);
+      setCoverPreview(URL.createObjectURL(file));
+    }
+  };
 
-  // Centering logic: flex column, center content
+  const handleSubmit = async () => {
+    if (!title.trim() || !content.trim() || !coverImg) {
+      setMessage("⚠️ Title, Content, and Cover Image are required.");
+      return;
+    }
+
+    setMessage("Uploading...");
+    try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+      formData.append("category", category);
+      formData.append("coverImg", coverImg);
+
+      // append files with array keys
+      attachments.forEach((att) => {
+        if (att.type === "image") formData.append("images[]", att.file);
+        if (att.type === "video") formData.append("videos[]", att.file);
+      });
+
+      
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+
+      const token = localStorage.getItem("token");
+      await axios.post("http://localhost:3008/api/uploadBlog", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setMessage("✅ Blog uploaded successfully!");
+      setTitle("");
+      setContent("");
+      setCategory(validCategories[0]);
+      setCoverImg(null);
+      setCoverPreview(null);
+      setAttachments([]);
+    } catch (err) {
+      console.error(err);
+      setMessage("❌ Upload failed. Check console.");
+    }
+  };
+
   return (
-    <div
-      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
-    >
+    <div className="min-h-screen flex flex-col">
       {showProgress && (
-        <div style={{ height: "6px", backgroundColor: "#e0e0e0", margin: 0 }}>
+        <div className="h-1 bg-gray-200">
           <div
-            style={{
-              width: `${progress}%`,
-              height: "100%",
-              backgroundColor: "#1474ED",
-              transition: "width 0.3s",
-            }}
+            className="h-full bg-blue-600 transition-all"
+            style={{ width: `${progress}%` }}
           />
         </div>
       )}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+
+      <div className="flex-1 flex flex-col">
         {loading ? (
           <ArticleSkeleton />
         ) : (
-          <div className="relative py-8 border border-gray-500 rounded-xl h-[350px] w-[90%] max-w-[850px] mx-auto my-[60px] font-['Poppins',sans-serif] bg-[#f8fafc] shadow-[0_4px_24px_0_rgba(0,0,0,0.07)] flex flex-col justify-center">
-            <button
-              onClick={() => setActive("Cancel")}
-              className={`absolute top-5 left-5 w-[150px] h-[50px] rounded-[40px] flex justify-center items-center text-xl border-2 border-[rgb(29,135,216)] cursor-pointer ${
-                active === "Cancel"
-                  ? "bg-[#2aa2ff] text-white"
-                  : "bg-white text-[#2aa2ff]"
-              }`}
+          <div className="relative py-8 border border-gray-500 rounded-xl w-[90%] max-w-[850px] mx-auto my-12 bg-[#f8fafc] shadow-lg flex flex-col gap-4 p-6">
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter blog title"
+              className="w-full border p-3 rounded-lg text-lg"
+            />
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Write your content..."
+              rows={5}
+              className="w-full border p-3 rounded-lg"
+            />
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="border p-2 rounded-lg"
             >
-              Cancel
-            </button>
+              {validCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
 
-            <button
-              onClick={() => setActive("Publish")}
-              className={`absolute top-5 right-5 w-[150px] h-[50px] rounded-[40px] flex justify-center items-center text-xl border-2 border-[rgb(28,128,204)] cursor-pointer ${
-                active === "Publish"
-                  ? "bg-[#2aa2ff] text-white"
-                  : "bg-white text-[#2aa2ff]"
-              }`}
-            >
-              Publish
-            </button>
-
-            {/* Inner wrapper for left alignment */}
-            <div className="w-[90%] max-w-[700px] mx-auto flex flex-col items-start">
-              {attachments.length > 0 && (
-                <div className="flex gap-4 mb-2.5 mt-0 justify-start">
-                  {attachments.map((att, idx) => (
-                    <div
-                      key={idx}
-                      className="relative w-[70px] h-[70px] shadow-[0_2px_8px_0_rgba(0,0,0,0.10)] border-2 border-[#e0e7ef] rounded-xl overflow-hidden bg-white transition-[box-shadow_0.2s,border_0.2s] flex items-center justify-center cursor-pointer hover:shadow-[0_4px_16px_0_rgba(42,162,255,0.18)] hover:border-[#2aa2ff]"
-                      onClick={() => {
-                        if (att.type === "video")
-                          setVideoModal({ open: true, url: att.url });
-                      }}
-                    >
-                      {att.type === "image" ? (
-                        <img
-                          src={att.url}
-                          alt="attachment"
-                          className="w-full h-full object-cover rounded-[10px] transition-[box-shadow_0.2s]"
-                        />
-                      ) : att.type === "video" ? (
-                        <div className="w-full h-full flex items-center justify-center bg-[#eaf4ff] rounded-[10px]">
-                          <svg
-                            width="36"
-                            height="36"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="#2aa2ff"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <rect x="2" y="7" width="15" height="10" rx="2" />
-                            <polygon points="17 7 22 12 17 17 17 7" />
-                          </svg>
-                        </div>
-                      ) : (
-                        <span className="w-[60px] h-[60px] flex items-center justify-center bg-[#eee] rounded-lg">
-                          File
-                        </span>
-                      )}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveAttachment(idx);
-                        }}
-                        className="absolute top-0.5 right-0.5 bg-white border border-[#ccc] rounded-full w-[22px] h-[22px] cursor-pointer font-bold leading-[18px] p-0 shadow-[0_1px_4px_0_rgba(0,0,0,0.10)] flex items-center justify-center"
-                        aria-label="Remove"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
+            <div>
+              <p className="font-medium">Cover Image (required)</p>
+              {coverPreview ? (
+                <div className="relative w-40">
+                  <img
+                    src={coverPreview}
+                    alt="cover"
+                    className="w-40 h-28 object-cover rounded-lg"
+                  />
+                  <button
+                    onClick={() => {
+                      setCoverImg(null);
+                      setCoverPreview(null);
+                    }}
+                    className="absolute top-1 right-1 bg-white border rounded-full w-6 h-6"
+                  >
+                    ×
+                  </button>
                 </div>
+              ) : (
+                <button
+                  onClick={() => coverInputRef.current.click()}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 font-medium"
+                >
+                  Upload Cover
+                </button>
               )}
-
-              {/* Text Input */}
               <input
-                type="text"
-                placeholder="Type your message..."
-                className="w-[80%] h-[100px] text-2xl font-medium border-none border-l-3 border-[#d3d3d3] outline-none px-5 py-2.5 m-0 block bg-[#f8fafc] text-[#333]"
+                type="file"
+                accept="image/*"
+                ref={coverInputRef}
+                onChange={handleCoverChange}
+                hidden
               />
             </div>
 
-            {/* File Inputs (hidden) */}
+            {attachments.length > 0 && (
+              <div className="flex gap-3 flex-wrap">
+                {attachments.map((att, idx) => (
+                  <div key={idx} className="relative w-24 h-20">
+                    {att.type === "image" ? (
+                      <img
+                        src={att.url}
+                        alt="preview"
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    ) : (
+                      <video
+                        src={att.url}
+                        className="w-full h-full object-cover rounded-lg"
+                        controls
+                      />
+                    )}
+                    <button
+                      onClick={() => handleRemoveAttachment(idx)}
+                      className="absolute top-0 right-0 bg-white border border-gray-300 rounded-full w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all duration-200"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <input
               type="file"
               accept="image/*"
               multiple
-              className="hidden"
               ref={fileInputRef}
               onChange={(e) => handleAttachmentChange(e, "image")}
+              hidden
             />
             <input
               type="file"
               accept="video/*"
               multiple
-              className="hidden"
               ref={videoInputRef}
               onChange={(e) => handleAttachmentChange(e, "video")}
+              hidden
             />
 
-            {/* Plus Icon for Attachments */}
+            <div className="flex gap-4 mt-2">
+              <button
+                onClick={() => fileInputRef.current.click()}
+                className="px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center gap-2"
+              >
+                <Image className="w-5 h-5" />
+                <span className="font-medium">Add Images</span>
+              </button>
+              <button
+                onClick={() => videoInputRef.current.click()}
+                className="px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center gap-2"
+              >
+                <Video className="w-5 h-5" />
+                <span className="font-medium">Add Videos</span>
+              </button>
+            </div>
+
             <button
-              onClick={() => setShowOptions(!showOptions)}
-              className="absolute bottom-5 left-5 text-white w-[80px] h-[80px] rounded-full flex justify-center items-center border-2 border-[#2aa2ff] bg-white cursor-pointer"
+              onClick={handleSubmit}
+              className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Plus size={65} strokeWidth={1} color="#2aa2ff" />
+              Publish Blog
             </button>
 
-            {/* Icon Options */}
-            {showOptions && (
-              <div className="absolute bottom-[30px] left-[120px] flex gap-5">
-                <div
-                  className="w-[60px] h-[60px] rounded-full border-2 border-[darkgreen] flex justify-center items-center cursor-pointer bg-white"
-                  onClick={() => fileInputRef.current.click()}
-                >
-                  <Image color="#064420" />
-                </div>
-                <div
-                  className="w-[60px] h-[60px] rounded-full border-2 border-[darkgreen] flex justify-center items-center cursor-pointer bg-white"
-                  onClick={() => videoInputRef.current.click()}
-                >
-                  <Video color="#064420" />
-                </div>
-                <div
-                  className="w-[60px] h-[60px] rounded-full border-2 border-[darkgreen] flex justify-center items-center cursor-pointer bg-white"
-                  onClick={() => fileInputRef.current.click()}
-                >
-                  <MoreHorizontal color="#064420" />
-                </div>
-              </div>
-            )}
-
-            {/* Video Modal */}
-            {videoModal.open && (
-              <div className="fixed inset-0 w-screen h-screen bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-[1000]">
-                <div className="bg-white rounded-xl p-5 shadow-[0_4px_24px_0_rgba(0,0,0,0.18)] relative min-w-[320px]">
-                  <button
-                    onClick={() => setVideoModal({ open: false, url: null })}
-                    className="absolute top-2 right-2 bg-white border border-[#ccc] rounded-full w-7 h-7 cursor-pointer font-bold text-lg leading-[22px] p-0 shadow-[0_1px_4px_0_rgba(0,0,0,0.10)] flex items-center justify-center"
-                    aria-label="Close video preview"
-                  >
-                    ×
-                  </button>
-                  <video
-                    src={videoModal.url}
-                    controls
-                    autoPlay
-                    className="w-[320px] h-[240px] rounded-lg bg-black"
-                  />
-                </div>
-              </div>
-            )}
+            {message && <p className="text-sm mt-2">{message}</p>}
           </div>
         )}
       </div>
-      <div style={{ flexShrink: 0 }}>
-        <NewsletterFooter />
-      </div>
+
+      <NewsletterFooter />
     </div>
   );
 };

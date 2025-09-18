@@ -92,95 +92,86 @@ const Gallery = () => {
   }, [model, currentIndex]);
 
   return (
-    <div style={{ backgroundColor: "#FAFAFA" }}>
+    <div className="bg-gray-50">
       {loading && (
-        <div style={{ height: "6px", backgroundColor: "#e0e0e0", margin: "0" }}>
+        <div className="h-1.5 bg-gray-200">
           <div
-            style={{
-              width: `${progress}%`,
-              height: "100%",
-              backgroundColor: "#1474ED",
-              transition: "width 0.3s",
-            }}
+            className="h-full bg-blue-600 transition-[width] duration-300"
+            style={{ width: `${progress}%` }}
           />
         </div>
       )}
 
-      <div
-        style={{
-          margin: "20px",
-          backgroundColor: "white",
-          borderRadius: "8px",
-          justifyContent: "center",
-          padding: "40px 60px",
-          height: "1350px",
-          marginLeft: "50px",
-          marginTop: "30px",
-          borderTop: "1px solid rgba(0, 0, 0, 0.1)",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <p
-          style={{
-            fontFamily: '"Poppins", sans-serif',
-            fontWeight: "600",
-            fontSize: "20px",
-            paddingLeft: "10px",
-          }}
-        >
-          Open Gallery
-        </p>
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="bg-white rounded-2xl shadow-lg p-6 md:p-10 my-8">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 font-heading">Open Gallery</h1>
+            {!loading && (
+              <div className="text-sm text-gray-500">{data.length} photos</div>
+            )}
+          </div>
 
-        <div className={model ? "model open" : "model"}>
-          <span className="close-btn" onClick={() => setModel(false)}>
-            &times;
-          </span>
-          <button className="arrow prev" onClick={prevImage}>
-            &#10094;
-          </button>
-          <img src={tempimgSrc} alt="expanded" />
-          <button className="arrow next" onClick={nextImage}>
-            &#10095;
-          </button>
-        </div>
-
-        <div className="gallery">
-          {loading
-            ? Array.from({ length: 25 }).map((_, index) => (
-                <div className="skeleton-box" key={index}></div>
-              ))
-            : data.map((item, index) => (
-                <div
-                  className="pics"
-                  key={index}
-                  onClick={() => getImg(item.imgSrc, index)}
-                >
-                  <img src={item.imgSrc} alt={`img-${index}`} />
-                </div>
-              ))}
-        </div>
-
-        <div style={{ marginLeft: "600px", marginTop: "30px" }}>
-          <button
-            onClick={() => window.open("https://photos.google.com/", "_blank")}
-            style={{
-              height: "40px",
-              width: "180px",
-              borderRadius: "8px",
-              border: "none",
-              fontFamily: '"Poppins", sans-serif',
-              fontWeight: "600",
-              backgroundColor: "#1474ED",
-              color: "white",
-            }}
+          {/* Lightbox */}
+          <div
+            className={model ? "model open" : "model"}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Image viewer"
           >
-            SEE MORE
-          </button>
+            <button
+              className="close-btn"
+              aria-label="Close"
+              onClick={() => setModel(false)}
+            >
+              &times;
+            </button>
+            <button className="arrow prev" aria-label="Previous" onClick={prevImage}>
+              &#10094;
+            </button>
+            {tempimgSrc && (
+              <img src={tempimgSrc} alt="Selected" />
+            )}
+            <button className="arrow next" aria-label="Next" onClick={nextImage}>
+              &#10095;
+            </button>
+          </div>
+
+          {/* Grid */}
+          <div className="gallery">
+            {loading
+              ? Array.from({ length: 24 }).map((_, index) => (
+                  <div className="skeleton-box" key={index} />
+                ))
+              : data.map((item, index) => (
+                  <div
+                    className="pics"
+                    key={index}
+                    onClick={() => getImg(item.imgSrc, index)}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Open image ${index + 1}`}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") getImg(item.imgSrc, index);
+                    }}
+                  >
+                    <img src={item.imgSrc} alt={`Gallery image ${index + 1}`} />
+                  </div>
+                ))}
+          </div>
+
+          {/* See More */}
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={() => window.open("https://photos.google.com/", "_blank")}
+              className="btn-secondary px-6 py-3"
+            >
+              See more
+            </button>
+          </div>
         </div>
 
-        <div
-          style={{ position: "relative", left: "-90px", marginTop: "100px" }}
-        >
+        {/* Footer */}
+        <div className="mt-12">
           <NewsletterFooter />
         </div>
       </div>

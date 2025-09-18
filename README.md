@@ -1,12 +1,89 @@
-# React + Vite
+# Hope Family Courtesy Newsletter Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React-based newsletter application for the Hope Family community.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Authentication System**: Complete login/signup functionality with JWT tokens
+- **Navigation**: Responsive navigation with logout functionality
+- **Blog Management**: Create and publish articles with media attachments
+- **Gallery**: Photo and video sharing
+- **Birthday Tracking**: Member birthday management
+- **Responsive Design**: Mobile-first design with Tailwind CSS
 
-## Expanding the ESLint configuration
+## Authentication
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The application now includes a complete authentication system:
+
+### Login
+- Users can log in with email and password
+- JWT tokens are stored in localStorage
+- Automatic redirect to home page after successful login
+
+### Logout
+- Logout button is available in the navigation bar
+- Clears authentication token and redirects to login page
+- Available on both desktop and mobile views
+
+### Protected Routes
+- Articles page requires authentication
+- Token is automatically included in API requests
+
+## Getting Started
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+3. Make sure the backend server is running on `http://localhost:3008`
+
+## API Endpoints
+
+- `POST /api/login` - User authentication
+- `POST /api/signup` - User registration
+- `POST /api/uploadBlog` - Blog creation (requires authentication)
+
+## Technologies Used
+
+- React 18
+- React Router DOM
+- Tailwind CSS
+- Axios for API calls
+- Lucide React for icons
+- Vite for build tooling
+
+## Project Structure
+
+```
+src/
+├── components/          # React components
+│   ├── Header.jsx      # Navigation with logout
+│   ├── Login.jsx       # Authentication form
+│   ├── Signup.jsx      # Registration form
+│   └── Articles.jsx    # Blog creation
+├── context/            # React context
+│   └── AuthContext.jsx # Authentication state management
+└── App.jsx            # Main application component
+```
+
+## Authentication Flow
+
+1. User visits the application
+2. If not authenticated, they see login/signup options
+3. After successful login, JWT token is stored
+4. User can access protected features like Articles
+5. Logout button clears token and redirects to login
+
+## Styling
+
+The application uses Tailwind CSS with custom components:
+- Glass morphism effects
+- Gradient text and buttons
+- Responsive navigation
+- Modern form styling
