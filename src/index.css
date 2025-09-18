@@ -13,3 +13,45 @@
 }
 
 /* Your custom styles below */
+
+@layer components {
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .font-heading {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+  }
+
+  .font-body {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+  }
+
+  .text-readable {
+    line-height: 1.6;
+  }
+
+  .input-field {
+    @apply border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl;
+  }
+
+  .nav-link {
+    @apply font-medium text-sm transition-all duration-200;
+  }
+}

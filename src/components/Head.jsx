@@ -94,13 +94,7 @@ const Head = () => {
         <div className="flex flex-col lg:flex-row items-center gap-8 mt-7">
           {loading ? (
             <div className="w-12 h-12 sm:w-15 sm:h-15 lg:mb-100 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
-          ) : (
-            <img
-              src="\src\assets\party1.png"
-              alt=""
-              className="w-12 h-12 sm:w-15 sm:h-15 lg:mb-100"
-            />
-          )}
+          ) : null}
 
           <div className="w-full lg:w-[45%] mt-4 lg:mt-[80px]">
             {loading ? (
@@ -134,7 +128,7 @@ const Head = () => {
                 </div>
 
                 
-                <div className="flex items-center gap-3 mt-6">
+                <div className="flex items-center mt-5 gap-3">
                   <div className="w-10 h-10 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
                   <div className="space-y-2">
                     <div className="w-32 h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
@@ -142,10 +136,7 @@ const Head = () => {
                   </div>
                 </div>
 
-               
-                <div className="w-12 h-12 sm:w-15 sm:h-15 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
-
-              
+                
                 <div className="flex gap-2 mt-8">
                   <div className="w-8 h-2 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
                   <div className="w-2 h-2 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
@@ -154,7 +145,7 @@ const Head = () => {
               </>
             ) : (
               <>
-                <button className="rounded-2xl px-4 py-2 bg-transparent-blue text-[#1A74ED] mb-4 font-semibold text-sm sm:text-base">
+                <button className="rounded-2xl px-4 py-2 bg-transparent text-[#1A74ED] mb-4 font-semibold text-sm sm:text-base border border-[#1A74ED]">
                   ACTIVITY
                 </button>
                 <h2 className="font-bold text-lg sm:text-xl lg:text-2xl mb-3 tracking-wider">
@@ -179,12 +170,6 @@ const Head = () => {
                     </span>
                   </div>
                 </div>
-
-                <img
-                  src="/src/assets/image.png"
-                  alt=""
-                  className="w-12 h-12 sm:w-15 sm:h-15 mt-4"
-                />
 
                 <div className="flex gap-2 mt-8">
                   {Header.map((_, i) => (
@@ -218,7 +203,7 @@ const Head = () => {
                 Featured news
               </h1>
               <button
-                className="bg-transparent-blue px-5 py-2 text-[#1A74ED] rounded-full text-center font-semibold text-sm sm:text-base hover:bg-[#F5F9FF] transition-colors"
+                className="px-5 py-2 text-[#1A74ED] rounded border border-[#1A74ED] text-center font-semibold text-sm sm:text-base hover:bg-[#F5F9FF] transition-colors"
                 onClick={() => navigate("/all")}
               >
                 See more

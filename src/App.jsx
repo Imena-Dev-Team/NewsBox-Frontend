@@ -16,6 +16,7 @@ import Header from "./components/Header";
 import SignUp from "./components/Signup";
 import Login from "./components/Login";
 import FamilyReunion from "./components/Singleb";
+import { AuthProvider } from "./context/AuthContext";
 
 function AppRoutes() {
   const location = useLocation();
@@ -44,7 +45,9 @@ function AppRoutes() {
 function App() {
   return (
     <Router>
-      <AppRoutes />
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </Router>
   );
 }

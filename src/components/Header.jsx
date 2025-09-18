@@ -1,75 +1,161 @@
-import React, { useState } from "react";
-import MyImage from "../Header.png";
-import { UserCircle } from "lucide-react";
-import { Menu, Search } from "lucide-react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Header() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [pending, setPending] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const Links = [
-    { name: "HOME", href: "/" },
-    { name: "BLOGS", href: "/all" },
-    { name: "PUBLISH ARTICLES", href: "/Articles" },
-    { name: "GALLERY", href: "/gallery" },
-    { name: "MEMBERS' BIRTHDAYS", href: "/Birthdays" },
+    { name: "Home", href: "/" },
+    { name: "Blogs", href: "/all" },
+    { name: "Publish Articles", href: "/Articles" },
+    { name: "Gallery", href: "/gallery" },
+    { name: "Members' Birthdays", href: "/Birthdays" },
   ];
 
-  return (
-    <div>
-      <div className="m-0 p-0 bg-[rgb(245,245,246)] flex justify-around font-['Poppins',sans-serif] text-gray-500">
-        <h3 className="mr-[190px] ml-10 p-0 font-['Poppins',sans-serif] font-bold text-lg mt-6">
-          HOPE FAMILY COURTESY
-        </h3>
-        <img src={MyImage} className="ml-[70px] text-gray-500" />
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            setPending(true);
-            setTimeout(() => {
-              setPending(false);
-              navigate("/login");
-            }, 1500);
-          }}
-          className="no-underline ml-[290px] right-[10px] text-gray-500 font-['Poppins',sans-serif] flex items-center leading-none font-bold text-[18px]"
-        >
-          <UserCircle className="w-[75px] h-[50px] text-[#2aa2ff] text-sm font-medium" />
-          Log Out
-        </a>
-        {pending && (
-          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-40">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
-            <p className="text-lg text-blue-600 font-semibold bg-white px-6 py-3 rounded shadow">
-              Logging out...
-            </p>
-          </div>
-        )}
-      </div>
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-      <div className="my-10 flex justify-between items-center px-5 py-3 border border-[rgba(128,123,123,0.1)]">
-        <div className="w-full flex justify-center items-center">
-          <ul className="list-none m-0 p-0 flex w-full max-w-[1200px] justify-evenly items-center text-gray-500 text-base font-bold leading-normal font-['Poppins',sans-serif]">
-            {Links.map((link) => (
-              <li key={link.name}>
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  return (
+    <>
+      {/* Main Header */}
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? 'glass-effect shadow-lg' : 'bg-transparent'
+      }`}>
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between py-4">
+            {/* Logo Section */}
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                  H
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold gradient-text font-heading">HOPE FAMILY COURTESY</h1>
+                  <p className="text-sm text-gray-600 font-body">Building bonds, sharing stories</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center space-x-1">
+              {Links.map((link) => (
                 <Link
+                  key={link.name}
                   to={link.href}
-                  className={`no-underline text-gray-500 mx-[45px] ${
+                  className={`nav-link px-4 py-2 rounded-md transition-all duration-200 ${
                     location.pathname === link.href
-                      ? "bg-[#eaf4ff] text-[#2aa2ff] px-4 py-1.5 rounded-full"
-                      : ""
+                      ? 'bg-blue-50 text-blue-700 font-semibold'
+                      : 'text-gray-700 hover:text-blue-700 hover:bg-gray-50'
                   }`}
                 >
-                  {link.name}
+                  <span className="font-medium text-sm">{link.name}</span>
                 </Link>
-              </li>
-            ))}
-          </ul>
+              ))}
+            </nav>
+
+            {/* Right Section: User Menu and Logout */}
+            <div className="flex items-center space-x-2">
+              {isAuthenticated ? (
+                <>
+                  {/* User Profile Button */}
+                  <button className="hidden lg:flex items-center px-4 py-2 rounded-md hover:bg-gray-50 text-gray-700 transition-all duration-200">
+                    <span className="font-medium text-sm">Profile</span>
+                  </button>
+                  
+                  {/* Logout Button */}
+                  <button
+                    onClick={handleLogout}
+                    className="hidden lg:flex items-center px-4 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-50 transition-all duration-200"
+                  >
+                    <span className="font-medium text-sm">Logout</span>
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  className="hidden lg:flex items-center px-4 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-50 transition-all duration-200"
+                >
+                  <span className="font-medium text-sm">Login</span>
+                </Link>
+              )}
+              
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="lg:hidden px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700"
+              >
+                {isMenuOpen ? 'Close' : 'Menu'}
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="lg:hidden bg-white/90 backdrop-blur border-t border-gray-100">
+            <div className="container mx-auto px-4 py-4">
+              <nav className="flex flex-col space-y-2">
+                {Links.map((link) => (
+                  <Link
+                    key={link.name}
+                    to={link.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`px-4 py-3 rounded-md transition-all duration-200 ${
+                      location.pathname === link.href
+                        ? 'bg-blue-50 text-blue-700 font-semibold'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="font-medium text-base">{link.name}</span>
+                  </Link>
+                ))}
+                
+                {/* Mobile Logout/Login */}
+                {isAuthenticated ? (
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-md transition-all duration-200"
+                  >
+                    <span className="font-medium text-base">Logout</span>
+                  </button>
+                ) : (
+                  <Link
+                    to="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-md transition-all duration-200"
+                  >
+                    <span className="font-medium text-base">Login</span>
+                  </Link>
+                )}
+              </nav>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* Spacer for fixed header */}
+      <div className="h-20"></div>
+
+      {/* No loading overlay in simplified nav */}
+    </>
   );
 }
 
