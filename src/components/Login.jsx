@@ -12,6 +12,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const validateForm = () => {
+    
     const newErrors = {};
     if (!email) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Invalid email format";
