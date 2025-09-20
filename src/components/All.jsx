@@ -4,6 +4,20 @@ import NewsletterFooter from "./Footer";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+// Import images for side boxes
+import image1 from "../assets/image1.jpg";
+import image2 from "../assets/image2.jpg";
+import image3 from "../assets/image3.png";
+import image4 from "../assets/image4.jpg";
+import image5 from "../assets/image5.png";
+import image6 from "../assets/image6.png";
+import party from "../assets/party.png";
+import party1 from "../assets/party1.png";
+import blur from "../photos/blur.jpg";
+import candle from "../photos/candle.jpg";
+import eyo from "../photos/eyo.png";
+import img from "../photos/img.png";
+
 // Skeleton component for loading state
 const CardSkeleton = () => {
   return (
@@ -163,8 +177,21 @@ const CardSkeleton = () => {
           borderRadius: "25px",
           width: "35%",
           animation: "pulse 1.5s infinite ease-in-out",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
-      ></div>
+      >
+        <div
+          style={{
+            width: "60px",
+            height: "60px",
+            backgroundColor: "#D1D5DB",
+            borderRadius: "50%",
+            animation: "pulse 1.5s infinite ease-in-out",
+          }}
+        />
+      </div>
     </div>
   );
 };
@@ -572,6 +599,12 @@ const pageContent = [
   ],
 ];
 
+// Array of images for side boxes
+const sideBoxImages = [
+  image1, image2, image3, image4, image5, image6, 
+  party, party1, blur, candle, eyo, img
+];
+
 function Duplicates() {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = pageContent.length;
@@ -844,7 +877,18 @@ function Duplicates() {
                     </div>
                   </div>
 
-                  <div style={sideBoxStyle}></div>
+                  <div style={sideBoxStyle}>
+                    <img
+                      src={sideBoxImages[index % sideBoxImages.length]}
+                      alt={`Blog image ${index + 1}`}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        borderRadius: "25px",
+                      }}
+                    />
+                  </div>
                 </div>
               ))}
 
