@@ -82,7 +82,7 @@ function NewsletterFooter() {
                 />
                 <button
                   type="submit"
-                  className="btn-primary px-6"
+                  className="bg-[#1A74ED] text-white rounded-lg px-6 "
                 >
                   Subscribe
                 </button>

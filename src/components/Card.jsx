@@ -30,7 +30,7 @@ const Card = ({ title, image }) => {
         <div className="space-y-4">
           {/* Category Badge */}
           <div className="flex items-center space-x-2">
-            <span className="px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs font-semibold rounded-full">
+            <span className="px-3 py-1 bg-[#1A74ED] text-white text-xs font-semibold rounded-full">
               Family News
             </span>
             <span className="text-xs text-gray-500">5 min read</span>
