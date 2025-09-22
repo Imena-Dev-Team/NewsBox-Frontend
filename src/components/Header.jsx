@@ -5,12 +5,12 @@ import { useAuth } from "../context/AuthContext";
 function Header() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   const Links = [
-    { name: "Home", href: "/" },
+    { name: "Home", href: "/home" },
     { name: "Blogs", href: "/all" },
     { name: "Gallery", href: "/gallery" }
   ];
@@ -84,9 +84,19 @@ function Header() {
             <div className="flex items-center space-x-2">
               {isAuthenticated ? (
                 <>
-                  <button className="hidden lg:flex items-center px-4 py-2 rounded-md hover:bg-gray-50 text-gray-700 transition-all duration-200">
-                    <span className="font-medium text-sm">Profile</span>
-                  </button>
+                  <Link to="/profile" className="hidden lg:flex items-center px-2 py-1 rounded-full hover:bg-gray-50 transition-all duration-200">
+                    {user?.photoUrl ? (
+                      <img
+                        src={user.photoUrl}
+                        alt={user?.name || "Profile"}
+                        className="w-9 h-9 rounded-full object-cover border border-gray-200"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-semibold">
+                        {(user?.name?.[0] || 'U').toUpperCase()}
+                      </div>
+                    )}
+                  </Link>
 
                   <button
                     onClick={handleLogout}

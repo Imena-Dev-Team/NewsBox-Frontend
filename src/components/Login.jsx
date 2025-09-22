@@ -89,7 +89,7 @@ const Login = () => {
           <p className="text-center mt-6 text-gray-600">
             Enter as{" "}
             <Link
-              to="/"
+              to="/home"
               className="text-blue-600 font-bold hover:underline"
             >
               Guest
