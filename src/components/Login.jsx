@@ -1,18 +1,115 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuth } from '../context/AuthContext';
+import { authService } from '../services/apiService';
 import photo1 from '../assets/image6.png'
 import photo2 from '../assets/image4.jpg'
 import photo3 from '../assets/image3.png'
 
 const Login = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const { login } = useAuth();
+  const [familyName, setFamilyName] = useState("");
   const [current, setCurrent] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [loginType, setLoginType] = useState("member"); // "member" or "guest"
 
-  const handleSubmit = (e) => {
+  const handleMemberLogin = async (e) => {
     e.preventDefault();
-    navigate("/Signup"); // takes user to home
+    if (!familyName.trim()) {
+      setError("Please enter your family name");
+      return;
+    }
+
+    setLoading(true);
+    setError(""); // Clear previous errors
+
+    try {
+      const response = await authService.loginAsMember(familyName);
+      
+      if (response.token) {
+        // Login successful - clear any errors
+        setError("");
+        
+        try {
+          // Store token temporarily to check profile
+          localStorage.setItem('temp_token', response.token);
+          
+          // Check if user already has a profile
+          const profileCheck = await authService.checkProfile();
+          
+          if (profileCheck.hasProfile) {
+            // User has profile, login normally and go to home
+            login(response.token, {
+              userType: 'member',
+              familyName: familyName,
+              profile: profileCheck.profile,
+              hasProfile: true,
+              profileData: profileCheck.profile,
+              ...response.user
+            });
+            navigate("/home");
+          } else {
+            // User needs to create profile
+            login(response.token, {
+              userType: 'member',
+              familyName: familyName,
+              hasProfile: false,
+              ...response.user
+            });
+            navigate("/signup");
+          }
+        } catch (profileError) {
+          console.error('Profile check failed:', profileError);
+          // If profile check fails, assume no profile and redirect to signup
+          login(response.token, {
+            userType: 'member',
+            familyName: familyName,
+            hasProfile: false,
+            ...response.user
+          });
+          navigate("/signup");
+        } finally {
+          // Clean up temporary token
+          localStorage.removeItem('temp_token');
+        }
+      }
+    } catch (err) {
+      // Set persistent error message
+      const errorMessage = err.message || "Invalid family name. Please check your credentials and try again.";
+      setError(errorMessage);
+      console.error("Login error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGuestLogin = async () => {
+    setLoading(true);
+    setError(""); // Clear previous errors
+
+    try {
+      const response = await authService.loginAsGuest();
+      
+      if (response.token) {
+        // Guest login successful - clear any errors
+        setError("");
+        login(response.token, {
+          userType: 'guest',
+          ...response.user
+        });
+        navigate("/home");
+      }
+    } catch (err) {
+      // Set persistent error message
+      const errorMessage = err.message || "Unable to login as guest. Please try again.";
+      setError(errorMessage);
+      console.error("Guest login error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const carouselImages = [
@@ -58,43 +155,107 @@ const Login = () => {
             Welcome back! Please sign in to your account.
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email */}
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-gray-700 font-medium mb-1"
-              >
-                Family Name
-              </label>
-              <input
-                id="name"
-                type="name"
-                placeholder="Enter your family name"
-                className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl">
+              {error}
             </div>
+          )}
 
-            {/* Submit */}
+          {/* Login Type Selector */}
+          <div className="flex mb-6 bg-gray-200 rounded-xl p-1">
             <button
-              type="submit"
-              className="w-full py-3 rounded-xl font-semibold transition bg-gray-900 text-white"
+              type="button"
+              onClick={() => setLoginType("member")}
+              className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
+                loginType === "member"
+                  ? "bg-white text-gray-800 shadow"
+                  : "text-gray-600"
+              }`}
             >
-             Sign In
+              Family Member
             </button>
-          </form>
-
-          <p className="text-center mt-6 text-gray-600">
-            Enter as{" "}
-            <Link
-              to="/home"
-              className="text-blue-600 font-bold hover:underline"
+            <button
+              type="button"
+              onClick={() => setLoginType("guest")}
+              className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
+                loginType === "guest"
+                  ? "bg-white text-gray-800 shadow"
+                  : "text-gray-600"
+              }`}
             >
               Guest
-            </Link>
-          </p>
+            </button>
+          </div>
+
+          {loginType === "member" ? (
+            <form onSubmit={handleMemberLogin} className="space-y-6">
+              {/* Family Name */}
+              <div>
+                <label
+                  htmlFor="familyName"
+                  className="block text-gray-700 font-medium mb-1"
+                >
+                  Family Name
+                </label>
+                <input
+                  id="familyName"
+                  type="text"
+                  placeholder="Enter your family name (e.g., MFURA)"
+                  className={`w-full p-3 border rounded-xl focus:outline-none focus:ring-2 ${
+                    error ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-400'
+                  }`}
+                  value={familyName}
+                  onChange={(e) => {
+                    setFamilyName(e.target.value);
+                    // Clear error when user starts typing
+                    if (error) setError("");
+                  }}
+                  disabled={loading}
+                  required
+                />
+              </div>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading || !familyName.trim()}
+                className="w-full py-3 rounded-xl font-semibold transition bg-gray-900 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800"
+              >
+                {loading ? "Signing In..." : "Sign In as Member"}
+              </button>
+            </form>
+          ) : (
+            <div className="space-y-6">
+              <div className="text-center p-6 bg-blue-50 rounded-xl">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                  Guest Access
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Continue as a guest to explore public content.
+                </p>
+                <button
+                  onClick={handleGuestLogin}
+                  disabled={loading}
+                  className="px-6 py-3 rounded-xl font-semibold transition bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700"
+                >
+                  {loading ? "Entering..." : "Continue as Guest"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {loginType === "member" && (
+            <p className="text-center mt-6 text-gray-600">
+              Don't have family access?{" "}
+              <button
+                onClick={() => setLoginType("guest")}
+                className="text-blue-600 font-bold hover:underline"
+              >
+                Enter as Guest
+              </button>
+            </p>
+          )}
         </div>
       </div>
     </div>

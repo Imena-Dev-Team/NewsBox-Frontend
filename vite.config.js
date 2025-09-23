@@ -10,4 +10,5 @@ export default defineConfig({
       plugins: [require("tailwindcss"), require("autoprefixer")],
     },
   },
+  // Proxy removed - using external deployed backend
 });
