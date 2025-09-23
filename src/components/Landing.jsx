@@ -107,7 +107,7 @@ export default function Landing() {
             words={[
               'Welcome to Imena Family',
               'United in love',
-              'We rise together💙'
+              'We rise together💙✊'
             ]}
             loop={true}
             cursor

@@ -163,13 +163,13 @@ const Login = () => {
           )}
 
           {/* Login Type Selector */}
-          <div className="flex mb-6 bg-gray-200 rounded-xl p-1">
+          <div className="flex mb-6 bg-gray-200 rounded-xl p-0">
             <button
               type="button"
               onClick={() => setLoginType("member")}
               className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
                 loginType === "member"
-                  ? "bg-white text-gray-800 shadow"
+                  ? "bg-blue-600 text-slate-200 shadow"
                   : "text-gray-600"
               }`}
             >
@@ -180,7 +180,7 @@ const Login = () => {
               onClick={() => setLoginType("guest")}
               className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
                 loginType === "guest"
-                  ? "bg-white text-gray-800 shadow"
+                  ? "bg-blue-600 text-slate-200 shadow"
                   : "text-gray-600"
               }`}
             >
@@ -220,7 +220,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading || !familyName.trim()}
-                className="w-full py-3 rounded-xl font-semibold transition bg-gray-900 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800"
+                className="w-full py-3 rounded-xl font-semibold transition bg-blue-600 text-white disabled:opacity-90 disabled:cursor-not-allowed hover:bg-blue-800"
               >
                 {loading ? "Signing In..." : "Sign In as Member"}
               </button>
