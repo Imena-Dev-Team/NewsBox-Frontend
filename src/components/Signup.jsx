@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../context/AuthContext';
 import { authService } from '../services/apiService';
+import {Camera} from "lucide-react";
 import photo2 from '../assets/image3.png';
 import photo3 from '../assets/image5.png';
 import photo1 from '../assets/image6.png';
 
 const Signup = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated, updateUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const [current, setCurrent] = useState(0);
   const [formData, setFormData] = useState({ 
     name: "", 
@@ -22,18 +23,15 @@ const Signup = () => {
   const [checkingProfile, setCheckingProfile] = useState(true);
   const allowedSubFamilyNames = ["Hope", "Light", "Wihogora"];
   
-  // Quick profile check (route guards should handle most cases)
+  // Quick profile check
   useEffect(() => {
-    // The route guard should prevent access, but double-check for safety
     const checkProfile = async () => {
       try {
         if (user?.hasProfile || user?.profileData) {
-          console.log('User already has profile, should not be here');
           navigate('/home');
           return;
         }
         
-        // Final server check
         const profileCheck = await authService.checkProfile();
         if (profileCheck.hasProfile) {
           updateUser({
@@ -44,11 +42,9 @@ const Signup = () => {
           return;
         }
         
-        // All clear - show the form
         setCheckingProfile(false);
       } catch (error) {
         console.error('Profile check error:', error);
-        // Allow form to show on error
         setCheckingProfile(false);
       }
     };
@@ -69,7 +65,6 @@ const Signup = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Show loading spinner while checking profile status
   if (checkingProfile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -108,8 +103,6 @@ const Signup = () => {
       setLoading(true);
       
       try {
-        // Create the profile data object according to backend schema
-        // familyName will be automatically added by the backend from JWT token
         const profileData = {
           name: formData.name.trim(),
           email: formData.email.trim(),
@@ -117,34 +110,23 @@ const Signup = () => {
           subFam: formData.subFam
         };
         
-        // Add profilePic only if provided
         if (formData.profilePic) {
-          // For now, we'll just use a placeholder path
-          // In a real implementation, you'd upload the file first
           profileData.profilePic = '/uploads/images/defaultProfile.png';
         }
-        
-        console.log('Sending profile data:', profileData);
         
         const response = await authService.createProfile(profileData);
         
         if (response.data) {
-          // Update user context with the new profile data
           updateUser({ 
             hasProfile: true,
             profileData: response.data,
             profileCompleted: true 
           });
           
-          console.log('Profile created successfully:', response.data);
-          
-          // Clear errors and redirect to home
           setErrors({});
           navigate("/home");
         }
       } catch (err) {
-        console.error('Profile creation error:', err);
-        // Handle specific error messages from backend
         const errorMessage = err.message || 'Failed to create profile. Please try again.';
         setErrors({ submit: errorMessage });
       } finally {
@@ -163,7 +145,6 @@ const Signup = () => {
               Welcome {user?.familyName}! Please complete your profile to continue.
             </p>
             
-            {/* General error message */}
             {errors.submit && (
               <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl">
                 {errors.submit}
@@ -171,6 +152,38 @@ const Signup = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
+              
+              <div>
+                <div className="flex flex-col items-center">
+                  <label htmlFor="profilePic" className="relative cursor-pointer">
+                    <div className="w-28 h-28 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                      {formData.profilePic ? (
+                        <img
+                          src={URL.createObjectURL(formData.profilePic)}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-gray-400 text-sm">No Image</span>
+                      )}
+                      <div className="absolute bottom-0 right-0 p-2 rounded-full">
+                        <Camera className="h-5 w-5 text-black" />
+                      </div>
+                    </div>
+                  </label>
+                  <input
+                    id="profilePic"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) =>
+                      setFormData({ ...formData, profilePic: e.target.files[0] })
+                    }
+                    disabled={loading}
+                  />
+                </div>
+                {errors.profilePic && <p className="text-red-500 text-sm mt-1">{errors.profilePic}</p>}
+              </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
                   Your Name
@@ -259,34 +272,6 @@ const Signup = () => {
                   required
                 />
                 {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Profile Image (Optional)
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    setFormData({ ...formData, profilePic: e.target.files[0] });
-                    if (errors.profilePic) setErrors({ ...errors, profilePic: "" });
-                  }}
-                  className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 ${
-                    errors.profilePic ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-300'
-                  }`}
-                  disabled={loading}
-                />
-                {formData.profilePic && (
-                  <div className="mt-3">
-                    <img
-                      src={URL.createObjectURL(formData.profilePic)}
-                      alt="Preview"
-                      className="w-24 h-24 object-cover rounded-full border"
-                    />
-                  </div>
-                )}
-                {errors.profilePic && <p className="text-red-500 text-sm mt-1">{errors.profilePic}</p>}
               </div>
 
               <button

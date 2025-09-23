@@ -32,7 +32,7 @@ function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 w-full${
           scrolled ? "glass-effect shadow-lg" : "bg-transparent"
         }`}
       >
@@ -124,7 +124,7 @@ function Header() {
                       onClick={handleLogout}
                       className="hidden lg:flex items-center px-4 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-50 transition-all duration-200"
                     >
-                      <span className="font-medium text-sm">Logout</span>
+                      <span className="font-medium text-sm ml-24">Logout</span>
                     </button>
                   ) : null}
                 </>
