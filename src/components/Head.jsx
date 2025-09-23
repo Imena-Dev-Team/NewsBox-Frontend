@@ -3,6 +3,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Card from "./Card";
 import Birthday from "./birthday_Card";
 import NewsletterFooter from "./Footer";
+import { client } from "../sanityClient";
+import imageUrlBuilder from "@sanity/image-url";
+
+const builder = imageUrlBuilder(client);
+function urlFor(source) {
+  return builder.image(source);
+}
 const Head = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -42,6 +49,8 @@ const Head = () => {
   const [isTransitioning, setIstransitioning] = useState(false);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [posts, setPosts] = useState([]);
+  const [error, setError] = useState("");
 
   // Reset loading state when route changes
   useEffect(() => {
@@ -58,6 +67,28 @@ const Head = () => {
       }, 300);
     }, 3000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const data = await client.fetch(
+          `*[_type == "post"] | order(publishedAt desc)[0...6]{
+            title,
+            body,
+            image,
+            publishedAt,
+            "authorName": author->name,
+            "authorImage": author->image
+          }`
+        );
+        setPosts(data);
+      } catch (e) {
+        console.error(e);
+        setError("Failed to load posts");
+      }
+    };
+    fetchPosts();
   }, []);
 
   useEffect(() => {
@@ -111,23 +142,19 @@ const Head = () => {
           <div className="w-full lg:w-[40%] mt-6 lg:mt-[100px] space-y-4">
             {loading ? (
               <>
-               
                 <div className="w-28 h-9 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-2xl"></div>
 
-               
                 <div className="space-y-2">
                   <div className="w-3/4 h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg"></div>
                   <div className="w-1/2 h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg"></div>
                 </div>
 
-               
                 <div className="space-y-2">
                   <div className="w-full h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
                   <div className="w-5/6 h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
                   <div className="w-4/6 h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
                 </div>
 
-                
                 <div className="flex items-center mt-5 gap-3">
                   <div className="w-10 h-10 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
                   <div className="space-y-2">
@@ -136,7 +163,6 @@ const Head = () => {
                   </div>
                 </div>
 
-                
                 <div className="flex gap-2 mt-8">
                   <div className="w-8 h-2 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
                   <div className="w-2 h-2 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
@@ -213,42 +239,40 @@ const Head = () => {
         </div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-          {loading ? (
-            Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="w-full max-w-[350px]">
-                <div className="bg-white rounded-xl shadow-lg p-4 mt-7">
-                  {/* Card Image Skeleton */}
-                  <div className="w-full aspect-[4/3] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-2xl mb-4"></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 justify-items-center mt-8">
+          {loading
+            ? Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="w-full max-w-[350px]">
+                  <div className="bg-white rounded-xl shadow-lg p-4 mt-7">
+                    {/* Card Image Skeleton */}
+                    <div className="w-full aspect-[4/3] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-2xl mb-4"></div>
 
-                  
-                  <div className="space-y-2 mb-4">
-                    <div className="w-5/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                    <div className="w-4/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                    <div className="space-y-2 mb-4">
+                      <div className="w-5/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                      <div className="w-4/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                    </div>
+
+                    <div className="space-y-2 mb-4">
+                      <div className="w-full h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                      <div className="w-5/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                      <div className="w-4/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                    </div>
+
+                    <div className="w-32 h-9 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
                   </div>
-
-                  
-                  <div className="space-y-2 mb-4">
-                    <div className="w-full h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                    <div className="w-5/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                    <div className="w-4/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                  </div>
-
-                  
-                  <div className="w-32 h-9 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
                 </div>
-              </div>
-            ))
-          ) : (
-            <>
-              <Card image="\src\assets\image3.png" />
-              <Card image="\src\assets\image4.jpg" />
-              <Card image="\src\assets\image6.png" />
-              <Card image="\src\assets\image6.png" />
-              <Card image="\src\assets\image4.jpg" />
-              <Card image="\src\assets\image1.jpg" />
-            </>
-          )}
+              ))
+            : posts.map((p, i) => (
+                <Card
+                  key={i}
+                  title={p.title}
+                  image={p.image}
+                  body={p.body}
+                  authorName={p.authorName}
+                  authorImage={p.authorImage}
+                  publishedAt={p.publishedAt}
+                />
+              ))}
         </div>
 
         {/* Birthday Section */}
