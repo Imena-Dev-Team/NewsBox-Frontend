@@ -39,7 +39,7 @@ const Card = ({ title, image, body, authorName, authorImage, publishedAt }) => {
 
   return (
     <div className="w-full max-w-[380px] mb-10">
-      <div className="glass-effect rounded-2xl p-6 relative overflow-hidden bg-white/70 shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-blue-200 group">
+      <div className="glass-effect rounded-2xl p-6 relative overflow-hidden bg-white shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-blue-200 group">
         {/* Image Container */}
         <div className="relative mb-6 overflow-hidden rounded-xl">
           {displayImage ? (
