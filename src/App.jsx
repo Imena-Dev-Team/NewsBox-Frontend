@@ -25,6 +25,29 @@ function RequireAuth({ children }) {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 
+function RequireProfileCompletion({ children }) {
+  const { isAuthenticated, user, loading } = useAuth();
+  
+  if (loading) return null;
+  
+  // Must be authenticated
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  // Must be a member (guests can't create profiles)
+  if (user?.userType !== 'member') {
+    return <Navigate to="/home" replace />;
+  }
+  
+  // If already has profile, redirect to home
+  if (user?.hasProfile || user?.profileData) {
+    return <Navigate to="/home" replace />;
+  }
+  
+  return children;
+}
+
 function AppRoutes() {
   const location = useLocation();
   const path = (location.pathname || '').toLowerCase();
@@ -36,7 +59,14 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Landing />} />
         <Route path="/union" element={<FamilyReunion />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route 
+          path="/signup" 
+          element={
+            <RequireProfileCompletion>
+              <SignUp />
+            </RequireProfileCompletion>
+          } 
+        />
         <Route path="/home" element={<Head />} />
         <Route path="/footer" element={<NewsletterFooter />} />
         <Route path="/all" element={<Duplicates />} />

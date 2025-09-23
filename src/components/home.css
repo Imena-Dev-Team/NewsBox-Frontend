@@ -101,4 +101,54 @@
 
 }
 
+/* Responsive adjustments - preserve desktop layout, adapt for smaller screens */
+@media (max-width: 1024px) {
+  #text1, #text2 {
+    position: static;
+    display: inline-block;
+    margin: 12px 8px 0 0;
+  }
+  .image{
+    margin: 40px auto 0;
+    display: block;
+    max-width: 90%;
+  }
+  #welcome{
+    margin-left: 0;
+    text-align: center;
+    padding-top: 60px;
+  }
+  #aerg{
+    position: static;
+    margin-left: 0;
+    text-align: center;
+    margin-top: 12px;
+  }
+  #cap{
+    margin-left: 0;
+    padding-top: 24px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .start{
+    position: static;
+    margin: 24px auto 0;
+    display: block;
+    width: min(270px, 90%);
+  }
+}
+
+@media (max-width: 640px) {
+  #welcome{
+    font-size: 28px;
+  }
+  #aerg{
+    font-size: 36px;
+    letter-spacing: 3px;
+  }
+  #cap{
+    font-size: 16px;
+  }
+}
+
 
