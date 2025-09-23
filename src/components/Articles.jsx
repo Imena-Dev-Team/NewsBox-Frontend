@@ -12,7 +12,7 @@ const validCategories = [
 ];
 
 const ArticleSkeleton = () => (
-  <div className="relative py-8 border border-gray-500 rounded-xl h-[350px] w-[90%] max-w-[850px] mx-auto my-[60px] bg-[#f8fafc] shadow-lg flex flex-col justify-center">
+  <div className="relative py-8 border border-gray-500 rounded-xl h-[350px] w-[90%] max-w-[850px] mx-auto my-[60px] bg-white shadow-lg flex flex-col justify-center">
     <div className="absolute top-5 left-5 w-[150px] h-[50px] bg-gray-200 animate-pulse rounded-[40px]" />
     <div className="absolute top-5 right-5 w-[150px] h-[50px] bg-gray-200 animate-pulse rounded-[40px]" />
     <div className="flex gap-6 mt-20 ml-32">
@@ -106,7 +106,6 @@ const Articles = () => {
         if (att.type === "video") formData.append("videos[]", att.file);
       });
 
-      
       for (let pair of formData.entries()) {
         console.log(pair[0], pair[1]);
       }
@@ -147,7 +146,7 @@ const Articles = () => {
         {loading ? (
           <ArticleSkeleton />
         ) : (
-          <div className="relative py-8 border border-gray-500 rounded-xl w-[90%] max-w-[850px] mx-auto my-12 bg-[#f8fafc] shadow-lg flex flex-col gap-4 p-6">
+          <div className="relative py-8 border border-gray-500 rounded-xl w-[90%] max-w-[850px] mx-auto my-12 bg-white shadow-lg flex flex-col gap-4 p-6">
             <input
               type="text"
               value={title}
@@ -274,7 +273,7 @@ const Articles = () => {
 
             <button
               onClick={handleSubmit}
-              className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-6 bg-[#1A74ED]  text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Publish Blog
             </button>

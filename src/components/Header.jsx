@@ -39,7 +39,7 @@ function Header() {
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                <div className="w-12 h-12 bg-[#1A74ED] rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
                   H
                 </div>
                 <div>
@@ -110,7 +110,7 @@ function Header() {
                   to="/login"
                   className="hidden lg:flex items-center px-4 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-50 transition-all duration-200"
                 >
-                  <span className="font-medium text-sm">Login</span>
+                  <span className="bg-[#1A74ED] px-6 py-2 rounded-md text-white ">Login</span>
                 </Link>
               )}
 
