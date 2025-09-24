@@ -54,7 +54,7 @@ function Duplicates() {
         const data = await client.fetch(
           `*[_type == "post"] | order(publishedAt desc){
             title,
-            body,
+            summary,
             image,
             publishedAt,
             categories,
@@ -142,7 +142,7 @@ function Duplicates() {
                 background: "#FFF",
                 borderRadius: 12,
                 padding: 24,
-                color: "#374151",
+                color: "white",
               }}
             >
               No posts found. Create a `post` document in Sanity Studio and
@@ -199,7 +199,7 @@ function Duplicates() {
                         {card.title}
                       </h2>
                       <p style={{ color: "#6B7280" }}>
-                        {toPlainText(card.body)}
+                        {card.summary || "No summary available"}
                       </p>
 
                       <div
