@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./gallery.css";
 import { client } from "./sanityClient";
-import NewsletterFooter from "./components/Footer";
+// Footer is rendered globally in App
 
 const Gallery = () => {
   const [data, setData] = useState([]);
@@ -181,7 +181,7 @@ const Gallery = () => {
 
         {/* Footer */}
         <div className="mt-12">
-          <NewsletterFooter />
+          
         </div>
       </div>
     </div>

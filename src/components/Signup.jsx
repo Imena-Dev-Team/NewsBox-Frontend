@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../context/AuthContext';
 import { authService } from '../services/apiService';
+import { useNotificationToast } from '../context/NotificationContext';
 import {Camera} from "lucide-react";
 import photo2 from '../assets/image3.png';
 import photo3 from '../assets/image5.png';
@@ -10,6 +11,7 @@ import photo1 from '../assets/image6.png';
 const Signup = () => {
   const navigate = useNavigate();
   const { user, updateUser } = useAuth();
+  const notify = useNotificationToast();
   const [current, setCurrent] = useState(0);
   const [formData, setFormData] = useState({ 
     name: "", 
@@ -28,6 +30,7 @@ const Signup = () => {
     const checkProfile = async () => {
       try {
         if (user?.hasProfile || user?.profileData) {
+          notify.success('Welcome back', 'Profile already completed.');
           navigate('/home');
           return;
         }
@@ -38,6 +41,7 @@ const Signup = () => {
             hasProfile: true,
             profileData: profileCheck.profile
           });
+          notify.success('Welcome back', 'Profile already completed.');
           navigate('/home');
           return;
         }
@@ -124,11 +128,13 @@ const Signup = () => {
           });
           
           setErrors({});
+          notify.success('Profile created', 'Your profile has been saved successfully.');
           navigate("/home");
         }
       } catch (err) {
         const errorMessage = err.message || 'Failed to create profile. Please try again.';
         setErrors({ submit: errorMessage });
+        notify.error('Profile error', errorMessage);
       } finally {
         setLoading(false);
       }
@@ -136,14 +142,15 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col lg:flex-row">
-        <div className="w-full lg:w-1/2 p-10 flex flex-col justify-center">
-          <div className="max-w-md mx-auto">
-            <h1 className="text-3xl font-bold text-gray-800 mb-4">Complete Your Profile</h1>
-            <p className="text-gray-500 mb-8 text-sm">
-              Welcome {user?.familyName}! Please complete your profile to continue.
-            </p>
+    <div className="min-h-screen w-full bg-gray-50 flex flex-col md:flex-row">
+      <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center">
+        <div className="max-w-md mx-auto">
+          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-blue-600 bg-clip-text text-transparent">Complete Your Profile</h1>
+          <div className="h-1 w-24 bg-gradient-to-r from-blue-400 to-purple-400 rounded mb-6"></div>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-blue-600 mb-8">
+            Welcome <span className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded-md">{user?.familyName || 'Member'}</span>!
+            <span className="block text-sm font-normal text-blue-600 mt-2">Please complete your profile to continue.</span>
+          </h2>
             
             {errors.submit && (
               <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl">
@@ -167,7 +174,7 @@ const Signup = () => {
                         <span className="text-gray-400 text-sm">No Image</span>
                       )}
                       <div className="absolute bottom-0 right-0 p-2 rounded-full">
-                        <Camera className="h-5 w-5 text-black" />
+                        <Camera className="h-5 w-5 text-blue-600" />
                       </div>
                     </div>
                   </label>
@@ -277,7 +284,7 @@ const Signup = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-xl font-semibold transition bg-gray-900 text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 rounded-xl font-semibold transition bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Creating Profile...' : 'Complete Profile'}
               </button>
@@ -285,7 +292,7 @@ const Signup = () => {
           </div>
         </div>
 
-        <div className="hidden lg:flex w-full lg:w-1/2 relative">
+        <div className="hidden md:flex w-full md:w-1/2 relative">
           {carouselImages.map((img, i) => (
             <img
               key={i}
@@ -299,7 +306,6 @@ const Signup = () => {
           <div className="absolute inset-0 flex flex-col justify-end p-10 text-white bg-black/30"></div>
         </div>
       </div>
-    </div>
   );
 };
 

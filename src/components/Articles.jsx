@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Plus, Image, Video } from "lucide-react";
-import NewsletterFooter from "./Footer";
+// Footer is rendered globally in App
 import { blogService } from '../services/apiService';
 
 const validCategories = [
@@ -278,7 +278,7 @@ const Articles = () => {
         )}
       </div>
 
-      <NewsletterFooter />
+      
     </div>
   );
 };

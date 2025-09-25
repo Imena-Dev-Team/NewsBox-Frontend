@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import { useAuth } from '../context/AuthContext';
+import { useNotificationToast } from '../context/NotificationContext';
 import { authService } from '../services/apiService';
 import photo1 from '../assets/image6.png'
 import photo2 from '../assets/image4.jpg'
@@ -10,6 +10,7 @@ import photo3 from '../assets/image3.png'
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const notify = useNotificationToast();
   const [familyName, setFamilyName] = useState("");
   const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -50,6 +51,7 @@ const Login = () => {
               profileData: profileCheck.profile,
               ...response.user
             });
+            notify.success("Welcome back", "Signed in successfully.");
             navigate("/home");
           } else {
             // User needs to create profile
@@ -59,6 +61,7 @@ const Login = () => {
               hasProfile: false,
               ...response.user
             });
+            notify.info("Complete Profile", "Please finish setting up your profile.");
             navigate("/signup");
           }
         } catch (profileError) {
@@ -70,6 +73,7 @@ const Login = () => {
             hasProfile: false,
             ...response.user
           });
+          notify.info("Complete Profile", "Please finish setting up your profile.");
           navigate("/signup");
         } finally {
           // Clean up temporary token
@@ -80,6 +84,7 @@ const Login = () => {
       // Set persistent error message
       const errorMessage = err.message || "Invalid family name. Please check your credentials and try again.";
       setError(errorMessage);
+      notify.error("Sign in failed", errorMessage);
       console.error("Login error:", err);
     } finally {
       setLoading(false);
@@ -100,12 +105,14 @@ const Login = () => {
           userType: 'guest',
           ...response.user
         });
+        notify.success("Welcome", "Continuing as Guest.");
         navigate("/home");
       }
     } catch (err) {
       // Set persistent error message
       const errorMessage = err.message || "Unable to login as guest. Please try again.";
       setError(errorMessage);
+      notify.error("Guest login failed", errorMessage);
       console.error("Guest login error:", err);
     } finally {
       setLoading(false);
@@ -131,19 +138,18 @@ const Login = () => {
       {/* Left Side - Image Carousel */}
       <div className="md:w-1/2 w-full relative overflow-hidden h-72 md:h-auto">
         {carouselImages.map((img, index) => (
-          <motion.div
-            key={index}
-            className="absolute inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: index === current ? 1 : 0 }}
-            transition={{ duration: 1 }}
-          >
-            <img
-              src={img.url}
-              alt={img.text}
-              className="w-full h-full object-cover"
-            />
-          </motion.div>
+          index === current && (
+            <div
+              key={index}
+              className="absolute inset-0"
+            >
+              <img
+                src={img.url}
+                alt={img.text}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )
         ))}
       </div>
 
@@ -155,12 +161,7 @@ const Login = () => {
             Welcome back! Please sign in to your account.
           </p>
 
-          {/* Error Message */}
-          {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl">
-              {error}
-            </div>
-          )}
+          {/* Error message hidden: handled via toast notifications */}
 
           {/* Login Type Selector */}
           <div className="flex mb-6 bg-gray-200 rounded-xl p-0">
@@ -227,7 +228,7 @@ const Login = () => {
             </form>
           ) : (
             <div className="space-y-6">
-              <div className="text-center p-6 bg-blue-50 rounded-xl">
+              <div className="text-center p-6 rounded-xl">
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
                   Guest Access
                 </h3>
