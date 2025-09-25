@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { authService } from '../services/apiService';
 
 const ProfileDropdown = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [remoteProfile, setRemoteProfile] = useState(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -20,11 +22,32 @@ const ProfileDropdown = () => {
     };
   }, []);
 
+  // Fetch profile image from API when authenticated member
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        if (!user || user.userType !== 'member') return;
+        const res = await authService.getProfile();
+        if (res?.success && res?.data) {
+          setRemoteProfile(res.data);
+          // Merge into auth context to ensure header avatar gets the URL
+          updateUser({
+            hasProfile: true,
+            profileData: { ...(user.profileData || {}), ...res.data }
+          });
+        }
+      } catch (err) {
+        // fail silently
+      }
+    };
+    fetchProfile();
+  }, [user, updateUser]);
+
   if (!user || user.userType !== 'member') {
     return null;
   }
   
-  const profile = user.profileData;
+  const profile = remoteProfile || user.profileData;
 
 
   const formatDate = (dateString) => {
@@ -62,19 +85,19 @@ const ProfileDropdown = () => {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 py-4 px-6 z-50">
+        <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 py-4 px-6 z-50 overflow-hidden isolate bg-clip-padding">
           {/* Profile Header */}
           <div className="flex items-center space-x-4 pb-4 border-b border-gray-100">
             {/* Profile Picture */}
-            <div className="flex-shrink-0">
-              {profile?.profilePic && profile.profilePic !== '/uploads/images/defaultProfile.png' ? (
+            <div className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-blue-200 overflow-hidden">
+              {profile?.profilePicUrl || (profile?.profilePic && profile.profilePic !== '/uploads/images/defaultProfile.png') ? (
                 <img
-                  src={profile.profilePic}
+                  src={profile.profilePicUrl || profile.profilePic}
                   alt={profile?.name || user.familyName}
-                  className="w-16 h-16 rounded-full object-cover border-2 border-blue-200"
+                  className="w-full h-full object-cover bg-transparent"
                 />
               ) : (
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-xl">
+                <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-xl select-none">
                   {profile?.name?.charAt(0)?.toUpperCase() || user.familyName?.charAt(0)?.toUpperCase() || 'M'}
                 </div>
               )}
