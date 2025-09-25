@@ -16,7 +16,14 @@ function toPlainText(blocks) {
     .join("\n\n");
 }
 
-const Card = ({ title, image, body, authorName, authorImage, publishedAt }) => {
+const Card = ({
+  title,
+  image,
+  summary,
+  authorName,
+  authorImage,
+  publishedAt,
+}) => {
   const navigate = useNavigate();
   const [pending, setPending] = useState(false);
 
@@ -33,7 +40,7 @@ const Card = ({ title, image, body, authorName, authorImage, publishedAt }) => {
   const displayImage = image
     ? urlFor(image).width(800).height(500).fit("crop").url()
     : "";
-  const displayExcerpt = body ? toPlainText(body) : "";
+  const displayExcerpt = summary || "";
   const displayAuthor = authorName || "";
   const displayDate = publishedAt ? new Date(publishedAt).toDateString() : "";
 

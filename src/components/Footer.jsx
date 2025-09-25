@@ -163,8 +163,8 @@ function NewsletterFooter() {
                     H
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold gradient-text font-heading">
-                      HOPE FAMILY
+                    <h3 className="text-xl font-bold text-blue-600 font-heading">
+                     IMENA FAMILY
                     </h3>
                     <p className="text-sm text-gray-600 font-body">
                       Building bonds, sharing stories

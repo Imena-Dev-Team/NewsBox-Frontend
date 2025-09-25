@@ -13,37 +13,7 @@ function urlFor(source) {
 const Head = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const Header = [
-    {
-      image: "src/assets/image6.png",
-      title: "Embracing Togetherness ! Embarking Togetherness!!",
-      content:
-        "Our itinerary is brimming with activities that cater to every family member's interests, ensuring that each moment is as special as the bonds we share. From heart-warming conversations over home-cooked meals to exploring the local attractions hand in hand, this visit is a celebration of the ties that bind us.",
-      profile: "src/assets/image2.jpg",
-      user: "Devon Lane",
-      time: "May 31, 2023",
-    },
-
-    {
-      image: "src/assets/image5.png",
-      title: "Let's Celebrate Togetherness ! Embarking Togetherness!!",
-      content:
-        "Our itinerary is brimming with activities that cater to every family member's interests, ensuring that each moment is as special as the bonds we share. From heart-warming conversations over home-cooked meals to exploring the local attractions hand in hand, this visit is a celebration of the ties that bind us.",
-      profile: "src/assets/image2.jpg",
-      user: "Devon Lane",
-      time: "May 31, 2023",
-    },
-
-    {
-      image: "src/assets/image3.png",
-      title: "Fly Over Dangers, because you are light!!",
-      content:
-        "Our itinerary is brimming with activities that cater to every family member's interests, ensuring that each moment is as special as the bonds we share. From heart-warming conversations over home-cooked meals to exploring the local attractions hand in hand, this visit is a celebration of the ties that bind us.",
-      profile: "src/assets/image2.jpg",
-      user: "Devon Lane",
-      time: "May 31, 2023",
-    },
-  ];
+  const [featuredPosts, setFeaturedPosts] = useState([]);
 
   const [index, setIndex] = useState(0);
   const [isTransitioning, setIstransitioning] = useState(false);
@@ -58,16 +28,41 @@ const Head = () => {
     setProgress(0);
   }, [location.pathname]);
 
+  // Fetch featured posts for carousel
   useEffect(() => {
+    const fetchFeaturedPosts = async () => {
+      try {
+        const data = await client.fetch(
+          `*[_type == "post"] | order(publishedAt desc)[0...3]{
+            title,
+            summary,
+            image,
+            publishedAt,
+            categories,
+            "authorName": author->name,
+            "authorImage": author->image
+          }`
+        );
+        setFeaturedPosts(data);
+      } catch (e) {
+        console.error("Error fetching featured posts:", e);
+      }
+    };
+    fetchFeaturedPosts();
+  }, []);
+
+  useEffect(() => {
+    if (featuredPosts.length === 0) return;
+
     const timer = setInterval(() => {
       setIstransitioning(true);
       setTimeout(() => {
-        setIndex((prev) => (prev + 1) % Header.length);
+        setIndex((prev) => (prev + 1) % featuredPosts.length);
         setIstransitioning(false);
       }, 300);
     }, 3000);
     return () => clearInterval(timer);
-  }, []);
+  }, [featuredPosts.length]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -75,9 +70,10 @@ const Head = () => {
         const data = await client.fetch(
           `*[_type == "post"] | order(publishedAt desc)[0...6]{
             title,
-            body,
+            summary,
             image,
             publishedAt,
+            categories,
             "authorName": author->name,
             "authorImage": author->image
           }`
@@ -130,13 +126,17 @@ const Head = () => {
           <div className="w-full lg:w-[45%] mt-4 lg:mt-[80px]">
             {loading ? (
               <div className="w-full aspect-[4/3] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-2xl"></div>
-            ) : (
+            ) : featuredPosts.length > 0 ? (
               <img
-                src={Header[index].image}
-                alt=""
+                src={urlFor(featuredPosts[index]?.image)
+                  .width(800)
+                  .height(600)
+                  .fit("crop")
+                  .url()}
+                alt={featuredPosts[index]?.title}
                 className="w-full h-auto rounded-2xl object-cover"
               />
-            )}
+            ) : null}
           </div>
 
           <div className="w-full lg:w-[40%] mt-6 lg:mt-[100px] space-y-4">
@@ -172,33 +172,48 @@ const Head = () => {
             ) : (
               <>
                 <button className="rounded-2xl px-4 py-2 bg-transparent text-[#1A74ED] mb-4 font-semibold text-sm sm:text-base border border-[#1A74ED]">
-                  ACTIVITY
+                  {featuredPosts[index]?.categories || "POST"}
                 </button>
                 <h2 className="font-bold text-lg sm:text-xl lg:text-2xl mb-3 tracking-wider">
-                  {Header[index].title}
+                  {featuredPosts[index]?.title || "Loading..."}
                 </h2>
                 <p className="text-[#808080] font-light text-sm sm:text-base">
-                  {Header[index].content}
+                  {featuredPosts[index]?.summary || "No summary available"}
                 </p>
 
                 <div className="flex items-center mt-5 gap-3">
-                  <img
-                    className="w-10 h-10 rounded-full object-cover"
-                    src={Header[index].profile}
-                    alt=""
-                  />
+                  {featuredPosts[index]?.authorImage ? (
+                    <img
+                      className="w-10 h-10 rounded-full object-cover"
+                      src={urlFor(featuredPosts[index].authorImage)
+                        .width(80)
+                        .height(80)
+                        .url()}
+                      alt={featuredPosts[index]?.authorName}
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
+                      {featuredPosts[index]?.authorName
+                        ?.charAt(0)
+                        ?.toUpperCase() || "A"}
+                    </div>
+                  )}
                   <div>
                     <h3 className="text-sm sm:text-base">
-                      {Header[index].user}
+                      {featuredPosts[index]?.authorName || "Anonymous"}
                     </h3>
                     <span className="font-extralight text-[#98A0A2] text-xs">
-                      {Header[index].time}
+                      {featuredPosts[index]?.publishedAt
+                        ? new Date(
+                            featuredPosts[index].publishedAt
+                          ).toLocaleDateString()
+                        : "Recently"}
                     </span>
                   </div>
                 </div>
 
                 <div className="flex gap-2 mt-8">
-                  {Header.map((_, i) => (
+                  {featuredPosts.map((_, i) => (
                     <span
                       key={i}
                       style={{
@@ -267,7 +282,7 @@ const Head = () => {
                   key={i}
                   title={p.title}
                   image={p.image}
-                  body={p.body}
+                  summary={p.summary}
                   authorName={p.authorName}
                   authorImage={p.authorImage}
                   publishedAt={p.publishedAt}

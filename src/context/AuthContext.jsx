@@ -23,14 +23,17 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       if (storedUser) {
         try {
-          setUser(JSON.parse(storedUser));
+          const userData = JSON.parse(storedUser);
+          setUser(userData);
+          
+          // If user is a member and has a profile, we're good
+          // If they're a member without profile data, they'll be redirected to complete profile
+          console.log('Restored user from localStorage:', userData);
         } catch (_) {
           // ignore parse error and clear bad data
           localStorage.removeItem('user');
         }
       }
-      // You could decode the JWT token here to get user info
-      // For now, we'll just set authenticated to true
     }
     setLoading(false);
   }, []);
@@ -38,20 +41,30 @@ export const AuthProvider = ({ children }) => {
   const login = (token, userData) => {
     localStorage.setItem('token', token);
     setIsAuthenticated(true);
-    setUser(userData);
+    
+    // Enhanced user data with profile information
+    const enhancedUserData = {
+      ...userData,
+      hasProfile: userData.profile ? true : false,
+      profileData: userData.profile || null
+    };
+    
+    setUser(enhancedUserData);
     try {
-      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('user', JSON.stringify(enhancedUserData));
+      console.log('User data saved to localStorage:', enhancedUserData);
     } catch (_) {
-      // do nothing
+      console.error('Failed to save user data to localStorage');
     }
-    // Navigation will be handled by the component using this context
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('temp_token'); // Clean up any temp tokens
     setIsAuthenticated(false);
     setUser(null);
+    console.log('User logged out successfully');
     // Navigation will be handled by the component using this context
   };
 

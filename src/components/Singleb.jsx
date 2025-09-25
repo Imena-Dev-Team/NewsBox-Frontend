@@ -196,19 +196,19 @@ export default function FamilyReunion() {
       <div className="w-screen min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex justify-center items-start overflow-y-auto py-8 px-4">
         <div className="bg-white w-full max-w-5xl rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
           {/* Header with back button and category */}
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+          <div className="px-8 py-6">
             <div className="flex items-center gap-3">
             <Link to="/all">
-                <div className="h-10 w-10 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center text-lg font-bold shadow-lg hover:bg-white/30 transition-all duration-300 cursor-pointer border border-white/30">
+                <div className="h-10 w-10 bg-blue-900 backdrop-blur-sm text-white rounded-full flex items-center justify-center text-lg font-bold shadow-lg hover:bg-white/30 transition-all duration-300 cursor-pointer border border-white/30">
                 &lt;
               </div>
             </Link>
               <div className="flex flex-col">
-                <span className="text-white/90 text-sm font-medium uppercase tracking-wider">
+                <span className="text-blue-900 text-sm font-medium uppercase tracking-wider">
                   {post.categories || "POST"}
                 </span>
                 {post.publishedAt && (
-                  <span className="text-white/70 text-xs">
+                  <span className="text-blue-900 text-xs">
                     {new Date(post.publishedAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
