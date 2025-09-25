@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { client } from "../sanityClient";
 import imageUrlBuilder from "@sanity/image-url";
-import NewsletterFooter from "./Footer";
+// Footer is rendered globally in App
 
 const builder = imageUrlBuilder(client);
 function urlFor(source) {
@@ -128,9 +128,7 @@ export default function FamilyReunion() {
             </div>
           </div>
         </div>
-        <div style={{ flexShrink: 0 }}>
-          <NewsletterFooter />
-        </div>
+        
       </>
     );
   }
@@ -155,9 +153,7 @@ export default function FamilyReunion() {
             </div>
           </div>
         </div>
-        <div style={{ flexShrink: 0 }}>
-          <NewsletterFooter />
-        </div>
+        
       </>
     );
   }
@@ -184,9 +180,7 @@ export default function FamilyReunion() {
             </div>
           </div>
         </div>
-        <div style={{ flexShrink: 0 }}>
-          <NewsletterFooter />
-        </div>
+        
       </>
     );
   }
@@ -307,9 +301,7 @@ export default function FamilyReunion() {
         </div>
       </div>
 
-    <div style={{ flexShrink: 0 }}>
-        <NewsletterFooter />
-    </div>
+    
     </>
   );
 }

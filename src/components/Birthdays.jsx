@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MyImage from "../bd.png";
 import Image from "../pt.png";
-import NewsletterFooter from "./Footer";
+// Footer is rendered globally in App
 
 const BirthdaySkeleton = () => (
   <div className="font-['Poppins',sans-serif] p-10 ml-[14px] box-border mt-24">
@@ -257,7 +257,7 @@ const Birthdays = () => {
         )}
       </div>
       <div style={{ flexShrink: 0 }}>
-        <NewsletterFooter />
+        
       </div>
     </div>
   );

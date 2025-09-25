@@ -13,6 +13,7 @@ function Header() {
   const Links = [
     { name: "Home", href: "/home" },
     { name: "Blogs", href: "/all" },
+    { name: "Articles", href: "/Articles" },
     { name: "Gallery", href: "/gallery" }
   ];
 
@@ -24,30 +25,48 @@ function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [isMenuOpen]);
+
   const handleLogout = () => {
+    setIsMenuOpen(false);
+    document.body.style.overflow = 'unset';
     logout();
-    navigate("/login");
+    navigate("/login", { replace: true });
   };
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 w-full${
-          scrolled ? "glass-effect shadow-lg" : "bg-transparent"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 w-full ${
+          scrolled
+            ? "backdrop-blur-2xl saturate-150 bg-gradient-to-r from-white/30 to-white/10 border-b border-white/30 shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
+            : "backdrop-blur-xl saturate-150 bg-white/20 border-b border-white/20"
         }`}
       >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-[#1A74ED] rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
                   H
                 </div>
-                <div>
-                  <h1 className="text-xl font-bold gradient-text font-heading">
+                <div className="hidden md:block">
+                  <h1 className="text-xl font-bold font-heading bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
                     IMENA FAMILY COURTESY
                   </h1>
-                  <p className="text-sm text-gray-600 font-body">
+                  <p className="text-sm text-blue-700/70 font-body">
                     Building bonds, sharing stories
                   </p>
                 </div>
@@ -61,7 +80,7 @@ function Header() {
                   to={link.href}
                   className={`nav-link px-4 py-2 rounded-md transition-all duration-200 ${
                     location.pathname === link.href
-                      ? "bg-blue-50 text-blue-700 font-semibold"
+                      ? "text-blue-700 font-semibold"
                       : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
                   }`}
                 >
@@ -73,7 +92,7 @@ function Header() {
                   to="/Birthdays"
                   className={`nav-link px-4 py-2 rounded-md transition-all duration-200 ${
                     location.pathname === "/Birthdays"
-                      ? "bg-blue-50 text-blue-700 font-semibold"
+                      ? "text-blue-700 font-semibold"
                       : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
                   }`}
                 >
@@ -102,9 +121,10 @@ function Header() {
                   )}
                   
                   {/* Show user type indicator */}
-                  <div className="hidden lg:flex items-center px-3 py-1 bg-gray-100 rounded-full">
-                    <span className="text-xs font-medium text-gray-600">
-                      {user?.userType === 'guest' ? 'Guest User' : `${user?.profileData?.name || user?.familyName || 'Member'}`}
+                  <div className="hidden lg:flex items-center px-3 py-1 rounded-full border border-blue-200">
+                    <span className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700">
+                      <span className="inline-block h-2 w-2 rounded-full bg-blue-500"></span>
+                      {user?.userType === 'guest' ? 'Guest ' : `${user?.profileData?.name || user?.familyName || 'Member'}`}
                     </span>
                   </div>
 
@@ -114,17 +134,23 @@ function Header() {
                       <ProfileDropdown />
                       <button
                         onClick={handleLogout}
-                        className="hidden lg:flex items-center px-4 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-50 transition-all duration-200"
+                        className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/100 text-white hover:bg-blue-700 transition-colors duration-200 shadow-sm overflow-hidden isolate bg-clip-padding backdrop-blur-0 relative transform-gpu"
                       >
-                        <span className="font-medium text-sm">Logout</span>
+                        <svg className="w-4 h-4 bg-transparent z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span className=" text-sm leading-none bg-transparent z-10">Logout</span>
                       </button>
                     </>
                   ) : user?.userType === 'guest' ? (
                     <button
                       onClick={handleLogout}
-                      className="hidden lg:flex items-center px-4 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-50 transition-all duration-200"
+                      className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/100 text-white hover:bg-blue-700 transition-colors duration-200 shadow-sm overflow-hidden isolate bg-clip-padding backdrop-blur-0 relative transform-gpu"
                     >
-                      <span className="font-medium text-sm ml-24">Logout</span>
+                      <svg className="w-4 h-4 bg-transparent z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      <span className="font-medium text-sm leading-none bg-transparent z-10">Logout</span>
                     </button>
                   ) : null}
                 </>
@@ -133,24 +159,60 @@ function Header() {
                   to="/login"
                   className="hidden lg:flex items-center px-4 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-50 transition-all duration-200"
                 >
-                  <span className="bg-[#1A74ED] px-6 py-2 rounded-md text-white ">Login</span>
+                  <span className="bg-blue-600 px-6 py-2 rounded-md text-white">Login</span>
                 </Link>
               )}
 
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="lg:hidden px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700"
+                className="lg:hidden px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 border border-blue-100"
               >
-                {isMenuOpen ? "Close" : "Menu"}
+                <span className="sr-only">Toggle menu</span>
+                {isMenuOpen ? (
+                  <svg
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                )}
               </button>
             </div>
           </div>
         </div>
 
         {isMenuOpen && (
-          <div className="lg:hidden bg-white/90 backdrop-blur border-t border-gray-100">
-            <div className="container mx-auto px-4 py-4">
-              <nav className="flex flex-col space-y-2">
+          <div className="lg:hidden fixed inset-0 z-50">
+            <div className="absolute inset-0 bg-black/30" onClick={() => setIsMenuOpen(false)}></div>
+            <div className="absolute right-0 top-0 h-screen w-11/12 max-w-sm bg-white/70 backdrop-blur-md border-l border-white/30 shadow-xl transform transition-transform duration-300 translate-x-0">
+              <div className="px-4 py-4 border-b border-white/40 flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-base">H</div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">IMENA</p>
+                    <p className="text-xs text-blue-700/70">Family Courtesy</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsMenuOpen(false)} className="p-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-blue-50 transition-colors">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <nav className="flex flex-col space-y-2 px-4 py-4 h-[calc(100vh-64px)] overflow-y-auto">
                 {Links.map((link) => (
                   <Link
                     key={link.name}
@@ -158,8 +220,8 @@ function Header() {
                     onClick={() => setIsMenuOpen(false)}
                     className={`px-4 py-3 rounded-md transition-all duration-200 ${
                       location.pathname === link.href
-                        ? "bg-blue-50 text-blue-700 font-semibold"
-                        : "text-gray-700 hover:bg-gray-50"
+                        ? "text-blue-700 font-semibold"
+                        : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
                     }`}
                   >
                     <span className="font-medium text-base">{link.name}</span>
@@ -172,8 +234,8 @@ function Header() {
                     onClick={() => setIsMenuOpen(false)}
                     className={`px-4 py-3 rounded-md transition-all duration-200 ${
                       location.pathname === "/Birthdays"
-                        ? "bg-blue-50 text-blue-700 font-semibold"
-                        : "text-gray-700 hover:bg-gray-50"
+                        ? "text-blue-700 font-semibold"
+                        : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
                     }`}
                   >
                     <span className="font-medium text-base">Members' Birthdays</span>
@@ -201,7 +263,7 @@ function Header() {
                 
                 {/* Show simple status for guests */}
                 {isAuthenticated && user?.userType === 'guest' && (
-                  <div className="px-4 py-2 bg-gray-100 rounded-md mb-2">
+                  <div className="px-4 py-2 bg-blue-50 rounded-md mb-2 border border-blue-100">
                     <span className="text-sm font-medium text-gray-600">
                       Logged in as Guest
                     </span>
@@ -214,18 +276,15 @@ function Header() {
                       handleLogout();
                       setIsMenuOpen(false);
                     }}
-                    className="flex items-center px-4 py-3 text-white bg-red-600 hover:bg-red-700 rounded-md transition-all duration-200 w-full justify-center"
+                    className="mt-2 mx-4 flex items-center justify-center px-4 py-3 border border-gray-200 text-gray-700 rounded-md hover:text-blue-700 hover:border-blue-300 hover:bg-blue-50 transition-colors duration-200"
                   >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
                     <span className="font-medium text-base">Logout</span>
                   </button>
                 ) : (
                   <Link
                     to="/login"
                     onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-md transition-all duration-200"
+                    className="mt-2 mx-4 flex items-center justify-center px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-md transition-all duration-200"
                   >
                     <span className="font-medium text-base">Login</span>
                   </Link>

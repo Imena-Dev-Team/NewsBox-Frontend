@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import NewsletterFooter from "./Footer";
+// Footer is rendered globally in App
 import { client } from "../sanityClient";
 import imageUrlBuilder from "@sanity/image-url";
 

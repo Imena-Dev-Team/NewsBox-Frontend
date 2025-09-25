@@ -17,8 +17,9 @@ import SignUp from "./components/Signup";
 
 import Login from "./components/Login";
 import FamilyReunion from "./components/Singleb";
-import Landing from "./components/landing";
+import Landing from "./components/Landing";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { NotificationProvider } from "./context/NotificationContext";
 
 function RequireAuth({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -54,9 +55,10 @@ function AppRoutes() {
   const path = (location.pathname || '').toLowerCase();
   const hideHeader = path === "/" || path === "/login" || path === "/signup";
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       {!hideHeader && <Header />}
-      <Routes>
+      <main className="flex-1">
+        <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Landing />} />
         <Route path="/union" element={<FamilyReunion />} />
@@ -69,7 +71,6 @@ function AppRoutes() {
           } 
         />
         <Route path="/home" element={<Head />} />
-        <Route path="/footer" element={<NewsletterFooter />} />
         <Route path="/all" element={<Duplicates />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route
@@ -83,16 +84,20 @@ function AppRoutes() {
         <Route path="/Articles" element={<Articles />} />
         {/* Catch-all: redirect unknown routes to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </>
+        </Routes>
+      </main>
+      <NewsletterFooter />
+    </div>
   );
 }
 
 function App() {
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
-        <AppRoutes />
+        <NotificationProvider>
+          <AppRoutes />
+        </NotificationProvider>
       </AuthProvider>
     </Router>
   );

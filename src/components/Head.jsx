@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Card from "./Card";
 import Birthday from "./birthday_Card";
-import NewsletterFooter from "./Footer";
+// Footer is rendered globally in App
 import { client } from "../sanityClient";
 import imageUrlBuilder from "@sanity/image-url";
 
@@ -334,7 +334,7 @@ const Head = () => {
           )}
         </div>
       </div>
-      <NewsletterFooter />
+      
     </>
   );
 };
