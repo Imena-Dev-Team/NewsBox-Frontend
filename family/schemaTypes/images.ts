@@ -17,7 +17,20 @@ export default defineType({
       type: 'image',
       options: {
         hotspot: true,
-      },
+      }
     }),
-  ],
-})
+    defineField({
+      name: 'gallery',
+      title: 'Gallery',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
+        },
+      ],
+    }),
+  ], 
+})  
