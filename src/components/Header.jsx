@@ -13,7 +13,6 @@ function Header() {
   const Links = [
     { name: "Home", href: "/home" },
     { name: "Blogs", href: "/all" },
-    { name: "Articles", href: "/Articles" },
     { name: "Gallery", href: "/gallery" }
   ];
 
@@ -105,15 +104,15 @@ function Header() {
               {isAuthenticated ? (
                 <>
                   {user?.userType === 'member' && (
-                    <div className="hidden lg:flex items-center px-2 py-1 rounded-full hover:bg-gray-50 transition-all duration-200 cursor-pointer">
-                      {user?.profileData?.profilePic && user.profileData.profilePic !== '/uploads/images/defaultProfile.png' ? (
+                    <div className="hidden lg:flex items-center rounded-full transition-all duration-200 cursor-pointer">
+                      { (user?.profileData?.profilePicUrl) || (user?.profileData?.profilePic && user.profileData.profilePic !== '/uploads/images/defaultProfile.png') ? (
                         <img
-                          src={user.profileData.profilePic}
+                          src={user.profileData.profilePicUrl || user.profileData.profilePic}
                           alt={user.profileData?.name || user.familyName || "Profile"}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-blue-300"
+                          className="w-12 h-12 rounded-full object-cover border-2 border-blue-300 bg-transparent"
                         />
                       ) : (
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-lg">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-lg select-none">
                           {(user?.familyName?.[0] || user?.profileData?.name?.[0] || 'M').toUpperCase()}
                         </div>
                       )}

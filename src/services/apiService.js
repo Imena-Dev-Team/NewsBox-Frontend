@@ -77,7 +77,7 @@ export const authService = {
       return response.data;
     } catch (error) {
       console.error('API: Profile creation error:', error.response?.data || error.message);
-      
+
       // Extract meaningful error message
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
@@ -98,6 +98,17 @@ export const authService = {
       return response.data;
     } catch (error) {
       console.error('API: Profile check error:', error.response?.data || error.message);
+      throw error.response?.data || error;
+    }
+  },
+
+  // Get current user's profile (members only)
+  getProfile: async () => {
+    try {
+      const response = await apiClient.get(API_ENDPOINTS.PROFILE);
+      return response.data; // { success, data }
+    } catch (error) {
+      console.error('API: Get profile error:', error.response?.data || error.message);
       throw error.response?.data || error;
     }
   },
