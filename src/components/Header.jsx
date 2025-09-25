@@ -13,7 +13,6 @@ function Header() {
   const Links = [
     { name: "Home", href: "/home" },
     { name: "Blogs", href: "/all" },
-    { name: "Articles", href: "/Articles" },
     { name: "Gallery", href: "/gallery" }
   ];
 
