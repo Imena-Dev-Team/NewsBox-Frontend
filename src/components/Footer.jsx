@@ -99,7 +99,7 @@ function NewsletterFooter() {
                         Email
                       </p>
                       <p className="text-sm text-blue-800/70 font-body">
-                        imena@outlook.com
+                        imena2025@outlook.com
                       </p>
                     </div>
                   </div>
