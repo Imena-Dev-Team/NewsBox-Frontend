@@ -54,6 +54,7 @@ function AppRoutes() {
   const location = useLocation();
   const path = (location.pathname || '').toLowerCase();
   const hideHeader = path === "/" || path === "/login" || path === "/signup";
+  const hideFooter = path === "/" || path === "/login" || path === "/signup";
   return (
     <div className="min-h-screen flex flex-col">
       {!hideHeader && <Header />}
@@ -86,7 +87,7 @@ function AppRoutes() {
         <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-      <NewsletterFooter />
+      {!hideFooter && <NewsletterFooter />}
     </div>
   );
 }
