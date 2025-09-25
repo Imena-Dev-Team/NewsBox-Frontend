@@ -133,3 +133,65 @@
   z-index: -1;
   opacity: 0.9;
 } 
+
+/* Responsive adjustments - preserve desktop, adapt on smaller screens */
+@media (max-width: 1024px) {
+  .birthdays-container {
+    padding: 24px;
+    margin-left: 0;
+  }
+  .birthday-card {
+    width: 48%;
+  }
+  .message-card {
+    flex-basis: 48%;
+  }
+  .message-input {
+    width: 90%;
+    margin: 60px auto 20px;
+    font-size: 20px;
+  }
+  .post-button {
+    position: static;
+    width: 180px;
+    height: 46px;
+    margin: 0 auto;
+    display: block;
+    font-size: 18px;
+  }
+  .gift-image,
+  .background-image {
+    position: static;
+    width: 100px;
+    margin: 16px auto;
+    display: block;
+  }
+}
+
+@media (max-width: 640px) {
+  .birthdays-heading {
+    font-size: 20px;
+    margin-left: 0;
+    text-align: center;
+  }
+  .birthday-card {
+    width: 100%;
+  }
+  .birthday-image {
+    font-size: 48px;
+  }
+  .birthday-messages {
+    gap: 16px;
+  }
+  .message-card {
+    flex-basis: 100%;
+    padding: 16px;
+  }
+  .message-text {
+    font-size: 13px;
+  }
+  .message-input {
+    font-size: 18px;
+    margin: 40px auto 16px;
+  }
+}

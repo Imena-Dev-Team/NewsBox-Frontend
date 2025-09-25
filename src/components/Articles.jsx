@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Plus, Image, Video } from "lucide-react";
 import NewsletterFooter from "./Footer";
-import axios from "axios";
+import { blogService } from '../services/apiService';
 
 const validCategories = [
   "Family Time",
@@ -110,13 +110,8 @@ const Articles = () => {
         console.log(pair[0], pair[1]);
       }
 
-      const token = localStorage.getItem("token");
-      await axios.post("http://localhost:3008/api/uploadBlog", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      // Use the blog service which handles authentication automatically
+      await blogService.uploadBlog(formData);
 
       setMessage("✅ Blog uploaded successfully!");
       setTitle("");
