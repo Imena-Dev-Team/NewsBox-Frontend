@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { authService } from '../services/apiService';
 import { useNotificationToast } from '../context/NotificationContext';
 import {Camera} from "lucide-react";
+import API_BASE_URL from '../config/api';
 import photo2 from '../assets/image3.png';
 import photo3 from '../assets/image5.png';
 import photo1 from '../assets/image6.png';
@@ -114,13 +115,13 @@ const Signup = () => {
           subFam: formData.subFam
         };
         
-        if (formData.profilePic) {
-          profileData.profilePic = '/uploads/images/defaultProfile.png';
-        }
+        // Do not force a default profile image URL here.
+        // If an image is uploaded, backend should provide a hosted URL in its response.
         
         const response = await authService.createProfile(profileData);
         
-        if (response.data) {
+        // API returns { success, data }
+        if (response?.success && response?.data) {
           updateUser({ 
             hasProfile: true,
             profileData: response.data,

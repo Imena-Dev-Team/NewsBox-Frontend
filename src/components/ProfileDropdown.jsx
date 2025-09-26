@@ -27,16 +27,39 @@ const ProfileDropdown = () => {
     const fetchProfile = async () => {
       try {
         if (!user || user.userType !== 'member') return;
+        
+        // Only skip fetch if profile data actually contains fields
+        const hasLocalProfile = !!(user.hasProfile && user.profileData && (user.profileData.name || user.profileData.email || user.profileData.subFam || user.profileData.birthday || user.profileData.profilePic || user.profileData.profilePicUrl));
+        if (hasLocalProfile) {
+          setRemoteProfile(user.profileData);
+          return;
+        }
+        
         const res = await authService.getProfile();
         if (res?.success && res?.data) {
+          // Shape: { success: true, data: { ...profile } }
           setRemoteProfile(res.data);
-          // Merge into auth context to ensure header avatar gets the URL
           updateUser({
             hasProfile: true,
             profileData: { ...(user.profileData || {}), ...res.data }
           });
+        } else if (res?.data) {
+          // Shape: { data: { ...profile } }
+          setRemoteProfile(res.data);
+          updateUser({
+            hasProfile: true,
+            profileData: { ...(user.profileData || {}), ...res.data }
+          });
+        } else if (res && !res.success) {
+          // Shape: direct profile object
+          setRemoteProfile(res);
+          updateUser({
+            hasProfile: true,
+            profileData: { ...(user.profileData || {}), ...res }
+          });
         }
       } catch (err) {
+        console.error('Failed to fetch profile:', err);
         // fail silently
       }
     };
@@ -47,7 +70,15 @@ const ProfileDropdown = () => {
     return null;
   }
   
-  const profile = remoteProfile || user.profileData;
+  const rawProfile = remoteProfile || user.profileData;
+  const profile = rawProfile?.data || rawProfile; // handle either {data:{...}} or flat
+  
+  // Debug logging
+  console.log('ProfileDropdown - Profile data:', profile);
+  console.log('ProfileDropdown - Profile pic URL:', profile?.profilePicUrl);
+  console.log('ProfileDropdown - Profile pic:', profile?.profilePic);
+  console.log('ProfileDropdown - User data:', user);
+  console.log('ProfileDropdown - User profileData:', user?.profileData);
 
 
   const formatDate = (dateString) => {
@@ -90,17 +121,33 @@ const ProfileDropdown = () => {
           <div className="flex items-center space-x-4 pb-4 border-b border-gray-100">
             {/* Profile Picture */}
             <div className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-blue-200 overflow-hidden">
-              {profile?.profilePicUrl || (profile?.profilePic && profile.profilePic !== '/uploads/images/defaultProfile.png') ? (
-                <img
-                  src={profile.profilePicUrl || profile.profilePic}
-                  alt={profile?.name || user.familyName}
-                  className="w-full h-full object-cover bg-transparent"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-xl select-none">
-                  {profile?.name?.charAt(0)?.toUpperCase() || user.familyName?.charAt(0)?.toUpperCase() || 'M'}
-                </div>
-              )}
+              {(() => {
+                const rawUrl = profile?.profilePicUrl || profile?.profilePic;
+                const imageUrl = rawUrl && rawUrl.startsWith('http') ? rawUrl : rawUrl;
+                const hasUrl = !!imageUrl;
+                return (
+                  <>
+                    <img
+                      src={imageUrl || ''}
+                      alt={profile?.name || user.familyName}
+                      className="w-full h-full object-cover bg-transparent"
+                      style={{ display: hasUrl ? 'block' : 'none' }}
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        if (e.currentTarget.nextSibling) {
+                          e.currentTarget.nextSibling.style.display = 'flex';
+                        }
+                      }}
+                    />
+                    <div
+                      className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 text-white items-center justify-center font-bold text-xl select-none"
+                      style={{ display: hasUrl ? 'none' : 'flex' }}
+                    >
+                      {profile?.name?.charAt(0)?.toUpperCase() || user.familyName?.charAt(0)?.toUpperCase() || 'M'}
+                    </div>
+                  </>
+                );
+              })()}
             </div>
 
             {/* Profile Info */}

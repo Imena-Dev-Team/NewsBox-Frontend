@@ -290,11 +290,12 @@ const Head = () => {
               ))}
         </div>
 
-        {/* Birthday Section */}
+        {/* Birthday Section - Commented Out */}
+        {/*
         <div className="mt-16">
           {loading ? (
             <div className="flex flex-col lg:flex-row gap-8">
-              {/* Left Section Skeleton */}
+              // Left Section Skeleton
               <div className="lg:w-1/2 space-y-6">
                 <div className="w-3/4 h-10 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg"></div>
                 <div className="space-y-2">
@@ -311,7 +312,7 @@ const Head = () => {
                 </div>
               </div>
 
-              {/* Right Section Skeleton */}
+              // Right Section Skeleton
               <div className="lg:w-1/2 flex flex-col gap-7">
                 {[1, 2, 3].map((_, i) => (
                   <div
@@ -333,6 +334,7 @@ const Head = () => {
             <Birthday />
           )}
         </div>
+        */}
       </div>
       
     </>
