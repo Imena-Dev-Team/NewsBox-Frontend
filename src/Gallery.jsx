@@ -65,27 +65,90 @@ const Gallery = () => {
         const query = `*[_type == "images"]{
           _id,
           title,
-          image,
-          gallery
+          image{
+            ...,
+            asset->{
+              _id,
+              url,
+              metadata
+            }
+          },
+          gallery[]{
+            ...,
+            asset->{
+              _id,
+              url,
+              metadata
+            }
+          }
         }`;
 
         const galleriesData = await client.fetch(query);
+        console.log("Raw galleries data:", galleriesData);
 
-        // Transform galleries data
         const transformedGalleries = galleriesData.map((gallery) => {
-          const previewImage = gallery.image
-            ? gallery.image
-            : gallery.gallery && gallery.gallery.length > 0
-            ? gallery.gallery[0]
-            : null;
-          return {
+          // Try to get preview image: first from image field, then from gallery array
+          const previewImage = gallery.image || gallery.gallery?.[0] || null;
+
+          console.log(`=== Gallery "${gallery.title}" Debug ===`);
+          console.log("Raw gallery.image:", gallery.image);
+          console.log("Raw gallery.gallery:", gallery.gallery);
+          console.log("Preview image selected:", previewImage);
+          console.log("Has image field:", !!gallery.image);
+          console.log("Has gallery array:", !!gallery.gallery);
+          console.log("Gallery length:", gallery.gallery?.length || 0);
+
+          let previewUrl = null;
+          if (previewImage) {
+            try {
+              console.log("Generating URL for preview image:", previewImage);
+
+              // Test if the image has the required asset structure
+              if (previewImage.asset) {
+                console.log("Image has asset:", previewImage.asset);
+                previewUrl = urlFor(previewImage)
+                  .width(400)
+                  .height(300)
+                  .fit("crop")
+                  .url();
+                console.log("Generated preview URL:", previewUrl);
+              } else {
+                console.log("Image missing asset property:", previewImage);
+                // Try to use the image directly if it doesn't have asset
+                previewUrl = urlFor(previewImage)
+                  .width(400)
+                  .height(300)
+                  .fit("crop")
+                  .url();
+                console.log("Generated preview URL (direct):", previewUrl);
+              }
+            } catch (error) {
+              console.error(
+                `Error generating URL for gallery "${gallery.title}":`,
+                error
+              );
+              console.log("Preview image that failed:", previewImage);
+            }
+          } else {
+            console.log(
+              "No preview image available for gallery:",
+              gallery.title
+            );
+          }
+
+          const result = {
             _id: gallery._id,
             title: gallery.title,
             image: gallery.image,
             gallery: gallery.gallery || [],
-            previewImage,
+            previewUrl: previewUrl,
             imageCount: gallery.gallery ? gallery.gallery.length : 0,
           };
+
+          console.log("Final gallery result:", result);
+          console.log("=== End Debug ===");
+
+          return result;
         });
 
         setGalleries(transformedGalleries);
@@ -257,66 +320,68 @@ const Gallery = () => {
                       className="bg-gray-200 animate-pulse rounded-xl h-64"
                     ></div>
                   ))
-                : galleries.map((gallery) => (
-                    <div
-                      key={gallery._id}
-                      className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                      onClick={() => openGallery(gallery)}
-                      role="button"
-                      tabIndex={0}
-                      aria-label={`Open ${gallery.title} gallery`}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ")
-                          openGallery(gallery);
-                      }}
-                    >
-                      {gallery.previewImage ? (
-                        <div className="relative h-48 overflow-hidden">
-                          <img
-                            src={urlFor(gallery.previewImage)
-                              .width(400)
-                              .height(300)
-                              .fit("crop")
-                              .url()}
-                            alt={gallery.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                          <div className="absolute bottom-2 right-2 bg-white bg-opacity-90 rounded-full px-2 py-1 text-xs font-medium">
-                            {gallery.imageCount} photos
+                : galleries.map((gallery) => {
+                    console.log(
+                      `Rendering gallery "${gallery.title}" with previewUrl:`,
+                      gallery.previewUrl
+                    );
+                    return (
+                      <div
+                        key={gallery._id}
+                        className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                        onClick={() => openGallery(gallery)}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Open ${gallery.title} gallery`}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ")
+                            openGallery(gallery);
+                        }}
+                      >
+                        {gallery.previewUrl ? (
+                          <div className="relative h-48 overflow-hidden">
+                            <img
+                              src={gallery.previewUrl}
+                              alt={gallery.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <div className="absolute bottom-2 right-2 bg-white bg-opacity-90 rounded-full px-2 py-1 text-xs font-medium">
+                              {gallery.imageCount} photos
+                            </div>
                           </div>
-                        </div>
-                      ) : (
-                        <div className="h-48 bg-gray-200 flex items-center justify-center">
-                          <div className="text-gray-400 text-center">
-                            <svg
-                              className="w-12 h-12 mx-auto mb-2"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              />
-                            </svg>
-                            <p className="text-sm">No preview</p>
+                        ) : (
+                          <div className="h-48 bg-gray-200 flex items-center justify-center">
+                            <div className="text-gray-400 text-center">
+                              <svg
+                                className="w-12 h-12 mx-auto mb-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                />
+                              </svg>
+                              <p className="text-sm">No preview</p>
+                            </div>
                           </div>
+                        )}
+                        <div className="p-4">
+                          <h3 className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
+                            {gallery.title}
+                          </h3>
+                          <p className="text-sm text-gray-500 mt-1">
+                            {gallery.imageCount}{" "}
+                            {gallery.imageCount === 1 ? "photo" : "photos"}
+                          </p>
                         </div>
-                      )}
-                      <div className="p-4">
-                        <h3 className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
-                          {gallery.title}
-                        </h3>
-                        <p className="text-sm text-gray-500 mt-1">
-                          {gallery.imageCount}{" "}
-                          {gallery.imageCount === 1 ? "photo" : "photos"}
-                        </p>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
             </div>
           )}
 
