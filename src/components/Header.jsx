@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { authService } from "../services/apiService";
 import ProfileDropdown from "./ProfileDropdown";
 
 function Header() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, updateUser } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [previewSrc, setPreviewSrc] = useState(null);
 
   const Links = [
     { name: "Home", href: "/home" },
@@ -23,6 +25,25 @@ function Header() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Ensure we have up-to-date profile data for members
+  useEffect(() => {
+    const fetchProfileIfNeeded = async () => {
+      try {
+        if (isAuthenticated && user?.userType === 'member') {
+          const resp = await authService.getProfile();
+          if (resp?.data) {
+            const data = resp.data;
+            const normalizedProfile = { ...data, profilePic: data.profilePicUrl || data.profilePic || null };
+            updateUser({ profileData: normalizedProfile, hasProfile: true });
+          }
+        }
+      } catch (_) {
+        // ignore header fetch errors
+      }
+    };
+    fetchProfileIfNeeded();
+  }, [isAuthenticated, user?.userType, updateUser]);
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -117,6 +138,9 @@ function Header() {
                               alt={profile?.name || user.familyName || "Profile"}
                               className="w-12 h-12 rounded-full object-cover border-2 border-blue-300 bg-transparent"
                               style={{ display: hasUrl ? 'block' : 'none' }}
+                              onClick={() => {
+                                if (hasUrl) setPreviewSrc(imageUrl);
+                              }}
                               onError={(e) => {
                                 e.currentTarget.style.display = 'none';
                                 if (e.currentTarget.nextSibling) {
@@ -260,11 +284,39 @@ function Header() {
 
                 {/* Show user profile in mobile for members */}
                 {isAuthenticated && user?.userType === 'member' && user?.profileData && (
-                  <div className="px-4 py-4 bg-gray-50 rounded-lg mb-2">
+                    <div className="px-4 py-4 bg-gray-50 rounded-lg mb-2">
                     <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-sm">
-                        {user.profileData.name?.charAt(0)?.toUpperCase() || user.familyName?.charAt(0)?.toUpperCase() || 'M'}
-                      </div>
+                      {(() => {
+                        const profile = user?.profileData?.data || user?.profileData;
+                        const rawUrl = profile?.profilePicUrl || profile?.profilePic;
+                        const imageUrl = rawUrl && rawUrl.startsWith('http') ? rawUrl : rawUrl;
+                        const hasUrl = !!imageUrl;
+                        return (
+                          <>
+                            <img
+                              src={imageUrl || ''}
+                              alt={profile?.name || user.familyName || "Profile"}
+                              className="w-12 h-12 rounded-full object-cover border-2 border-blue-300"
+                              style={{ display: hasUrl ? 'block' : 'none' }}
+                              onClick={() => {
+                                if (hasUrl) setPreviewSrc(imageUrl);
+                              }}
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                if (e.currentTarget.nextSibling) {
+                                  e.currentTarget.nextSibling.style.display = 'flex';
+                                }
+                              }}
+                            />
+                            <div
+                              className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white items-center justify-center font-bold text-sm select-none"
+                              style={{ display: hasUrl ? 'none' : 'flex' }}
+                            >
+                              {(user?.familyName?.[0] || user?.profileData?.name?.[0] || 'M').toUpperCase()}
+                            </div>
+                          </>
+                        );
+                      })()}
                       <div>
                         <p className="font-semibold text-gray-900">{user.profileData.name}</p>
                         <p className="text-sm text-blue-600">{user.familyName} Family</p>
@@ -310,6 +362,25 @@ function Header() {
           </div>
         )}
       </header>
+
+      {/* Image Preview Modal */}
+      {previewSrc && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70" onClick={() => setPreviewSrc(null)}>
+          <div className="relative max-w-4xl w-[90vw] max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="absolute -top-10 right-0 text-white bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 text-sm"
+              onClick={() => setPreviewSrc(null)}
+            >
+              Close
+            </button>
+            <img
+              src={previewSrc}
+              alt="Profile Preview"
+              className="w-full h-auto max-h-[90vh] object-contain rounded-lg shadow-2xl"
+            />
+          </div>
+        </div>
+      )}
 
       <div className="h-20"></div>
     </>

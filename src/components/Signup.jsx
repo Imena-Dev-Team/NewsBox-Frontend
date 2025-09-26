@@ -24,7 +24,7 @@ const Signup = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [checkingProfile, setCheckingProfile] = useState(true);
-  const allowedSubFamilyNames = ["Hope", "Light", "Wihogora"];
+  const allowedSubFamilyNames = ["Hope", "Light", "Wihogora", "SubFamily1"];
   
   // Quick profile check
   useEffect(() => {
@@ -108,24 +108,29 @@ const Signup = () => {
       setLoading(true);
       
       try {
+        // Build payload. If an image File is present, the service will convert to FormData.
         const profileData = {
           name: formData.name.trim(),
           email: formData.email.trim(),
           birthday: formData.birthday,
-          subFam: formData.subFam
+          subFam: formData.subFam,
+          profilePic: formData.profilePic || undefined
         };
-        
-        // Do not force a default profile image URL here.
-        // If an image is uploaded, backend should provide a hosted URL in its response.
-        
+
         const response = await authService.createProfile(profileData);
         
-        // API returns { success, data }
-        if (response?.success && response?.data) {
-          updateUser({ 
+        // Backend returns { data } (no success flag on creation)
+        if (response?.data) {
+          const data = response.data;
+          // Normalize profilePic url field for consumers
+          const normalizedProfile = {
+            ...data,
+            profilePic: data.profilePicUrl || data.profilePic || null
+          };
+          updateUser({
             hasProfile: true,
-            profileData: response.data,
-            profileCompleted: true 
+            profileData: normalizedProfile,
+            profileCompleted: true
           });
           
           setErrors({});
@@ -160,15 +165,23 @@ const Signup = () => {
                 <div className="flex flex-col items-center">
                   <label htmlFor="profilePic" className="relative cursor-pointer">
                     <div className="w-28 h-28 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
-                      {formData.profilePic ? (
-                        <img
-                          src={URL.createObjectURL(formData.profilePic)}
-                          alt="Preview"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-gray-400 text-sm">No Image</span>
-                      )}
+                      {(() => {
+                        const pic = formData.profilePic;
+                        const isFile = typeof File !== 'undefined' && pic instanceof File;
+                        const isString = typeof pic === 'string' && pic.length > 0;
+                        if (isFile || isString) {
+                          const src = isFile ? URL.createObjectURL(pic) : pic;
+                          return (
+                            <img
+                              src={src}
+                              alt="Preview"
+                              className="w-full h-full object-cover"
+                              onLoad={() => { if (isFile) URL.revokeObjectURL(src); }}
+                            />
+                          );
+                        }
+                        return <span className="text-gray-400 text-sm">No Image</span>;
+                      })()}
                       <div className="absolute bottom-0 right-0 p-2 rounded-full">
                         <Camera className="h-5 w-5 text-blue-600" />
                       </div>
@@ -179,9 +192,10 @@ const Signup = () => {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) =>
-                      setFormData({ ...formData, profilePic: e.target.files[0] })
-                    }
+                    onChange={(e) => {
+                      const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+                      setFormData({ ...formData, profilePic: file });
+                    }}
                     disabled={loading}
                   />
                 </div>
