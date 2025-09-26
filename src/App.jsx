@@ -83,6 +83,9 @@ function AppRoutes() {
           }
         />
         <Route path="/Articles" element={<Articles />} />
+        {/* Blog detail routes */}
+        <Route path="/union" element={<FamilyReunion />} />
+        <Route path="/union/:slug" element={<FamilyReunion />} />
         {/* Catch-all: redirect unknown routes to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
