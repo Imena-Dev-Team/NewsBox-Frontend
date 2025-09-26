@@ -17,6 +17,13 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // If sending FormData, let the browser set the correct multipart boundary
+    if (config.data instanceof FormData) {
+      if (config.headers && 'Content-Type' in config.headers) {
+        delete config.headers['Content-Type'];
+      }
+    }
     return config;
   },
   (error) => {
@@ -71,12 +78,52 @@ export const authService = {
   // Create profile (members only)
   createProfile: async (profileData) => {
     try {
-      console.log('API: Sending profile data:', profileData);
-      const response = await apiClient.post(API_ENDPOINTS.PROFILE, profileData);
+      // Support both JSON payloads and multipart with image file
+      let payload = profileData;
+      let config = undefined;
+
+      const hasFile =
+        profileData instanceof FormData ||
+        (profileData && typeof File !== 'undefined' && profileData.profilePic instanceof File);
+
+      if (hasFile) {
+        const formData = new FormData();
+        const toStringOrEmpty = (v) => (v === undefined || v === null ? '' : String(v));
+        if (profileData.name) formData.append('name', toStringOrEmpty(profileData.name).trim());
+        if (profileData.email) formData.append('email', toStringOrEmpty(profileData.email).trim());
+        if (profileData.birthday) {
+          // Ensure yyyy-mm-dd
+          const b = toStringOrEmpty(profileData.birthday).slice(0, 10);
+          formData.append('birthday', b);
+        }
+        if (profileData.subFam) formData.append('subFam', toStringOrEmpty(profileData.subFam));
+        if (profileData.profilePic instanceof File) {
+          formData.append('profilePic', profileData.profilePic);
+        }
+
+        // Debug: log form keys and value types for verification
+        try {
+          const debugEntries = [];
+          for (const [key, value] of formData.entries()) {
+            debugEntries.push({ key, type: value instanceof File ? 'File' : typeof value });
+          }
+          console.log('API: FormData fields:', debugEntries);
+        } catch (_err) {
+          // ignore debug logging failures
+        }
+        payload = formData;
+        // Do NOT set Content-Type explicitly; let axios/browser set proper boundary
+        config = undefined;
+      }
+
+      console.log('API: Sending profile data:', hasFile ? '[FormData]' : payload);
+      const response = await apiClient.post(API_ENDPOINTS.PROFILE, payload, config);
       console.log('API: Profile creation response:', response.data);
       return response.data;
     } catch (error) {
-      console.error('API: Profile creation error:', error.response?.data || error.message);
+      const status = error.response?.status;
+      const data = error.response?.data;
+      console.error('API: Profile creation error:', status, data || error.message);
 
       // Extract meaningful error message
       if (error.response?.data?.message) {
