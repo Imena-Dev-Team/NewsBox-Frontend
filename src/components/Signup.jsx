@@ -54,7 +54,7 @@ const Signup = () => {
     };
     
     checkProfile();
-  }, [user, navigate, updateUser]);
+  }, [user, navigate, updateUser, notify]);
 
   const carouselImages = [
     { url: photo1, text: "Welcome to Our School" },
@@ -67,7 +67,7 @@ const Signup = () => {
       setCurrent((prev) => (prev + 1) % carouselImages.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [carouselImages.length]);
 
   if (checkingProfile) {
     return (
@@ -152,11 +152,6 @@ const Signup = () => {
             <span className="block text-sm font-normal text-blue-600 mt-2">Please complete your profile to continue.</span>
           </h2>
             
-            {errors.submit && (
-              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl">
-                {errors.submit}
-              </div>
-            )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
               
