@@ -105,17 +105,34 @@ function Header() {
                 <>
                   {user?.userType === 'member' && (
                     <div className="hidden lg:flex items-center rounded-full transition-all duration-200 cursor-pointer">
-                      { (user?.profileData?.profilePicUrl) || (user?.profileData?.profilePic && user.profileData.profilePic !== '/uploads/images/defaultProfile.png') ? (
-                        <img
-                          src={user.profileData.profilePicUrl || user.profileData.profilePic}
-                          alt={user.profileData?.name || user.familyName || "Profile"}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-blue-300 bg-transparent"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-lg select-none">
-                          {(user?.familyName?.[0] || user?.profileData?.name?.[0] || 'M').toUpperCase()}
-                        </div>
-                      )}
+                      {(() => {
+                        const profile = user?.profileData?.data || user?.profileData;
+                        const rawUrl = profile?.profilePicUrl || profile?.profilePic;
+                        const imageUrl = rawUrl && rawUrl.startsWith('http') ? rawUrl : rawUrl;
+                        const hasUrl = !!imageUrl;
+                        return (
+                          <>
+                            <img
+                              src={imageUrl || ''}
+                              alt={profile?.name || user.familyName || "Profile"}
+                              className="w-12 h-12 rounded-full object-cover border-2 border-blue-300 bg-transparent"
+                              style={{ display: hasUrl ? 'block' : 'none' }}
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                if (e.currentTarget.nextSibling) {
+                                  e.currentTarget.nextSibling.style.display = 'flex';
+                                }
+                              }}
+                            />
+                            <div
+                              className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white items-center justify-center font-bold text-lg select-none"
+                              style={{ display: hasUrl ? 'none' : 'flex' }}
+                            >
+                              {(user?.familyName?.[0] || user?.profileData?.name?.[0] || 'M').toUpperCase()}
+                            </div>
+                          </>
+                        );
+                      })()}
                     </div>
                   )}
                   
