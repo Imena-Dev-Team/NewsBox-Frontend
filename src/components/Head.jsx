@@ -101,8 +101,7 @@ const Head = () => {
       });
     }, 300);
     return () => clearInterval(interval);
-  }, [loading]); // Add loading as dependency
-
+  }, [loading]); 
   return (
     <>
       {loading && (

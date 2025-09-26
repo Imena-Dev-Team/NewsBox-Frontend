@@ -3,9 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '../context/AuthContext';
 import { useNotificationToast } from '../context/NotificationContext';
 import { authService } from '../services/apiService';
-import photo1 from '../assets/image6.png'
-import photo2 from '../assets/image4.jpg'
-import photo3 from '../assets/image3.png'
+import photo1 from '../assets/FM.JPG'
+import photo2 from '../assets/cl.JPG'
+import photo3 from '../assets/BP.JPG'
 
 const Login = () => {
   const navigate = useNavigate();
