@@ -16,27 +16,27 @@ const Birthday = () => {
   const [error, setError] = useState("");
 
   // Fetch birthday messages from Sanity
-  useEffect(() => {
-    const fetchBirthdayMessages = async () => {
-      try {
-        const query = `*[_type == "birthday"]{
-          _id,
-          title,
-          body
-        }`;
+  // useEffect(() => {
+  //   const fetchBirthdayMessages = async () => {
+  //     try {
+  //       const query = `*[_type == "birthday"]{
+  //         _id,
+  //         title,
+  //         body
+  //       }`;
 
-        const messages = await client.fetch(query);
-        setBirthdayMessages(messages);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching birthday messages:", err);
-        setError("Failed to load birthday messages");
-        setLoading(false);
-      }
-    };
+  //       const messages = await client.fetch(query);
+  //       setBirthdayMessages(messages);
+  //       setLoading(false);
+  //     } catch (err) {
+  //       console.error("Error fetching birthday messages:", err);
+  //       setError("Failed to load birthday messages");
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchBirthdayMessages();
-  }, []);
+  //   fetchBirthdayMessages();
+  // }, []);
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 mt-">
@@ -71,7 +71,7 @@ const Birthday = () => {
       </div>
 
       {/* Right Section - Zigzag Cards */}
-      <div className="lg:w-1/2 flex flex-col gap-7">
+      {/* <div className="lg:w-1/2 flex flex-col gap-7">
         {loading ? (
           // Loading skeleton
           <>
@@ -128,7 +128,7 @@ const Birthday = () => {
             </div>
           ))
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
