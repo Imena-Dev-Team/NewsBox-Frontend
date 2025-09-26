@@ -39,6 +39,7 @@ const Head = () => {
             image,
             publishedAt,
             categories,
+            slug,
             "authorName": author->name,
             "authorImage": author->image
           }`
@@ -74,6 +75,7 @@ const Head = () => {
             image,
             publishedAt,
             categories,
+            slug,
             "authorName": author->name,
             "authorImage": author->image
           }`
@@ -286,6 +288,7 @@ const Head = () => {
                   authorName={p.authorName}
                   authorImage={p.authorImage}
                   publishedAt={p.publishedAt}
+                  slug={p.slug?.current}
                 />
               ))}
         </div>

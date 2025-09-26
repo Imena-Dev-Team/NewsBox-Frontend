@@ -58,6 +58,7 @@ function Duplicates() {
             image,
             publishedAt,
             categories,
+            slug,
             "authorName": author->name,
             "authorImage": author->image
           }`
@@ -85,12 +86,13 @@ function Duplicates() {
     return () => clearInterval(id);
   }, [loading]);
 
-  const handleCardClick = () => {
+  const handleCardClick = (slug) => {
+    if (!slug?.current) return;
     setPending(true);
     setTimeout(() => {
       setPending(false);
-      navigate("/union");
-    }, 1500);
+      navigate(`/union/${slug.current}`);
+    }, 500);
   };
 
   return (
@@ -162,7 +164,7 @@ function Duplicates() {
                     marginBottom: 40,
                     cursor: "pointer",
                   }}
-                  onClick={handleCardClick}
+                  onClick={() => handleCardClick(card.slug)}
                 >
                   <div
                     style={{
@@ -236,6 +238,25 @@ function Duplicates() {
                             </div>
                           </div>
                         </div>
+                        {/* Read more button */}
+                        {card.slug?.current && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCardClick(card.slug);
+                            }}
+                            style={{
+                              marginTop: 12,
+                              padding: '8px 14px',
+                              borderRadius: 8,
+                              backgroundColor: '#1E88E5',
+                              color: 'white',
+                              fontWeight: 600,
+                            }}
+                          >
+                            Read more
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

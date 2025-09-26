@@ -30,14 +30,14 @@ export default function FamilyReunion() {
       try {
         console.log("Starting to fetch post data...");
         console.log("Current slug:", slug);
-        
+
         let query;
         if (slug) {
           // If slug is provided, fetch specific post
           query = `*[_type == "post" && slug.current == "${slug}"][0]{
             title,
             body,
-            image,
+            image{..., asset->},
             publishedAt,
             categories,
             "authorName": author->name,
@@ -49,7 +49,7 @@ export default function FamilyReunion() {
           query = `*[_type == "post"] | order(publishedAt desc)[0]{
             title,
             body,
-            image,
+            image{..., asset->},
             publishedAt,
             categories,
             "authorName": author->name,
@@ -66,7 +66,7 @@ export default function FamilyReunion() {
         console.log("Sanity query:", query);
         const postData = await client.fetch(query);
         console.log("Fetched post data:", postData);
-        
+
         if (postData) {
           setPost(postData);
           console.log("Post set successfully");
@@ -128,7 +128,6 @@ export default function FamilyReunion() {
             </div>
           </div>
         </div>
-        
       </>
     );
   }
@@ -153,7 +152,6 @@ export default function FamilyReunion() {
             </div>
           </div>
         </div>
-        
       </>
     );
   }
@@ -180,7 +178,6 @@ export default function FamilyReunion() {
             </div>
           </div>
         </div>
-        
       </>
     );
   }
@@ -192,11 +189,11 @@ export default function FamilyReunion() {
           {/* Header with back button and category */}
           <div className="px-8 py-6">
             <div className="flex items-center gap-3">
-            <Link to="/all">
+              <Link to="/all">
                 <div className="h-10 w-10 bg-blue-900 backdrop-blur-sm text-white rounded-full flex items-center justify-center text-lg font-bold shadow-lg hover:bg-white/30 transition-all duration-300 cursor-pointer border border-white/30">
-                &lt;
-              </div>
-            </Link>
+                  &lt;
+                </div>
+              </Link>
               <div className="flex flex-col">
                 <span className="text-blue-900 text-sm font-medium uppercase tracking-wider">
                   {post.categories || "POST"}
@@ -236,7 +233,7 @@ export default function FamilyReunion() {
             <div className="space-y-4">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
                 {post.title}
-          </h1>
+              </h1>
             </div>
 
             {/* Content Body */}
@@ -300,8 +297,6 @@ export default function FamilyReunion() {
           </div>
         </div>
       </div>
-
-    
     </>
   );
 }

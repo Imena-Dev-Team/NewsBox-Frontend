@@ -23,17 +23,19 @@ const Card = ({
   authorName,
   authorImage,
   publishedAt,
+  slug,
 }) => {
   const navigate = useNavigate();
   const [pending, setPending] = useState(false);
 
   const handleReadMore = (e) => {
     e.preventDefault();
+    if (!slug) return;
     setPending(true);
     setTimeout(() => {
       setPending(false);
-      navigate("/union");
-    }, 1500);
+      navigate(`/union/${slug}`);
+    }, 300);
   };
 
   const displayTitle = title || "";
