@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// Footer is rendered globally in App
 import { client } from "../sanityClient";
 import imageUrlBuilder from "@sanity/image-url";
 
@@ -25,7 +24,7 @@ const CardSkeleton = () => (
     style={{
       height: 370,
       margin: "20px 70px",
-      background: "#eee",
+      background: "#FAFAFA",
       borderRadius: 25,
     }}
   />
@@ -108,7 +107,7 @@ function Duplicates() {
             <div
               style={{
                 height: 6,
-                backgroundColor: "#e0e0e0",
+                backgroundColor: "#FAFAFA",
                 marginBottom: 30,
               }}
             >
@@ -126,7 +125,7 @@ function Duplicates() {
           {!loading && error && (
             <div
               style={{
-                background: "#FEE2E2",
+                background: "#FAFAFA",
                 color: "#991B1B",
                 padding: 12,
                 borderRadius: 8,
@@ -141,7 +140,7 @@ function Duplicates() {
             <div
               style={{
                 margin: "0 70px",
-                background: "#FFF",
+                background: "#FAFAFA",
                 borderRadius: 12,
                 padding: 24,
                 color: "white",
@@ -168,7 +167,7 @@ function Duplicates() {
                 >
                   <div
                     style={{
-                      backgroundColor: "white",
+                      backgroundColor: "#FAFAFA",
                       height: 390,
                       marginLeft: 70,
                       borderRadius: 25,
@@ -238,7 +237,6 @@ function Duplicates() {
                             </div>
                           </div>
                         </div>
-                        {/* Read more button */}
                         {card.slug?.current && (
                           <button
                             onClick={(e) => {
@@ -247,11 +245,12 @@ function Duplicates() {
                             }}
                             style={{
                               marginTop: 12,
-                              padding: '8px 14px',
-                              borderRadius: 8,
-                              backgroundColor: '#1E88E5',
-                              color: 'white',
+                              padding: "8px 14px",
+                              borderRadius: 14,
+                              backgroundColor: "#1E88E5", 
+                              color: "white",
                               fontWeight: 600,
+                              
                             }}
                           >
                             Read more
@@ -282,7 +281,7 @@ function Duplicates() {
                   ) : (
                     <div
                       style={{
-                        backgroundColor: "#E9E9E9",
+                        backgroundColor: "#FAFAFA",
                         height: 320,
                         left: 840,
                         position: "absolute",
