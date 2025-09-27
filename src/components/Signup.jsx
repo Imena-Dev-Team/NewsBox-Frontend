@@ -5,9 +5,9 @@ import { authService } from '../services/apiService';
 import { useNotificationToast } from '../context/NotificationContext';
 import {Camera} from "lucide-react";
 import API_BASE_URL from '../config/api';
-import photo2 from '../assets/image3.png';
-import photo3 from '../assets/image5.png';
-import photo1 from '../assets/image6.png';
+import photo2 from '../assets/image1.jpg';
+import photo3 from '../assets/image2.jpg';
+import photo1 from '../assets/image3.jpg';
 
 const Signup = () => {
   const navigate = useNavigate();
