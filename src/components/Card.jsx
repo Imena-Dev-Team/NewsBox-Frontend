@@ -116,7 +116,7 @@ const Card = ({
           {/* Read More Link */}
           <button
             onClick={handleReadMore}
-            className="mt-4 text-blue-600 hover:underline font-medium"
+            className="mt-4 text-blue-600 font-medium"
           >
             Read more
           </button>

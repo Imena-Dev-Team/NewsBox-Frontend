@@ -7,17 +7,15 @@ import {
   Navigate,
   useLocation,
 } from "react-router-dom";
-import Duplicates from "./components/All";
-import Gallery from "./Gallery";
-import Head from "./components/Head";
-import Articles from "./components/Articles";
-import Birthdays from "./components/Birthdays";
+import Duplicates from "./pages/Blogs/All";
+import Gallery from "./pages/Gallery";
+import Home from "./pages/Home";
+import Birthdays from "./pages/Birthdays";
 import Header from "./components/Header";
-import SignUp from "./components/Signup";
-
-import Login from "./components/Login";
-import FamilyReunion from "./components/Singleb";
-import Landing from "./components/Landing";
+import SignUp from "./pages/Auth/Signup";
+import Login from "./pages/Auth/Login";
+import FamilyReunion from "./pages/Blogs/ReunionBlog";
+import Landing from "./pages/Landing";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { NotificationProvider } from "./context/NotificationContext";
 
@@ -71,7 +69,7 @@ function AppRoutes() {
             </RequireProfileCompletion>
           } 
         />
-        <Route path="/home" element={<Head />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/all" element={<Duplicates />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route
@@ -82,7 +80,6 @@ function AppRoutes() {
             </RequireAuth>
           }
         />
-        <Route path="/Articles" element={<Articles />} />
         {/* Blog detail routes */}
         <Route path="/union" element={<FamilyReunion />} />
         <Route path="/union/:slug" element={<FamilyReunion />} />
