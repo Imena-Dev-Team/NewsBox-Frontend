@@ -15,7 +15,8 @@ function Header() {
   const Links = [
     { name: "Home", href: "/home" },
     { name: "Blogs", href: "/all" },
-    { name: "Gallery", href: "/gallery" }
+    { name: "Gallery", href: "/gallery" },
+    { name: "Story", href: "/story" }
   ];
 
   useEffect(() => {

@@ -18,6 +18,13 @@ import FamilyReunion from "./pages/Blogs/ReunionBlog";
 import Landing from "./pages/Landing";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { NotificationProvider } from "./context/NotificationContext";
+import PaginatedShowcase from "./pages/Story"
+
+function PrivateRoute({ children }) {
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return null;
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+}
 
 function RequireAuth({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -72,6 +79,14 @@ function AppRoutes() {
         <Route path="/home" element={<Home />} />
         <Route path="/all" element={<Duplicates />} />
         <Route path="/gallery" element={<Gallery />} />
+        <Route 
+          path="/story" 
+          element={
+            <PrivateRoute>
+              <PaginatedShowcase/>
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/Birthdays"
           element={
