@@ -83,17 +83,17 @@
 }
 
 .prev {
-  left: 30px;
+  left: 1.5rem;
 }
 
 .next {
-  right: 30px;
+  right: 1.5rem;
 }
 
 .close-btn {
   position: absolute;
-  top: 24px;
-  right: 24px;
+  top: 1.5rem;
+  right: 1.5rem;
   font-size: 36px;
   color: white;
   font-weight: 700;

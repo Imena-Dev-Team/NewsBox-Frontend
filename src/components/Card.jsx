@@ -50,15 +50,15 @@ const Card = ({
     <div className="w-full max-w-[380px] mb-10">
       <div className="glass-effect rounded-2xl p-6 relative overflow-hidden bg-white shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-blue-200 group">
         {/* Image Container */}
-        <div className="relative mb-6 overflow-hidden rounded-xl">
+        <div className="relative mb-6 overflow-hidden rounded-xl aspect-[4/3]">
           {displayImage ? (
             <img
               src={displayImage}
               alt={displayTitle}
-              className="w-full h-[220px] object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             />
           ) : (
-            <div className="w-full h-[220px] bg-gray-200" />
+            <div className="w-full h-full bg-gray-200" />
           )}
         </div>
 

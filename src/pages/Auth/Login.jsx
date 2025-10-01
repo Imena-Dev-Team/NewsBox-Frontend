@@ -136,7 +136,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left Side - Image Carousel */}
-      <div className="md:w-1/2 w-full relative overflow-hidden h-72 md:h-auto">
+      <div className="md:w-1/2 w-full relative overflow-hidden h-48 sm:h-64 md:h-auto">
         {carouselImages.map((img, index) => (
           index === current && (
             <div

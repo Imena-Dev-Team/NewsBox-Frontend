@@ -151,7 +151,7 @@ export default function Landing() {
         </div>
       </div>
 
-      <div className="w-full md:w-1/2 h-1/2 md:h-full overflow-hidden">
+      <div className="w-full md:w-1/2 h-64 sm:h-96 md:h-full overflow-hidden">
         <HeroSlider />
       </div>
     </div>

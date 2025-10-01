@@ -20,14 +20,25 @@ function toPlainText(blocks) {
 
 // Simple placeholder while loading
 const CardSkeleton = () => (
-  <div
-    style={{
-      height: 370,
-      margin: "20px 70px",
-      background: "#FAFAFA",
-      borderRadius: 25,
-    }}
-  />
+  <div className="w-full max-w-[350px]">
+    <div className="bg-white rounded-xl shadow-lg p-4 mt-7">
+      {/* Card Image Skeleton */}
+      <div className="w-full aspect-[4/3] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-2xl mb-4"></div>
+
+      <div className="space-y-2 mb-4">
+        <div className="w-5/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+        <div className="w-4/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+      </div>
+
+      <div className="space-y-2 mb-4">
+        <div className="w-full h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+        <div className="w-5/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+        <div className="w-4/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+      </div>
+
+      <div className="w-32 h-9 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
+    </div>
+  </div>
 );
 
 function Duplicates() {
@@ -95,210 +106,181 @@ function Duplicates() {
   };
 
   return (
-    <div style={{ backgroundColor: "#FAFAFA", paddingBottom: "120px" }}>
+    <div className="bg-gray-50 pb-24">
       {pending ? (
         <div className="flex flex-col items-center justify-center min-h-[80vh]">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
           <p className="text-lg text-blue-600 font-semibold">Loading Blog...</p>
         </div>
       ) : (
-        <>
+        <div className="container mx-auto px-4 max-w-7xl">
           {loading && (
-            <div
-              style={{
-                height: 6,
-                backgroundColor: "#FAFAFA",
-                marginBottom: 30,
-              }}
-            >
+            <div className="h-1.5 bg-gray-200 mb-8">
               <div
-                style={{
-                  width: `${progress}%`,
-                  height: "100%",
-                  backgroundColor: "#1474ED",
-                  transition: "width 0.3s",
-                }}
+                className="h-full bg-blue-600 transition-[width] duration-300"
+                style={{ width: `${progress}%` }}
               />
             </div>
           )}
 
           {!loading && error && (
-            <div
-              style={{
-                background: "#FAFAFA",
-                color: "#991B1B",
-                padding: 12,
-                borderRadius: 8,
-                margin: "0 70px 20px",
-              }}
-            >
+            <div className="bg-red-100 text-red-800 p-3 rounded-lg mb-5">
               {error}
             </div>
           )}
 
           {!loading && !error && posts.length === 0 && (
-            <div
-              style={{
-                margin: "0 70px",
-                background: "#FAFAFA",
-                borderRadius: 12,
-                padding: 24,
-                color: "white",
-              }}
-            >
+            <div className="bg-blue-100 text-blue-800 p-6 rounded-xl">
               No posts found. Create a `post` document in Sanity Studio and
               publish it.
             </div>
           )}
 
-          {loading
-            ? Array.from({ length: pageSize }).map((_, i) => (
-                <CardSkeleton key={i} />
-              ))
-            : currentPageContent.map((card, i) => (
-                <div
-                  key={i}
-                  style={{
-                    position: "relative",
-                    marginBottom: 40,
-                    cursor: "pointer",
-                  }}
-                  onClick={() => handleCardClick(card.slug)}
-                >
-                  <div
-                    style={{
-                      backgroundColor: "#FAFAFA",
-                      height: 390,
-                      marginLeft: 70,
-                      borderRadius: 25,
-                      width: "87%",
-                      marginBottom: 24,
-                    }}
-                  >
-                    <div
-                      style={{
-                        padding: 24,
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 20,
-                        maxWidth: 600,
-                      }}
-                    >
-                      <div
-                        style={{
-                          alignSelf: "flex-start",
-                          backgroundColor: "#E3F2FD",
-                          color: "#1E88E5",
-                          padding: "8px 16px",
-                          borderRadius: 20,
-                          fontWeight: 600,
-                        }}
-                      >
-                        {card.categories}
-                      </div>
-                      <h2 style={{ fontSize: 20, fontWeight: 700 }}>
-                        {card.title}
-                      </h2>
-                      <p style={{ color: "#6B7280" }}>
-                        {card.summary || "No summary available"}
-                      </p>
+          <div className="flex flex-col sm:flex-row justify-between items-center mt-16 mb-8">
+            <h1 className="font-semibold text-lg sm:text-xl mb-4 sm:mb-0">
+              All Blogs
+            </h1>
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+              {/* Search Input */}
+              <input
+                type="text"
+                placeholder="Search blogs..."
+                className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                // Add onChange and value handlers for search functionality
+              />
+              {/* Filter Dropdown */}
+              <select
+                className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                // Add onChange and value handlers for filter functionality
+              >
+                <option value="">All Categories</option>
+                {/* Map categories here */}
+              </select>
+            </div>
+          </div>
 
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          {card.authorImage && (
-                            <img
-                              src={urlFor(card.authorImage)
-                                .width(48)
-                                .height(48)
-                                .url()}
-                              alt={card.authorName}
-                              style={{
-                                width: 48,
-                                height: 48,
-                                borderRadius: "50%",
-                                marginRight: 12,
-                              }}
-                            />
-                          )}
-                          <div>
-                            <div style={{ fontWeight: 600 }}>
-                              {card.authorName}
-                            </div>
-                            <div style={{ fontSize: 14, color: "#9CA3AF" }}>
-                              {card.publishedAt
-                                ? new Date(card.publishedAt).toDateString()
-                                : ""}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 justify-items-center mt-8">
+            {loading
+              ? Array.from({ length: pageSize }).map((_, i) => (
+                  <div key={i} className="w-full max-w-[350px]">
+                    <div className="bg-white rounded-xl shadow-lg p-4 mt-7">
+                      {/* Card Image Skeleton */}
+                      <div className="w-full aspect-[4/3] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-2xl mb-4"></div>
+
+                      <div className="space-y-2 mb-4">
+                        <div className="w-5/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                        <div className="w-4/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                      </div>
+
+                      <div className="space-y-2 mb-4">
+                        <div className="w-full h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                        <div className="w-5/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                        <div className="w-4/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                      </div>
+
+                      <div className="w-32 h-9 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
+                    </div>
+                  </div>
+                ))
+              : currentPageContent.map((card, i) => (
+                  <div
+                    key={i}
+                    className="w-full max-w-[350px] mb-10"
+                    onClick={() => handleCardClick(card.slug)}
+                  >
+                    <div className="glass-effect rounded-2xl p-6 relative overflow-hidden bg-white shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-blue-200 group">
+                      {/* Image Container */}
+                      <div className="relative mb-6 overflow-hidden rounded-xl aspect-[4/3]">
+                        {card.image ? (
+                          <img
+                            src={urlFor(card.image)
+                              .width(800)
+                              .height(500)
+                              .fit("crop")
+                              .url()}
+                            alt={card.title}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-200" />
+                        )}
+                      </div>
+
+                      {/* Content */}
+                      <div className="space-y-4">
+                        {/* Category Badge */}
+                        <div className="flex items-center space-x-2">
+                          <span className="px-3 py-1 bg-[#1A74ED] text-white text-xs font-semibold rounded-full">
+                            {card.categories || "Family News"}
+                          </span>
+                          <span className="text-xs text-gray-500">5 min read</span>
+                        </div>
+
+                        {/* Title */}
+                        <h2 className="text-xl font-bold text-gray-800 leading-tight font-heading">
+                          {card.title}
+                        </h2>
+
+                        {/* Description */}
+                        <p className="text-gray-600 leading-relaxed text-readable font-body">
+                          {card.summary || ""}
+                        </p>
+
+                        {/* Author Info */}
+                        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                          <div className="flex items-center space-x-3">
+                            {card.authorImage ? (
+                              <img
+                                src={urlFor(card.authorImage)
+                                  .width(64)
+                                  .height(64)
+                                  .fit("crop")
+                                  .url()}
+                                alt={card.authorName}
+                                className="w-10 h-10 rounded-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                {card.authorName
+                                  ?.slice(0, 2)
+                                  ?.toUpperCase() || ""}
+                              </div>
+                            )}
+                            <div>
+                              <p className="text-sm font-semibold text-gray-800 font-heading">
+                                {card.authorName}
+                              </p>
+                              <p className="text-xs text-gray-500 font-body">
+                                {card.publishedAt
+                                  ? new Date(card.publishedAt).toDateString()
+                                  : ""}
+                              </p>
                             </div>
                           </div>
                         </div>
-                        {card.slug?.current && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleCardClick(card.slug);
-                            }}
-                            style={{
-                              marginTop: 12,
-                              padding: "8px 14px",
-                              borderRadius: 14,
-                              backgroundColor: "#1E88E5", 
-                              color: "white",
-                              fontWeight: 600,
-                              
-                            }}
-                          >
-                            Read more
-                          </button>
-                        )}
+
+                        {/* Read More Link */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCardClick(card.slug);
+                          }}
+                          className="mt-4 text-blue-600 font-medium"
+                        >
+                          Read more
+                        </button>
                       </div>
                     </div>
                   </div>
-
-                  {card.image ? (
-                    <img
-                      src={urlFor(card.image)
-                        .width(700)
-                        .height(310)
-                        .fit("crop")
-                        .url()}
-                      alt={card.title || "Post image"}
-                      style={{
-                        height: 310,
-                        left: 840,
-                        position: "absolute",
-                        top: 30,
-                        borderRadius: 25,
-                        width: "35%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        backgroundColor: "#FAFAFA",
-                        height: 320,
-                        left: 840,
-                        position: "absolute",
-                        top: 30,
-                        borderRadius: 25,
-                        width: "35%",
-                      }}
-                    />
-                  )}
-                </div>
-              ))}
+                ))}
+          </div>
 
           {/* Pagination */}
-          <div className="flex flex-wrap justify-center gap-5 mt-10">
+          <div className="flex justify-center items-center gap-4 mt-10">
             <button
               disabled={currentPage === 1 || loading}
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              className="px-4 py-2 rounded-md bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </button>
@@ -307,10 +289,7 @@ function Duplicates() {
                 key={i}
                 disabled={loading}
                 onClick={() => setCurrentPage(i + 1)}
-                style={{
-                  color: currentPage === i + 1 ? "#1E88E5" : "#6B7280",
-                  fontWeight: currentPage === i + 1 ? "bold" : "normal",
-                }}
+                className={`px-4 py-2 rounded-md ${currentPage === i + 1 ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"} disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 {i + 1}
               </button>
@@ -318,11 +297,12 @@ function Duplicates() {
             <button
               disabled={currentPage === totalPages || loading}
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              className="px-4 py-2 rounded-md bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

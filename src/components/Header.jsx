@@ -83,13 +83,18 @@ function Header() {
                 <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
                   I
                 </div>
-                <div className="hidden md:block">
+                <div className="hidden sm:block">
                   <h1 className="text-xl font-bold font-heading bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
                     IMENA FAMILY COURTESY
                   </h1>
                   <p className="text-sm text-blue-700/70 font-body">
                     Building bonds, sharing stories
                   </p>
+                </div>
+                <div className="sm:hidden">
+                  <h1 className="text-lg font-bold font-heading bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
+                    IMENA Family
+                  </h1>
                 </div>
               </div>
             </div>
@@ -126,7 +131,7 @@ function Header() {
               {isAuthenticated ? (
                 <>
                   {user?.userType === 'member' && (
-                    <div className="hidden lg:flex items-center rounded-full transition-all duration-200 cursor-pointer">
+                    <div className="flex items-center rounded-full transition-all duration-200 cursor-pointer">
                       {(() => {
                         const profile = user?.profileData?.data || user?.profileData;
                         const rawUrl = profile?.profilePicUrl || profile?.profilePic;
@@ -162,7 +167,7 @@ function Header() {
                   )}
                   
                   {/* Show user type indicator */}
-                  <div className="hidden lg:flex items-center px-3 py-1 rounded-full border border-blue-200">
+                  <div className="flex items-center px-3 py-1 rounded-full border border-blue-200">
                     <span className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700">
                       <span className="inline-block h-2 w-2 rounded-full bg-blue-500"></span>
                       {user?.userType === 'guest' ? 'Guest ' : `${user?.profileData?.name || user?.familyName || 'Member'}`}
@@ -175,7 +180,7 @@ function Header() {
                       <ProfileDropdown />
                       <button
                         onClick={handleLogout}
-                        className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/100 text-white hover:bg-blue-700 transition-colors duration-200 shadow-sm overflow-hidden isolate bg-clip-padding backdrop-blur-0 relative transform-gpu"
+                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/100 text-white hover:bg-blue-700 transition-colors duration-200 shadow-sm overflow-hidden isolate bg-clip-padding backdrop-blur-0 relative transform-gpu"
                       >
                         <svg className="w-4 h-4 bg-transparent z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -186,7 +191,7 @@ function Header() {
                   ) : user?.userType === 'guest' ? (
                     <button
                       onClick={handleLogout}
-                      className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/100 text-white hover:bg-blue-700 transition-colors duration-200 shadow-sm overflow-hidden isolate bg-clip-padding backdrop-blur-0 relative transform-gpu"
+                      className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/100 text-white hover:bg-blue-700 transition-colors duration-200 shadow-sm overflow-hidden isolate bg-clip-padding backdrop-blur-0 relative transform-gpu"
                     >
                       <svg className="w-4 h-4 bg-transparent z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -198,7 +203,7 @@ function Header() {
               ) : (
                 <Link
                   to="/login"
-                  className="hidden lg:flex items-center px-4 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-50 transition-all duration-200"
+                  className="flex items-center px-4 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-50 transition-all duration-200"
                 >
                   <span className="bg-blue-600 px-6 py-2 rounded-md text-white">Login</span>
                 </Link>
