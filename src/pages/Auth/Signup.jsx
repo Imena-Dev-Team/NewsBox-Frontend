@@ -164,7 +164,7 @@ const Signup = () => {
               <div>
                 <div className="flex flex-col items-center">
                   <label htmlFor="profilePic" className="relative cursor-pointer">
-                    <div className="w-28 h-28 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
                       {(() => {
                         const pic = formData.profilePic;
                         const isFile = typeof File !== 'undefined' && pic instanceof File;

@@ -10,7 +10,7 @@ const BirthdaySkeleton = () => (
       <div className="absolute right-0 -top-[170px] w-32 h-32 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full opacity-80" />
       <div className="flex flex-wrap gap-[30px] justify-between w-full">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="bg-white flex-[30%] p-5 rounded-[15px] box-border shadow-[0px_4px_10px_rgba(0,0,0,0.1)]">
+          <div key={i} className="bg-white w-full sm:w-1/2 lg:w-1/3 p-5 rounded-[15px] box-border shadow-[0px_4px_10px_rgba(0,0,0,0.1)]">
             <div className="h-6 w-32 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded mb-2.5"></div>
             <div className="h-4 w-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded mb-2"></div>
             <div className="h-3 w-24 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
@@ -116,8 +116,8 @@ const Birthdays = () => {
         {loading ? (
           <BirthdaySkeleton />
         ) : (
-          <div className="font-['Poppins',sans-serif] p-10 ml-[14px] box-border mt-8">
-            <div className="flex flex-col md:flex-row gap-6 mb-8 mt-2 w-full ml-10">
+          <div className="font-['Poppins',sans-serif] p-4 sm:p-6 md:p-10 box-border mt-8">
+            <div className="flex flex-col md:flex-row gap-6 mb-8 mt-2 w-full px-4">
               <div className="flex-1 min-w-[220px] ml-[14px]">
                 <h2 className="text-xl font-bold mb-2 text-[#1474ED]"> 🎉 Today's Birthdays </h2>
                 {loadingBirthdays ? (

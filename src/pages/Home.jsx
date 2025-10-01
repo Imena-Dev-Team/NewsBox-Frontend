@@ -123,9 +123,9 @@ const Home = () => {
             <div className="w-12 h-12 sm:w-15 sm:h-15 lg:mb-100 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
           ) : null}
 
-          <div className="w-full lg:w-[45%] mt-4 lg:mt-[80px]">
+          <div className="w-full lg:w-[45%] mt-4 lg:mt-[80px] aspect-[4/3] overflow-hidden rounded-2xl">
             {loading ? (
-              <div className="w-full aspect-[4/3] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-2xl"></div>
+              <div className="w-full h-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-2xl"></div>
             ) : featuredPosts.length > 0 ? (
               <img
                 src={urlFor(featuredPosts[index]?.image)
@@ -134,7 +134,7 @@ const Home = () => {
                   .fit("crop")
                   .url()}
                 alt={featuredPosts[index]?.title}
-                className="w-full h-auto rounded-2xl object-cover"
+                className="w-full h-full object-cover"
               />
             ) : null}
           </div>

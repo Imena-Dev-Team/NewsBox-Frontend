@@ -240,7 +240,7 @@ const Gallery = () => {
                 {galleryImages.map((image, index) => (
                   <div
                     key={image.id}
-                    className="relative group cursor-pointer overflow-hidden rounded-lg transition-all duration-300 w-full"
+                    className="relative group cursor-pointer overflow-hidden rounded-lg transition-all duration-300 w-full aspect-[4/3]"
                     onClick={() => getImg(image.imgSrc, index)}
                     role="button"
                     tabIndex={0}
@@ -253,7 +253,7 @@ const Gallery = () => {
                     <img
                       src={image.imgSrc}
                       alt={image.alt}
-                      className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -284,7 +284,7 @@ const Gallery = () => {
                 ? Array.from({ length: 6 }).map((_, index) => (
                     <div
                       key={index}
-                      className="bg-gray-200 animate-pulse rounded-xl h-64 w-full"
+                      className="bg-gray-200 animate-pulse rounded-xl w-full aspect-[4/3]"
                     ></div>
                   ))
                 : galleries.map((gallery) => (
@@ -300,7 +300,7 @@ const Gallery = () => {
                       }}
                     >
                       {gallery.previewUrl ? (
-                        <div className="relative h-80 overflow-hidden">
+                        <div className="relative aspect-[4/3] overflow-hidden">
                           <img
                             src={gallery.previewUrl}
                             alt={gallery.title}

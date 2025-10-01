@@ -14,7 +14,7 @@ const Birthday = () => {
   const [birthdayMessages, setBirthdayMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  
   // Fetch birthday messages from Sanity
   // useEffect(() => {
   //   const fetchBirthdayMessages = async () => {
