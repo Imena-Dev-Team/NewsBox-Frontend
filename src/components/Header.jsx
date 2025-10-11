@@ -14,9 +14,10 @@ function Header() {
 
   const Links = [
     { name: "Home", href: "/home" },
+    { name: "About", href: "/about" },
     { name: "Blogs", href: "/all" },
     { name: "Gallery", href: "/gallery" },
-    { name: "Story", href: "/story" }
+    { name: "Story", href: "/story" },
   ];
 
   useEffect(() => {
@@ -31,11 +32,14 @@ function Header() {
   useEffect(() => {
     const fetchProfileIfNeeded = async () => {
       try {
-        if (isAuthenticated && user?.userType === 'member') {
+        if (isAuthenticated && user?.userType === "member") {
           const resp = await authService.getProfile();
           if (resp?.data) {
             const data = resp.data;
-            const normalizedProfile = { ...data, profilePic: data.profilePicUrl || data.profilePic || null };
+            const normalizedProfile = {
+              ...data,
+              profilePic: data.profilePicUrl || data.profilePic || null,
+            };
             updateUser({ profileData: normalizedProfile, hasProfile: true });
           }
         }
@@ -54,15 +58,15 @@ function Header() {
   // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
   }, [isMenuOpen]);
 
   const handleLogout = () => {
     setIsMenuOpen(false);
-    document.body.style.overflow = 'unset';
+    document.body.style.overflow = "unset";
     logout();
     navigate("/login", { replace: true });
   };
@@ -113,7 +117,7 @@ function Header() {
                   <span className="font-medium text-sm">{link.name}</span>
                 </Link>
               ))}
-              {isAuthenticated && user?.userType === 'member' && (
+              {isAuthenticated && user?.userType === "member" && (
                 <Link
                   to="/Birthdays"
                   className={`nav-link px-4 py-2 rounded-md transition-all duration-200 ${
@@ -122,7 +126,9 @@ function Header() {
                       : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
                   }`}
                 >
-                  <span className="font-medium text-sm">Members' Birthdays</span>
+                  <span className="font-medium text-sm">
+                    Members' Birthdays
+                  </span>
                 </Link>
               )}
             </nav>
@@ -130,73 +136,113 @@ function Header() {
             <div className="flex items-center space-x-2">
               {isAuthenticated ? (
                 <>
-                  {user?.userType === 'member' && (
+                  {user?.userType === "member" && (
                     <div className="flex items-center rounded-full transition-all duration-200 cursor-pointer">
                       {(() => {
-                        const profile = user?.profileData?.data || user?.profileData;
-                        const rawUrl = profile?.profilePicUrl || profile?.profilePic;
-                        const imageUrl = rawUrl && rawUrl.startsWith('http') ? rawUrl : rawUrl;
+                        const profile =
+                          user?.profileData?.data || user?.profileData;
+                        const rawUrl =
+                          profile?.profilePicUrl || profile?.profilePic;
+                        const imageUrl =
+                          rawUrl && rawUrl.startsWith("http") ? rawUrl : rawUrl;
                         const hasUrl = !!imageUrl;
                         return (
                           <>
                             <img
-                              src={imageUrl || ''}
-                              alt={profile?.name || user.familyName || "Profile"}
+                              src={imageUrl || ""}
+                              alt={
+                                profile?.name || user.familyName || "Profile"
+                              }
                               className="w-12 h-12 rounded-full object-cover border-2 border-blue-300 bg-transparent"
-                              style={{ display: hasUrl ? 'block' : 'none' }}
+                              style={{ display: hasUrl ? "block" : "none" }}
                               onClick={() => {
                                 if (hasUrl) setPreviewSrc(imageUrl);
                               }}
                               onError={(e) => {
-                                e.currentTarget.style.display = 'none';
+                                e.currentTarget.style.display = "none";
                                 if (e.currentTarget.nextSibling) {
-                                  e.currentTarget.nextSibling.style.display = 'flex';
+                                  e.currentTarget.nextSibling.style.display =
+                                    "flex";
                                 }
                               }}
                             />
                             <div
                               className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white items-center justify-center font-bold text-lg select-none"
-                              style={{ display: hasUrl ? 'none' : 'flex' }}
+                              style={{ display: hasUrl ? "none" : "flex" }}
                             >
-                              {(user?.familyName?.[0] || user?.profileData?.name?.[0] || 'M').toUpperCase()}
+                              {(
+                                user?.familyName?.[0] ||
+                                user?.profileData?.name?.[0] ||
+                                "M"
+                              ).toUpperCase()}
                             </div>
                           </>
                         );
                       })()}
                     </div>
                   )}
-                  
+
                   {/* Show user type indicator */}
                   <div className="flex items-center px-3 py-1 rounded-full border border-blue-200">
                     <span className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700">
                       <span className="inline-block h-2 w-2 rounded-full bg-blue-500"></span>
-                      {user?.userType === 'guest' ? 'Guest ' : `${user?.profileData?.name || user?.familyName || 'Member'}`}
+                      {user?.userType === "guest"
+                        ? "Guest "
+                        : `${
+                            user?.profileData?.name ||
+                            user?.familyName ||
+                            "Member"
+                          }`}
                     </span>
                   </div>
 
                   {/* Profile Dropdown and Logout for members, simple logout for guests */}
-                  {user?.userType === 'member' ? (
+                  {user?.userType === "member" ? (
                     <>
                       <ProfileDropdown />
                       <button
                         onClick={handleLogout}
                         className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/100 text-white hover:bg-blue-700 transition-colors duration-200 shadow-sm overflow-hidden isolate bg-clip-padding backdrop-blur-0 relative transform-gpu"
                       >
-                        <svg className="w-4 h-4 bg-transparent z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        <svg
+                          className="w-4 h-4 bg-transparent z-10"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                          />
                         </svg>
-                        <span className=" text-sm leading-none bg-transparent z-10">Logout</span>
+                        <span className=" text-sm leading-none bg-transparent z-10">
+                          Logout
+                        </span>
                       </button>
                     </>
-                  ) : user?.userType === 'guest' ? (
+                  ) : user?.userType === "guest" ? (
                     <button
                       onClick={handleLogout}
                       className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/100 text-white hover:bg-blue-700 transition-colors duration-200 shadow-sm overflow-hidden isolate bg-clip-padding backdrop-blur-0 relative transform-gpu"
                     >
-                      <svg className="w-4 h-4 bg-transparent z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      <svg
+                        className="w-4 h-4 bg-transparent z-10"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        />
                       </svg>
-                      <span className="font-medium text-sm leading-none bg-transparent z-10">Logout</span>
+                      <span className="font-medium text-sm leading-none bg-transparent z-10">
+                        Logout
+                      </span>
                     </button>
                   ) : null}
                 </>
@@ -205,7 +251,9 @@ function Header() {
                   to="/login"
                   className="flex items-center px-4 py-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-gray-50 transition-all duration-200"
                 >
-                  <span className="bg-blue-600 px-6 py-2 rounded-md text-white">Login</span>
+                  <span className="bg-blue-600 px-6 py-2 rounded-md text-white">
+                    Login
+                  </span>
                 </Link>
               )}
 
@@ -222,7 +270,11 @@ function Header() {
                     stroke="currentColor"
                     strokeWidth={2}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 ) : (
                   <svg
@@ -232,7 +284,11 @@ function Header() {
                     stroke="currentColor"
                     strokeWidth={2}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
                   </svg>
                 )}
               </button>
@@ -242,19 +298,37 @@ function Header() {
 
         {isMenuOpen && (
           <div className="lg:hidden fixed inset-0 z-50">
-            <div className="absolute inset-0 bg-black/30" onClick={() => setIsMenuOpen(false)}></div>
+            <div
+              className="absolute inset-0 bg-black/30"
+              onClick={() => setIsMenuOpen(false)}
+            ></div>
             <div className="absolute right-0 top-0 h-screen w-11/12 max-w-sm bg-white/70 backdrop-blur-md border-l border-white/30 shadow-xl transform transition-transform duration-300 translate-x-0">
               <div className="px-4 py-4 border-b border-white/40 flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-base">H</div>
+                  <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-base">
+                    H
+                  </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-900">IMENA</p>
                     <p className="text-xs text-blue-700/70">Family Courtesy</p>
                   </div>
                 </div>
-                <button onClick={() => setIsMenuOpen(false)} className="p-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-blue-50 transition-colors">
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  className="p-2 rounded-md text-gray-700 hover:text-blue-700 hover:bg-blue-50 transition-colors"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -274,7 +348,7 @@ function Header() {
                   </Link>
                 ))}
 
-                {isAuthenticated && user?.userType === 'member' && (
+                {isAuthenticated && user?.userType === "member" && (
                   <Link
                     to="/Birthdays"
                     onClick={() => setIsMenuOpen(false)}
@@ -284,59 +358,85 @@ function Header() {
                         : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
                     }`}
                   >
-                    <span className="font-medium text-base">Members' Birthdays</span>
+                    <span className="font-medium text-base">
+                      Members' Birthdays
+                    </span>
                   </Link>
                 )}
 
                 {/* Show user profile in mobile for members */}
-                {isAuthenticated && user?.userType === 'member' && user?.profileData && (
+                {isAuthenticated &&
+                  user?.userType === "member" &&
+                  user?.profileData && (
                     <div className="px-4 py-4 bg-gray-50 rounded-lg mb-2">
-                    <div className="flex items-center space-x-3 mb-3">
-                      {(() => {
-                        const profile = user?.profileData?.data || user?.profileData;
-                        const rawUrl = profile?.profilePicUrl || profile?.profilePic;
-                        const imageUrl = rawUrl && rawUrl.startsWith('http') ? rawUrl : rawUrl;
-                        const hasUrl = !!imageUrl;
-                        return (
-                          <>
-                            <img
-                              src={imageUrl || ''}
-                              alt={profile?.name || user.familyName || "Profile"}
-                              className="w-12 h-12 rounded-full object-cover border-2 border-blue-300"
-                              style={{ display: hasUrl ? 'block' : 'none' }}
-                              onClick={() => {
-                                if (hasUrl) setPreviewSrc(imageUrl);
-                              }}
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none';
-                                if (e.currentTarget.nextSibling) {
-                                  e.currentTarget.nextSibling.style.display = 'flex';
+                      <div className="flex items-center space-x-3 mb-3">
+                        {(() => {
+                          const profile =
+                            user?.profileData?.data || user?.profileData;
+                          const rawUrl =
+                            profile?.profilePicUrl || profile?.profilePic;
+                          const imageUrl =
+                            rawUrl && rawUrl.startsWith("http")
+                              ? rawUrl
+                              : rawUrl;
+                          const hasUrl = !!imageUrl;
+                          return (
+                            <>
+                              <img
+                                src={imageUrl || ""}
+                                alt={
+                                  profile?.name || user.familyName || "Profile"
                                 }
-                              }}
-                            />
-                            <div
-                              className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white items-center justify-center font-bold text-sm select-none"
-                              style={{ display: hasUrl ? 'none' : 'flex' }}
-                            >
-                              {(user?.familyName?.[0] || user?.profileData?.name?.[0] || 'M').toUpperCase()}
-                            </div>
-                          </>
-                        );
-                      })()}
-                      <div>
-                        <p className="font-semibold text-gray-900">{user.profileData.name}</p>
-                        <p className="text-sm text-blue-600">{user.familyName} Family</p>
+                                className="w-12 h-12 rounded-full object-cover border-2 border-blue-300"
+                                style={{ display: hasUrl ? "block" : "none" }}
+                                onClick={() => {
+                                  if (hasUrl) setPreviewSrc(imageUrl);
+                                }}
+                                onError={(e) => {
+                                  e.currentTarget.style.display = "none";
+                                  if (e.currentTarget.nextSibling) {
+                                    e.currentTarget.nextSibling.style.display =
+                                      "flex";
+                                  }
+                                }}
+                              />
+                              <div
+                                className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white items-center justify-center font-bold text-sm select-none"
+                                style={{ display: hasUrl ? "none" : "flex" }}
+                              >
+                                {(
+                                  user?.familyName?.[0] ||
+                                  user?.profileData?.name?.[0] ||
+                                  "M"
+                                ).toUpperCase()}
+                              </div>
+                            </>
+                          );
+                        })()}
+                        <div>
+                          <p className="font-semibold text-gray-900">
+                            {user.profileData.name}
+                          </p>
+                          <p className="text-sm text-blue-600">
+                            {user.familyName} Family
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-xs text-gray-600 space-y-1">
+                        <p>
+                          <span className="font-medium">Email:</span>{" "}
+                          {user.profileData.email}
+                        </p>
+                        <p>
+                          <span className="font-medium">Sub Family:</span>{" "}
+                          {user.profileData.subFam}
+                        </p>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-600 space-y-1">
-                      <p><span className="font-medium">Email:</span> {user.profileData.email}</p>
-                      <p><span className="font-medium">Sub Family:</span> {user.profileData.subFam}</p>
-                    </div>
-                  </div>
-                )}
-                
+                  )}
+
                 {/* Show simple status for guests */}
-                {isAuthenticated && user?.userType === 'guest' && (
+                {isAuthenticated && user?.userType === "guest" && (
                   <div className="px-4 py-2 bg-blue-50 rounded-md mb-2 border border-blue-100">
                     <span className="text-sm font-medium text-gray-600">
                       Logged in as Guest
@@ -371,8 +471,14 @@ function Header() {
 
       {/* Image Preview Modal */}
       {previewSrc && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70" onClick={() => setPreviewSrc(null)}>
-          <div className="relative max-w-4xl w-[90vw] max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70"
+          onClick={() => setPreviewSrc(null)}
+        >
+          <div
+            className="relative max-w-4xl w-[90vw] max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               className="absolute -top-10 right-0 text-white bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 text-sm"
               onClick={() => setPreviewSrc(null)}
