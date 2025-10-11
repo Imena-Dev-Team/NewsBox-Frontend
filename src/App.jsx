@@ -16,6 +16,7 @@ import SignUp from "./pages/Auth/Signup";
 import Login from "./pages/Auth/Login";
 import FamilyReunion from "./pages/Blogs/ReunionBlog";
 import Landing from "./pages/Landing";
+import About from "./pages/About";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import PaginatedShowcase from "./pages/Story"
@@ -77,6 +78,7 @@ function AppRoutes() {
           } 
         />
         <Route path="/home" element={<Home />} />
+        <Route path="/about" element={<About />} />
         <Route path="/all" element={<Duplicates />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route 
