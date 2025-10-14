@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '../../context/AuthContext';
 import { useNotificationToast } from '../../context/NotificationContext';
@@ -119,11 +119,11 @@ const Login = () => {
     }
   };
 
-  const carouselImages = [
+  const carouselImages = useMemo(() => ([
     { url: photo1, text: "Welcome to Our School" },
     { url: photo2, text: "Empowering Students Every Day" },
     { url: photo3, text: "A Place to Grow and Learn" },
-  ];
+  ]), []);
 
   // Auto change slides
   useEffect(() => {
@@ -131,7 +131,15 @@ const Login = () => {
       setCurrent((prev) => (prev + 1) % carouselImages.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [carouselImages.length]);
+
+  // Preload next image to avoid lag on transition
+  useEffect(() => {
+    const nextIndex = (current + 1) % carouselImages.length;
+    const next = new Image();
+    next.decoding = 'async';
+    next.src = carouselImages[nextIndex].url;
+  }, [current, carouselImages]);
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -147,6 +155,10 @@ const Login = () => {
                 src={img.url}
                 alt={img.text}
                 className="w-full h-full object-cover"
+                loading={index === 0 ? "eager" : "lazy"}
+                fetchpriority={index === 0 ? "high" : undefined}
+                decoding="async"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
           )
