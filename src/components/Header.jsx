@@ -104,48 +104,51 @@ function Header() {
             </div>
 
             <nav className="hidden lg:flex items-center space-x-1">
-  {Links.filter(link => link.name !== "Story").map((link) => (
-    <Link
-      key={link.name}
-      to={link.href}
-      className={`nav-link px-4 py-2 rounded-md transition-all duration-200 ${
-        location.pathname === link.href
-          ? "text-blue-700 font-semibold"
-          : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
-      }`}
-    >
-      <span className="font-medium text-sm">{link.name}</span>
-    </Link>
-  ))}
+              {Links.filter(link => link.name !== "Story").map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.href}
+                  className={`nav-link px-4 py-2 rounded-md transition-all duration-200 ${
+                    location.pathname === link.href
+                      ? "text-blue-700 font-semibold"
+                      : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <span className="font-medium text-sm">{link.name}</span>
+                </Link>
+              ))}
+              {/* Members only */}
+               {isAuthenticated && user?.userType === "member" && (
+                <Link
+                  to="/story"
+                  className={`nav-link px-4 py-2 rounded-md transition-all duration-200 ${
+                    location.pathname === "/story"
+                      ? "text-blue-700 font-semibold"
+                      : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
+                  }`}
+                >
 
-  {/* Members only */}
-  {isAuthenticated && user?.userType === "member" && (
-    <>
-      <Link
-        to="/Birthdays"
-        className={`nav-link px-4 py-2 rounded-md transition-all duration-200 ${
-          location.pathname === "/Birthdays"
-            ? "text-blue-700 font-semibold"
-            : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
-        }`}
-      >
-        <span className="font-medium text-sm">Members' Birthdays</span>
-      </Link>
-
-      <Link
-        to="/story"
-        className={`nav-link px-4 py-2 rounded-md transition-all duration-200 ${
-          location.pathname === "/story"
-            ? "text-blue-700 font-semibold"
-            : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
-        }`}
-      >
-        <span className="font-medium text-sm">Story</span>
-      </Link>
-    </>
-  )}
-</nav>
-
+                  <span className="font-medium text-sm">
+                    story
+                  </span>
+                </Link>
+              )}
+              {isAuthenticated && user?.userType === "member" && (
+                <Link
+                  to="/Birthdays"
+                  className={`nav-link px-4 py-2 rounded-md transition-all duration-200 ${
+                    location.pathname === "/Birthdays"
+                      ? "text-blue-700 font-semibold"
+                      : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <span className="font-medium text-sm">
+                    Members' Birthdays
+                  </span>
+                </Link>
+              )}
+              
+            </nav>
 
             <div className="flex items-center space-x-2">
               {isAuthenticated ? (
