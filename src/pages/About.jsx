@@ -11,6 +11,8 @@ import img7 from "../assets/aboutPhotos/image7.jpg";
 
 const About = () => {
   const [members, setMembers] = useState([]);
+  const [years, setYears] = useState([]);
+  const [selectedYear, setSelectedYear] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   // Removed old mock tree and layout helpers
@@ -19,11 +21,12 @@ const About = () => {
     const fetchMembers = async () => {
       try {
         setLoading(true);
-        const query = `*[_type == "about"]|order(_createdAt asc){
+        const query = `*[_type == "about"]|order(year asc){
           _id,
           name,
           familyName,
           role,
+          year,
           image{asset->{url}}
         }`;
         const data = await client.fetch(query);
@@ -39,9 +42,15 @@ const About = () => {
           name: m.name || "Unnamed",
           role: m.role || "",
           familyName: m.familyName || "",
+          year: typeof m.year === "number" ? m.year : null,
           profilePic: m?.image?.asset?.url || pickPhoto(),
         }));
         setMembers(mapped);
+        const uniqueYears = Array.from(
+          new Set(mapped.map((m) => m.year).filter((y) => y))
+        ).sort((a, b) => a - b);
+        setYears(uniqueYears);
+        setSelectedYear(uniqueYears[uniqueYears.length - 1] ?? null);
         setLoading(false);
       } catch (err) {
         setError("Failed to load members");
@@ -140,6 +149,28 @@ const About = () => {
             family. Each level represents a generation, and each circle
             represents a family member.
           </p>
+          {years.length > 0 && (
+            <div className="flex items-center justify-center space-x-4">
+              <label
+                htmlFor="yearFilter"
+                className="text-sm font-medium text-gray-700"
+              >
+                Filter by Year:
+              </label>
+              <select
+                id="yearFilter"
+                value={selectedYear ?? ""}
+                onChange={(e) => setSelectedYear(Number(e.target.value))}
+                className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              >
+                {years.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
         {/* Members from Sanity in 2-1-2-2-2 layout */}
         <div className="rounded-lg p-8 border border-gray-200 shadow-sm">
@@ -147,41 +178,55 @@ const About = () => {
             Our Core Members
           </h2>
           {(() => {
-            const list = members;
-            // Ensure we have deterministic groups; pad with empty if needed
-            const safe = (i) => list[i] || null;
-            const firstRow = [safe(0), safe(1)].filter(Boolean);
-            const middle = [safe(2)].filter(Boolean);
-            const secondRow = [safe(3), safe(4)].filter(Boolean);
-            const thirdRow = [safe(5), safe(6)].filter(Boolean);
-            const fourthRow = [safe(7), safe(8)].filter(Boolean);
+            const list = selectedYear
+              ? members.filter((m) => m.year === selectedYear)
+              : members;
+            const blocks = [];
+            for (let i = 0; i < list.length; i += 9) {
+              const slice = list.slice(i, i + 9);
+              const safe = (idx) => slice[idx] || null;
+              blocks.push({
+                firstRow: [safe(0), safe(1)].filter(Boolean),
+                middle: [safe(2)].filter(Boolean),
+                secondRow: [safe(3), safe(4)].filter(Boolean),
+                thirdRow: [safe(5), safe(6)].filter(Boolean),
+                fourthRow: [safe(7), safe(8)].filter(Boolean),
+              });
+            }
             return (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {firstRow.map((m) => (
-                    <MemberCard key={m.id} member={m} />
-                  ))}
-                </div>
-                {middle.length > 0 && (
-                  <div className="max-w-md mx-auto">
-                    <MemberCard key={middle[0].id} member={middle[0]} />
+              <div className="space-y-10">
+                {blocks.map((block, bi) => (
+                  <div key={bi} className="space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      {block.firstRow.map((m) => (
+                        <MemberCard key={m.id} member={m} />
+                      ))}
+                    </div>
+                    {block.middle.length > 0 && (
+                      <div className="max-w-md mx-auto">
+                        <MemberCard
+                          key={block.middle[0].id}
+                          member={block.middle[0]}
+                        />
+                      </div>
+                    )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      {block.secondRow.map((m) => (
+                        <MemberCard key={m.id} member={m} />
+                      ))}
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      {block.thirdRow.map((m) => (
+                        <MemberCard key={m.id} member={m} />
+                      ))}
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      {block.fourthRow.map((m) => (
+                        <MemberCard key={m.id} member={m} />
+                      ))}
+                    </div>
                   </div>
-                )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {secondRow.map((m) => (
-                    <MemberCard key={m.id} member={m} />
-                  ))}
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {thirdRow.map((m) => (
-                    <MemberCard key={m.id} member={m} />
-                  ))}
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {fourthRow.map((m) => (
-                    <MemberCard key={m.id} member={m} />
-                  ))}
-                </div>
+                ))}
               </div>
             );
           })()}
