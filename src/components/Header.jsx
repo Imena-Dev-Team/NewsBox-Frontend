@@ -128,7 +128,7 @@ function Header() {
                 >
 
                   <span className="font-medium text-sm">
-                    story
+                  Story
                   </span>
                 </Link>
               )}
