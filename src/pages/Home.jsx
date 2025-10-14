@@ -15,11 +15,10 @@ const Home = () => {
   const [featuredPosts, setFeaturedPosts] = useState([]);
 
   const [index, setIndex] = useState(0);
-  const [isTransitioning, setIstransitioning] = useState(false);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [posts, setPosts] = useState([]);
-  const [error, setError] = useState("");
+  // removed unused error state
 
   // Reset loading state when route changes
   useEffect(() => {
@@ -55,11 +54,7 @@ const Home = () => {
     if (featuredPosts.length === 0) return;
 
     const timer = setInterval(() => {
-      setIstransitioning(true);
-      setTimeout(() => {
-        setIndex((prev) => (prev + 1) % featuredPosts.length);
-        setIstransitioning(false);
-      }, 300);
+      setIndex((prev) => (prev + 1) % featuredPosts.length);
     }, 3000);
     return () => clearInterval(timer);
   }, [featuredPosts.length]);
@@ -82,7 +77,6 @@ const Home = () => {
         setPosts(data);
       } catch (e) {
         console.error(e);
-        setError("Failed to load posts");
       }
     };
     fetchPosts();
@@ -232,7 +226,7 @@ const Home = () => {
         </div>
 
         {/* Featured News Section */}
-        <div className="flex flex-col sm:flex-row justify-between items-center mt-16 mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-center mt-16 mb-3">
           {loading ? (
             <>
               <div className="w-40 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg"></div>
@@ -244,7 +238,7 @@ const Home = () => {
                 Featured news
               </h1>
               <button
-                className="px-5 py-2 text-[#1A74ED] rounded border border-[#1A74ED] text-center font-semibold text-sm sm:text-base hover:bg-[#F5F9FF] transition-colors"
+                className="px-5 py-2 rounded-full bg-[#1A74ED] text-white text-center font-semibold text-sm sm:text-base hover:bg-[#125fcc] active:translate-y-[1px] transition"
                 onClick={() => navigate("/all")}
               >
                 See more
@@ -252,6 +246,11 @@ const Home = () => {
             </>
           )}
         </div>
+        {!loading && (
+          <p className="text-gray-600 mb-6">
+            Catch up on highlighted stories and important updates from our community.
+          </p>
+        )}
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 justify-items-center mt-8">
