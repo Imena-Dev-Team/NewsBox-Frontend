@@ -284,14 +284,14 @@ const About = () => {
   // Create a simple card component for members
   const MemberCard = ({ member }) => {
     return (
-      <div className="rounded-xl border border-gray-200 shadow-sm p-5">
+      <div className="rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow bg-white">
         <div className="flex items-stretch gap-4">
           <div className="w-40 h-48 sm:w-48 sm:h-56 md:w-56 md:h-60 shrink-0 overflow-hidden">
             {member.profilePic ? (
               <img
                 src={member.profilePic}
                 alt={member.name}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
               />
             ) : (
               <div className="w-full h-full bg-blue-600 text-white flex items-center justify-center font-bold text-2xl">
@@ -309,13 +309,9 @@ const About = () => {
               </p>
             )}
             {member.role && (
-              <p className="text-sm text-gray-600 truncate">{member.role}</p>
+              <p className="text-sm text-white rounded-lg border p-2 bg-blue-400 truncate">{member.role}</p>
             )}
-            {member.email && (
-              <p className="text-xs text-gray-500 truncate mt-1">
-                {member.email}
-              </p>
-            )}
+           
           </div>
         </div>
       </div>
