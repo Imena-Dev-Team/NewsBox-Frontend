@@ -21,24 +21,32 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import PaginatedShowcase from "./pages/Story";
 
+// ✅ Protects routes for authenticated users
 function PrivateRoute({ children }) {
-  const { isAuthenticated, loading } = useAuth();
-  if (loading) return null;
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
+  const { isAuthenticated, user, loading } = useAuth();
+
+  if (loading) return null; // Wait for auth state
+
+  // If not logged in
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // If logged in but not a member
+  if (user?.userType !== "member") {
+    return <Navigate to="/home" replace />;
+  }
+
+  // ✅ Otherwise, show the page
+  return children;
 }
 
-function RequireAuth({ children }) {
-  const { isAuthenticated, loading } = useAuth();
-  if (loading) return null;
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
-}
-
+// ✅ Checks profile completion for signup
 function RequireProfileCompletion({ children }) {
   const { isAuthenticated, user, loading } = useAuth();
 
   if (loading) return null;
 
-  // Must be authenticated
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
@@ -56,11 +64,18 @@ function RequireProfileCompletion({ children }) {
   return children;
 }
 
+function RequireAuth({ children }) {
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return null;
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+}
+
 function AppRoutes() {
   const location = useLocation();
   const path = (location.pathname || "").toLowerCase();
   const hideHeader = path === "/" || path === "/login" || path === "/signup";
   const hideFooter = path === "/" || path === "/login" || path === "/signup";
+
   return (
     <div className="min-h-screen flex flex-col">
       {!hideHeader && <Header />}
@@ -81,6 +96,8 @@ function AppRoutes() {
           <Route path="/about" element={<About />} />
           <Route path="/all" element={<Duplicates />} />
           <Route path="/gallery" element={<Gallery />} />
+
+          {/* ✅ Protect the story page */}
           <Route
             path="/story"
             element={
@@ -89,17 +106,19 @@ function AppRoutes() {
               </PrivateRoute>
             }
           />
+
           <Route
-            path="/Birthdays"
+            path="/birthdays"
             element={
               <RequireAuth>
                 <Birthdays />
               </RequireAuth>
             }
           />
+
           {/* Blog detail routes */}
-          <Route path="/union" element={<FamilyReunion />} />
           <Route path="/union/:slug" element={<FamilyReunion />} />
+
           {/* Catch-all: redirect unknown routes to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
