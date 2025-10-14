@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-// Removed unused auth context and api service imports
+import { useAuth } from "../context/AuthContext";
+import { authService } from "../services/apiService";
 import { client } from "../sanityClient";
 import img1 from "../assets/aboutPhotos/image1.jpg";
 import img2 from "../assets/aboutPhotos/image2.jpg";
@@ -10,12 +11,233 @@ import img6 from "../assets/aboutPhotos/image6.jpg";
 import img7 from "../assets/aboutPhotos/image7.jpg";
 
 const About = () => {
+  const { user, isAuthenticated } = useAuth();
   const [members, setMembers] = useState([]);
-  const [years, setYears] = useState([]);
-  const [selectedYear, setSelectedYear] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  // Removed old mock tree and layout helpers
+  const [selectedYear, setSelectedYear] = useState("All");
+  const [years, setYears] = useState([]);
+
+  // Mock data removed; content now comes from Sanity
+  const mockFamilyTreeByYear = {
+    2020: {
+      id: "root",
+      name: "IMENA Family 2020",
+      type: "family",
+      // Level 1: 2 circles at top
+      children: [
+        {
+          id: "member1",
+          name: "Jean Mukamana",
+          role: "Elder",
+          email: "jean.mukamana@email.com",
+          birthday: "1970-05-15",
+          profilePic: "/assets/aboutPhotos/image1.jpg",
+          type: "member",
+          year: 2020,
+        },
+        {
+          id: "member2",
+          name: "Marie Mukamana",
+          role: "Elder",
+          email: "marie.mukamana@email.com",
+          birthday: "1975-08-22",
+          profilePic: null,
+          type: "member",
+          year: 2020,
+        },
+      ],
+    },
+    2021: {
+      id: "root",
+      name: "IMENA Family 2021",
+      type: "family",
+      // Level 1: 2 circles at top
+      children: [
+        {
+          id: "member3",
+          name: "Pierre Nkurunziza",
+          role: "Elder",
+          email: "pierre.nkurunziza@email.com",
+          birthday: "1968-03-18",
+          profilePic: null,
+          type: "member",
+          year: 2021,
+        },
+        {
+          id: "member4",
+          name: "Grace Nkurunziza",
+          role: "Elder",
+          email: "grace.nkurunziza@email.com",
+          birthday: "1972-11-05",
+          profilePic: null,
+          type: "member",
+          year: 2021,
+        },
+      ],
+    },
+    2022: {
+      id: "root",
+      name: "IMENA Family 2022",
+      type: "family",
+      // Level 1: 2 circles at top
+      children: [
+        {
+          id: "member5",
+          name: "Joseph Uwimana",
+          role: "Elder",
+          email: "joseph.uwimana@email.com",
+          birthday: "1975-01-25",
+          profilePic: null,
+          type: "member",
+          year: 2022,
+        },
+        {
+          id: "member6",
+          name: "Claire Uwimana",
+          role: "Elder",
+          email: "claire.uwimana@email.com",
+          birthday: "1980-04-12",
+          profilePic: null,
+          type: "member",
+          year: 2022,
+        },
+      ],
+    },
+    2023: {
+      id: "root",
+      name: "IMENA Family 2023",
+      type: "family",
+      // Level 1: 2 circles at top
+      children: [
+        {
+          id: "member7",
+          name: "David Mukamana",
+          role: "Adult",
+          email: "david.mukamana@email.com",
+          birthday: "1995-12-10",
+          profilePic: null,
+          type: "member",
+          year: 2023,
+        },
+        {
+          id: "member8",
+          name: "Sarah Nkurunziza",
+          role: "Adult",
+          email: "sarah.nkurunziza@email.com",
+          birthday: "1998-07-14",
+          profilePic: null,
+          type: "member",
+          year: 2023,
+        },
+      ],
+    },
+    2024: {
+      id: "root",
+      name: "IMENA Family 2024",
+      type: "family",
+      // Level 1: 2 circles at top
+      children: [
+        {
+          id: "member9",
+          name: "Paul Nkurunziza",
+          role: "Young Adult",
+          email: "paul.nkurunziza@email.com",
+          birthday: "2001-09-30",
+          profilePic: null,
+          type: "member",
+          year: 2024,
+        },
+        {
+          id: "member10",
+          name: "Esther Uwimana",
+          role: "Young Adult",
+          email: "esther.uwimana@email.com",
+          birthday: "2003-06-08",
+          profilePic: null,
+          type: "member",
+          year: 2024,
+        },
+      ],
+    },
+  };
+
+  // Generate binary tree structure for each year
+  const generateBinaryTree = (yearData) => {
+    const root = { ...yearData };
+
+    // Level 1: 2 circles at top (already have these)
+    const level1Nodes = root.children;
+
+    // Level 2: 2 more circles coming from each of the top 2
+    const level2Nodes = [];
+    level1Nodes.forEach((node, index) => {
+      const leftChild = {
+        id: `${node.id}_left`,
+        name: `${node.name} Jr.`,
+        role: "Child",
+        email: `${node.name.toLowerCase().replace(" ", ".")}.jr@email.com`,
+        birthday: "2005-01-01",
+        profilePic: null,
+        type: "member",
+        year: node.year,
+      };
+      const rightChild = {
+        id: `${node.id}_right`,
+        name: `${node.name} II`,
+        role: "Child",
+        email: `${node.name.toLowerCase().replace(" ", ".")}.ii@email.com`,
+        birthday: "2007-01-01",
+        profilePic: null,
+        type: "member",
+        year: node.year,
+      };
+      level2Nodes.push(leftChild, rightChild);
+    });
+
+    // Level 3: 2 more circles from each of the level 2 nodes
+    const level3Nodes = [];
+    level2Nodes.forEach((node, index) => {
+      const leftChild = {
+        id: `${node.id}_left`,
+        name: `${node.name} III`,
+        role: "Grandchild",
+        email: `${node.name.toLowerCase().replace(" ", ".")}.iii@email.com`,
+        birthday: "2010-01-01",
+        profilePic: null,
+        type: "member",
+        year: node.year,
+      };
+      const rightChild = {
+        id: `${node.id}_right`,
+        name: `${node.name} IV`,
+        role: "Grandchild",
+        email: `${node.name.toLowerCase().replace(" ", ".")}.iv@email.com`,
+        birthday: "2012-01-01",
+        profilePic: null,
+        type: "member",
+        year: node.year,
+      };
+      level3Nodes.push(leftChild, rightChild);
+    });
+
+    // Build the tree structure
+    root.children = level1Nodes.map((node, index) => ({
+      ...node,
+      children: [
+        {
+          ...level2Nodes[index],
+          children: [level3Nodes[index * 4], level3Nodes[index * 4 + 1]],
+        },
+        {
+          ...level2Nodes[index * 2 + 1],
+          children: [level3Nodes[index * 4 + 2], level3Nodes[index * 4 + 3]],
+        },
+      ],
+    }));
+
+    return root;
+  };
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -47,10 +269,9 @@ const About = () => {
         }));
         setMembers(mapped);
         const uniqueYears = Array.from(
-          new Set(mapped.map((m) => m.year).filter((y) => y))
+          new Set(mapped.map((m) => m.year).filter(Boolean))
         ).sort((a, b) => a - b);
         setYears(uniqueYears);
-        setSelectedYear(uniqueYears[uniqueYears.length - 1] ?? null);
         setLoading(false);
       } catch (err) {
         setError("Failed to load members");
@@ -63,20 +284,22 @@ const About = () => {
   // Create a simple card component for members
   const MemberCard = ({ member }) => {
     return (
-      <div className="rounded-xl border border-gray-200 shadow-sm p-5 transition-transform duration-200 hover:shadow-md hover:-translate-y-0.5">
-        <div className="flex items-start gap-4">
-          {member.profilePic ? (
-            <img
-              src={member.profilePic}
-              alt={member.name}
-              className="h-20 w-20 rounded-full object-cover ring-2 ring-blue-100"
-            />
-          ) : (
-            <div className="h-20 w-20 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xl">
-              {member.name?.charAt(0)?.toUpperCase() || "M"}
-            </div>
-          )}
-          <div className="min-w-0">
+      <div className="rounded-xl border border-gray-200 shadow-sm p-5">
+        <div className="flex items-stretch gap-4">
+          <div className="w-40 h-48 sm:w-48 sm:h-56 md:w-56 md:h-60 shrink-0 overflow-hidden">
+            {member.profilePic ? (
+              <img
+                src={member.profilePic}
+                alt={member.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-blue-600 text-white flex items-center justify-center font-bold text-2xl">
+                {member.name?.charAt(0)?.toUpperCase() || "M"}
+              </div>
+            )}
+          </div>
+          <div className="min-w-0 flex-1 text-center mt-[70px] text-xl">
             <p className="font-semibold text-gray-900 truncate">
               {member.name}
             </p>
@@ -96,6 +319,15 @@ const About = () => {
           </div>
         </div>
       </div>
+    );
+  };
+
+  const PlaceholderCard = () => {
+    return (
+      <div
+        className="rounded-xl border border-transparent p-5"
+        aria-hidden="true"
+      ></div>
     );
   };
 
@@ -149,84 +381,78 @@ const About = () => {
             family. Each level represents a generation, and each circle
             represents a family member.
           </p>
-          {years.length > 0 && (
-            <div className="flex items-center justify-center space-x-4">
-              <label
-                htmlFor="yearFilter"
-                className="text-sm font-medium text-gray-700"
-              >
-                Filter by Year:
-              </label>
-              <select
-                id="yearFilter"
-                value={selectedYear ?? ""}
-                onChange={(e) => setSelectedYear(Number(e.target.value))}
-                className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              >
-                {years.map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
         </div>
         {/* Members from Sanity in 2-1-2-2-2 layout */}
         <div className="rounded-lg p-8 border border-gray-200 shadow-sm">
-          <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">
-            Our Core Members
-          </h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-gray-800 text-center flex-1">
+              Browse Committe Members
+            </h2>
+            {years.length > 0 && (
+              <div className="ml-4">
+                <label htmlFor="yearFilter" className="sr-only">
+                  Filter by Year
+                </label>
+                <select
+                  id="yearFilter"
+                  value={String(selectedYear)}
+                  onChange={(e) => setSelectedYear(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="All">All years</option>
+                  {years.map((y) => (
+                    <option key={y} value={String(y)}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
           {(() => {
-            const list = selectedYear
-              ? members.filter((m) => m.year === selectedYear)
-              : members;
-            const blocks = [];
-            for (let i = 0; i < list.length; i += 9) {
-              const slice = list.slice(i, i + 9);
-              const safe = (idx) => slice[idx] || null;
-              blocks.push({
-                firstRow: [safe(0), safe(1)].filter(Boolean),
-                middle: [safe(2)].filter(Boolean),
-                secondRow: [safe(3), safe(4)].filter(Boolean),
-                thirdRow: [safe(5), safe(6)].filter(Boolean),
-                fourthRow: [safe(7), safe(8)].filter(Boolean),
-              });
-            }
+            const list =
+              selectedYear === "All"
+                ? members
+                : members.filter(
+                    (m) => String(m.year) === String(selectedYear)
+                  );
+            // Ensure we have deterministic groups; pad with empty if needed
+            const safe = (i) => list[i] || null;
+            const firstRow = [safe(0), safe(1)].filter(Boolean);
+            const middle = [safe(2)].filter(Boolean);
+            const secondRow = [safe(3), safe(4)].filter(Boolean);
+            const thirdRow = [safe(5), safe(6)].filter(Boolean);
+            const fourthRow = [safe(7), safe(8)].filter(Boolean);
             return (
-              <div className="space-y-10">
-                {blocks.map((block, bi) => (
-                  <div key={bi} className="space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      {block.firstRow.map((m) => (
-                        <MemberCard key={m.id} member={m} />
-                      ))}
-                    </div>
-                    {block.middle.length > 0 && (
-                      <div className="max-w-md mx-auto">
-                        <MemberCard
-                          key={block.middle[0].id}
-                          member={block.middle[0]}
-                        />
-                      </div>
-                    )}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      {block.secondRow.map((m) => (
-                        <MemberCard key={m.id} member={m} />
-                      ))}
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      {block.thirdRow.map((m) => (
-                        <MemberCard key={m.id} member={m} />
-                      ))}
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      {block.fourthRow.map((m) => (
-                        <MemberCard key={m.id} member={m} />
-                      ))}
-                    </div>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {firstRow.map((m) => (
+                    <MemberCard key={m.id} member={m} />
+                  ))}
+                </div>
+                {middle.length > 0 && (
+                  <div className="max-w-md mx-auto">
+                    <MemberCard key={middle[0].id} member={middle[0]} />
                   </div>
-                ))}
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {secondRow.map((m) => (
+                    <MemberCard key={m.id} member={m} />
+                  ))}
+                  {secondRow.length === 1 && <PlaceholderCard />}
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {thirdRow.map((m) => (
+                    <MemberCard key={m.id} member={m} />
+                  ))}
+                  {thirdRow.length === 1 && <PlaceholderCard />}
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {fourthRow.map((m) => (
+                    <MemberCard key={m.id} member={m} />
+                  ))}
+                  {fourthRow.length === 1 && <PlaceholderCard />}
+                </div>
               </div>
             );
           })()}
