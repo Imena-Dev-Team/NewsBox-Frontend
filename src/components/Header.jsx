@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { authService } from "../services/apiService";
 import ProfileDropdown from "./ProfileDropdown";
+import logo from "../assets/logo.png"
 
 function Header() {
   const location = useLocation();
@@ -84,9 +85,11 @@ function Header() {
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                  I
-                </div>
+                <img
+                src={logo}
+                alt="Logo"
+                style={{ height : '70px', width:'72px'}}
+                />
                 <div className="hidden sm:block">
                   <h1 className="text-xl font-bold font-heading bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
                     IMENA FAMILY COURTESY
