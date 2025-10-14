@@ -16,7 +16,7 @@ import familyImage4 from "../assets/landingPhotos/family3.JPG";
 import familyImage5 from "../assets/landingPhotos/family5.JPG";
 import familyImage6 from "../assets/landingPhotos/family6.JPG";
 import familyImage7 from "../assets/landingPhotos/family7.JPG";
-import familyImage8 from "../assets/landingPhotos/family2.JPG";
+import familyImage8 from "../assets/landingPhotos/family2.jpg";
 
 function HeroSlider() {
   return (

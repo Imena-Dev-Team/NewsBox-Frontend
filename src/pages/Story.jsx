@@ -1,107 +1,76 @@
-import React, { useEffect, useMemo, useState } from "react"
-import { client } from "../sanityClient"
-import Ange from "../assets/storyPhotos/Ange2.jpg";
-import Nziza from "../assets/storyPhotos/Nziza.jpg";
-
-// Static testimonials data - keeping unchanged
-const staticTestimonials = [
-      { name: "Mutako", quote: "I had an amazing experience working with this team. They were professional, attentive, and always ready to listen to my needs. The project was delivered on time, with high quality, and far exceeded my expectations. I truly appreciate their dedication and would highly recommend them to anyone looking for reliable and outstanding service.", avatar: Ange},
-      { name: "Muheto", quote: "I had an amazing experience working with this team. They were professional, attentive, and always ready to listen to my needs. The project was delivered on time, with high quality, and far exceeded my expectations. I truly appreciate their dedication and would highly recommend them to anyone looking for reliable and outstanding service.", avatar: Ange},
-      { name: "Mfura", quote: "I had an amazing experience working with this team. They were professional, attentive, and always ready to listen to my needs. The project was delivered on time, with high quality, and far exceeded my expectations. I truly appreciate their dedication and would highly recommend them to anyone looking for reliable and outstanding service.", avatar:Nziza},
-      { name: "Tunga", quote: "I had an amazing experience working with this team. They were professional, attentive, and always ready to listen to my needs. The project was delivered on time, with high quality, and far exceeded my expectations. I truly appreciate their dedication and would highly recommend them to anyone looking for reliable and outstanding service.", avatar: Nziza}
-    ]
-
-// Simple block content renderer for Sanity's portable text
-const renderBlockContent = (blocks) => {
-  if (!blocks || !Array.isArray(blocks)) return "No content available."
-  
-  return blocks.map((block, index) => {
-    if (block._type === 'block') {
-      return (
-        <p key={index} className="mb-3">
-          {block.children?.map((child, childIndex) => {
-            if (child.marks && child.marks.length > 0) {
-              let element = child.text
-              child.marks.forEach(mark => {
-                if (mark === 'strong') {
-                  element = <strong key={childIndex}>{element}</strong>
-                } else if (mark === 'em') {
-                  element = <em key={childIndex}>{element}</em>
-                }
-              })
-              return element
-            }
-            return child.text
-          })}
-        </p>
-      )
-    }
-    return null
-  })
-}
+import React, { useEffect, useMemo, useState } from "react";
+import { client } from "../sanityClient";
 
 export default function PaginatedShowcase() {
-  const [pageIndex, setPageIndex] = useState(0)
-  const [stories, setStories] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [pageIndex, setPageIndex] = useState(0);
+  const [stories, setStories] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let isMounted = true
-    
-    const fetchStories = async () => {
+    let isMounted = true;
+
+    async function fetchData() {
       try {
-        const data = await client.fetch(
-          `*[_type == "story"]|order(_createdAt asc){
-            _id,
-            title,
-            body,
-            "imageUrl": coalesce(image.asset->url, mainImage.asset->url)
-          }`
-        )
-        if (isMounted && Array.isArray(data)) {
-          setStories(data)
-        }
-      } catch (error) {
-        console.error('Error fetching stories:', error)
+        const storiesQuery = `*[_type == "story"]|order(_createdAt asc){
+          _id,
+          title,
+          "description": coalesce(pt::text(body), ""),
+          image{asset->{url}}
+        }`;
+
+        const testimonialsQuery = `*[_type == "testimonials"]|order(_createdAt desc){
+          _id,
+          "name": title,
+          "quote": coalesce(pt::text(body), ""),
+          image{asset->{url}}
+        }`;
+
+        const [storiesData, testimonialsData] = await Promise.all([
+          client.fetch(storiesQuery),
+          client.fetch(testimonialsQuery),
+        ]);
+
+        if (!isMounted) return;
+
+        setStories(
+          (storiesData || []).map((s) => ({
+            id: s._id,
+            title: s.title,
+            description: s.description,
+            image: s?.image?.asset?.url || "",
+          }))
+        );
+
+        setTestimonials(
+          (testimonialsData || []).map((t) => ({
+            id: t._id,
+            name: t.name,
+            quote: t.quote,
+            avatar: t?.image?.asset?.url || "",
+          }))
+        );
+      } catch (err) {
+        console.error("Failed to load stories/testimonials", err);
       } finally {
-        if (isMounted) {
-          setLoading(false)
-        }
+        if (isMounted) setLoading(false);
       }
     }
 
-    fetchStories()
-    
+    fetchData();
     return () => {
-      isMounted = false
-    }
-  }, [])
+      isMounted = false;
+    };
+  }, []);
 
-  const current = useMemo(() => {
-    if (loading || !stories[pageIndex]) {
-      return {
-        title: "Loading...",
-        body: "Please wait while we load the story content.",
-        image: "",
-        testimonials: staticTestimonials
-      }
-    }
-    
-    const story = stories[pageIndex]
-    return {
-      title: story.title || "Untitled",
-      body: story.body || [],
-      image: story.imageUrl || "",
-      testimonials: staticTestimonials
-    }
-  }, [pageIndex, stories, loading])
+  const current = useMemo(() => stories[pageIndex], [stories, pageIndex]);
+  const isFirst = pageIndex === 0;
+  const isLast = stories.length ? pageIndex === stories.length - 1 : true;
 
-  const isFirst = pageIndex === 0
-  const isLast = pageIndex === (stories.length - 1)
-
-  const goPrev = () => !isFirst && setPageIndex((i) => Math.max(0, i - 1))
-  const goNext = () => !isLast && setPageIndex((i) => Math.min(stories.length - 1, i + 1))
-  const goTo = (i) => setPageIndex(i)
+  const goPrev = () => !isFirst && setPageIndex((i) => Math.max(0, i - 1));
+  const goNext = () =>
+    !isLast && setPageIndex((i) => Math.min((stories.length || 1) - 1, i + 1));
+  const goTo = (i) => setPageIndex(i);
 
   return (
     <main className="w-full min-h-screen bg-white text-gray-900">
@@ -113,23 +82,23 @@ export default function PaginatedShowcase() {
           <div className="inline-flex items-center gap-2">
             <span className="text-xs text-gray-500">Page</span>
             <span className="text-sm font-medium text-blue-700">
-              {pageIndex + 1} / {stories.length || 1}
+              {stories.length ? pageIndex + 1 : 0} / {stories.length}
             </span>
           </div>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
           <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-            {current.image ? (
-            <img
-                key={current.title}
-              src={current.image}
-              alt={current.title}
-              className="h-[900px] sm:h-[500px] w-full object-cover transition-all duration-500 ease-out opacity-0 [animation:fade-in_.6s_ease-out_forwards]"
-            />
+            {current ? (
+              <img
+                key={current.id}
+                src={current.image}
+                alt={current.title}
+                className="h-[900px] sm:h-[500px] w-full object-cover transition-all duration-500 ease-out opacity-0 [animation:fade-in_.6s_ease-out_forwards]"
+              />
             ) : (
-              <div className="h-[900px] sm:h-[500px] w-full bg-gray-100 flex items-center justify-center">
-                <span className="text-gray-500">No image available</span>
+              <div className="h-[900px] sm:h-[500px] w-full flex items-center justify-center text-gray-400">
+                {loading ? "Loading..." : "No stories found"}
               </div>
             )}
           </div>
@@ -137,24 +106,27 @@ export default function PaginatedShowcase() {
           <div className="flex flex-col justify-between rounded-xl border border-gray-200 bg-white p-5 sm:p-6 shadow-sm">
             <div>
               <h2
-                key={`title-${current.title}`}
+                key={`title-${current?.id || "empty"}`}
                 className="text-xl sm:text-2xl font-semibold text-gray-900 transition-all duration-500 ease-out opacity-0 [animation:slide-up_.5s_ease-out_forwards]"
               >
-                {current.title}
+                {current?.title || (loading ? "Loading..." : "No title")}
               </h2>
-              <div
-                key={`desc-${current.title}`}
+              <p
+                key={`desc-${current?.id || "empty"}`}
                 className="mt-3 text-sm sm:text-base text-gray-600 leading-relaxed transition-all duration-500 ease-out opacity-0 [animation:slide-up_.6s_.1s_ease-out_forwards]"
               >
-                {typeof current.body === 'string' ? current.body : renderBlockContent(current.body)}
-              </div>
+                {current?.description ||
+                  (loading
+                    ? "Fetching content..."
+                    : "No description available.")}
+              </p>
             </div>
 
             <nav className="mt-6 flex items-center justify-between">
               <button
                 type="button"
                 onClick={goPrev}
-                disabled={isFirst}
+                disabled={isFirst || !stories.length}
                 aria-label="Previous page"
                 className="inline-flex items-center gap-2 rounded-lg border border-[#1A74ED] bg-[#1A74ED] px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#1A74ED]/30 disabled:cursor-not-allowed disabled:border-blue-200 disabled:bg-blue-200"
               >
@@ -170,10 +142,11 @@ export default function PaginatedShowcase() {
                 Previous
               </button>
 
+              {/* ✅ Fixed map section */}
               <div className="flex items-center gap-2" aria-label="Pagination">
-                {stories.map((story, i) => (
+                {stories.map((p, i) => (
                   <button
-                    key={story._id || i}
+                    key={p.id || i}
                     onClick={() => goTo(i)}
                     aria-label={`Go to page ${i + 1}`}
                     className={
@@ -191,7 +164,7 @@ export default function PaginatedShowcase() {
               <button
                 type="button"
                 onClick={goNext}
-                disabled={isLast}
+                disabled={isLast || !stories.length}
                 aria-label="Next page"
                 className="inline-flex items-center gap-2 rounded-lg border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 disabled:cursor-not-allowed disabled:border-blue-200 disabled:bg-blue-200"
               >
@@ -210,15 +183,38 @@ export default function PaginatedShowcase() {
           </div>
         </div>
 
+        {/* Testimonials */}
         <div className="mt-10">
-          <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Testimonials</h3>
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
+            Testimonials
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {current.testimonials.map((t, idx) => (
-              <div key={idx} className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-                <img src={t.avatar} alt={`${t.name} avatar`} className="h-12 w-12 aspect-square shrink-0 rounded-full object-cover ring-2 ring-blue-100" />
+            {testimonials.length === 0 && (
+              <div className="col-span-full text-sm text-gray-500">
+                {loading ? "Loading testimonials..." : "No testimonials found."}
+              </div>
+            )}
+            {testimonials.map((t) => (
+              <div
+                key={t.id}
+                className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+              >
+                {t.avatar ? (
+                  <img
+                    src={t.avatar}
+                    alt={`${t.name} avatar`}
+                    className="h-12 w-12 aspect-square shrink-0 rounded-full object-cover ring-2 ring-blue-100"
+                  />
+                ) : (
+                  <div className="h-12 w-12 rounded-full bg-gray-200 ring-2 ring-blue-100" />
+                )}
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">{t.name}</p>
-                  <p className="mt-1 text-sm text-gray-600 leading-relaxed">{`"${t.quote}"`}</p>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {t.name}
+                  </p>
+                  <p className="mt-1 text-sm text-gray-600 leading-relaxed">
+                    {t.quote ? `"${t.quote}"` : ""}
+                  </p>
                 </div>
               </div>
             ))}
@@ -231,7 +227,5 @@ export default function PaginatedShowcase() {
         @keyframes slide-up { from { transform: translateY(8px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
       `}</style>
     </main>
-  )
+  );
 }
-
-
