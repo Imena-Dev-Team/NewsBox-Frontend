@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from 'react-helmet-async';
 import { useLocation, useNavigate } from "react-router-dom";
 import Card from "../components/Card";
 import Birthday from "../components/birthday_Card";
@@ -97,6 +98,10 @@ const Home = () => {
   }, [loading]); 
   return (
     <>
+      <Helmet>
+        <title>Imena News – Featured stories and updates</title>
+        <meta name="description" content="Featured news, recent posts, and community updates from Imena." />
+      </Helmet>
       {loading && (
         <div style={{ height: "6px", backgroundColor: "#e0e0e0", margin: "0" }}>
           <div

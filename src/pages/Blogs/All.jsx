@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { Helmet } from 'react-helmet-async';
 import { Link, useNavigate } from "react-router-dom";
 import { client } from "../../sanityClient";
 import imageUrlBuilder from "@sanity/image-url";
@@ -101,6 +102,10 @@ function Duplicates() {
 
   return (
     <div className="pb-24">
+      <Helmet>
+        <title>All Blogs – Imena News</title>
+        <meta name="description" content="Explore all blog posts: stories, events, and community news." />
+      </Helmet>
       {pending ? (
         <div className="flex flex-col items-center justify-center min-h-[80vh]">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
