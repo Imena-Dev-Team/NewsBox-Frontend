@@ -16,9 +16,10 @@ import SignUp from "./pages/Auth/Signup";
 import Login from "./pages/Auth/Login";
 import FamilyReunion from "./pages/Blogs/ReunionBlog";
 import Landing from "./pages/Landing";
+import About from "./pages/About";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { NotificationProvider } from "./context/NotificationContext";
-import PaginatedShowcase from "./pages/Story"
+import PaginatedShowcase from "./pages/Story";
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -34,30 +35,30 @@ function RequireAuth({ children }) {
 
 function RequireProfileCompletion({ children }) {
   const { isAuthenticated, user, loading } = useAuth();
-  
+
   if (loading) return null;
-  
+
   // Must be authenticated
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  
+
   // Must be a member (guests can't create profiles)
-  if (user?.userType !== 'member') {
+  if (user?.userType !== "member") {
     return <Navigate to="/home" replace />;
   }
-  
+
   // If already has profile, redirect to home
   if (user?.hasProfile || user?.profileData) {
     return <Navigate to="/home" replace />;
   }
-  
+
   return children;
 }
 
 function AppRoutes() {
   const location = useLocation();
-  const path = (location.pathname || '').toLowerCase();
+  const path = (location.pathname || "").toLowerCase();
   const hideHeader = path === "/" || path === "/login" || path === "/signup";
   const hideFooter = path === "/" || path === "/login" || path === "/signup";
   return (
@@ -65,41 +66,42 @@ function AppRoutes() {
       {!hideHeader && <Header />}
       <main className="flex-1">
         <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Landing />} />
-        <Route path="/union" element={<FamilyReunion />} />
-        <Route 
-          path="/signup" 
-          element={
-            <RequireProfileCompletion>
-              <SignUp />
-            </RequireProfileCompletion>
-          } 
-        />
-        <Route path="/home" element={<Home />} />
-        <Route path="/all" element={<Duplicates />} />
-        <Route path="/gallery" element={<Gallery />} />
-        <Route 
-          path="/story" 
-          element={
-            <PrivateRoute>
-              <PaginatedShowcase/>
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/Birthdays"
-          element={
-            <RequireAuth>
-              <Birthdays />
-            </RequireAuth>
-          }
-        />
-        {/* Blog detail routes */}
-        <Route path="/union" element={<FamilyReunion />} />
-        <Route path="/union/:slug" element={<FamilyReunion />} />
-        {/* Catch-all: redirect unknown routes to home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/union" element={<FamilyReunion />} />
+          <Route
+            path="/signup"
+            element={
+              <RequireProfileCompletion>
+                <SignUp />
+              </RequireProfileCompletion>
+            }
+          />
+          <Route path="/home" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/all" element={<Duplicates />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route
+            path="/story"
+            element={
+              <PrivateRoute>
+                <PaginatedShowcase />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/Birthdays"
+            element={
+              <RequireAuth>
+                <Birthdays />
+              </RequireAuth>
+            }
+          />
+          {/* Blog detail routes */}
+          <Route path="/union" element={<FamilyReunion />} />
+          <Route path="/union/:slug" element={<FamilyReunion />} />
+          {/* Catch-all: redirect unknown routes to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
       {!hideFooter && <NewsletterFooter />}
