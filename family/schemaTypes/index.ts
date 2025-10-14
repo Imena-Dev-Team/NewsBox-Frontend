@@ -7,4 +7,5 @@ import story from './story';
 import testimonials from './testimonials';
 
 
-export const schemaTypes = [post, author, blockContent, images, birthday, story, testimonials];
+export const schemaTypes = [post, author, blockContent, images, birthday, story, testimonials
+];
