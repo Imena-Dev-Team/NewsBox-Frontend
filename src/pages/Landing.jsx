@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/css';
 import 'swiper/css/autoplay';
@@ -8,17 +8,53 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authService } from '../services/apiService';
 
-import familyImage from "../assets/landingPhotos/fam .jpg";
-import familyImage1 from "../assets/landingPhotos/fam2.jpg";
-import familyImage2 from "../assets/landingPhotos/family1.jpg";
-import familyImage3 from "../assets/landingPhotos/family2.jpg";
-import familyImage4 from "../assets/landingPhotos/family3.JPG";
-import familyImage5 from "../assets/landingPhotos/family5.JPG";
-import familyImage6 from "../assets/landingPhotos/family6.JPG";
-import familyImage7 from "../assets/landingPhotos/family7.JPG";
-import familyImage8 from "../assets/landingPhotos/family2.jpg";
+import familyImage from "../assets/landingPhotos/fam .webp";
+import familyImage1 from "../assets/landingPhotos/fam2.webp";
+import familyImage2 from "../assets/landingPhotos/family1.webp";
+import familyImage3 from "../assets/landingPhotos/family2.webp";
+import familyImage4 from "../assets/landingPhotos/family3.webp";
+import familyImage0 from "../assets/landingPhotos/family4.webp";
+import familyImage5 from "../assets/landingPhotos/family5.webp";
+import familyImage6 from "../assets/landingPhotos/family6.webp";
+import familyImage7 from "../assets/landingPhotos/family7.webp"; 
+import familyImage8 from "../assets/landingPhotos/family2.webp";
 
 function HeroSlider() {
+  const images = useMemo(() => [
+    familyImage,
+    familyImage1,
+    familyImage2,
+    familyImage3,
+    familyImage4,
+    familyImage0,
+    familyImage5,
+    familyImage6,
+    familyImage7,
+    familyImage8,
+    familyImage1,
+    familyImage,
+    familyImage2
+  ], []);
+
+  useEffect(() => {
+    const preload = () => {
+      for (let i = 1; i < images.length; i++) {
+        const img = new Image();
+        img.decoding = 'async';
+        img.loading = 'eager';
+        img.src = images[i];
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      if ('requestIdleCallback' in window) {
+        // @ts-ignore
+        window.requestIdleCallback(preload, { timeout: 2000 });
+      } else {
+        setTimeout(preload, 300);
+      }
+    }
+  }, [images]);
   return (
     <div className="w-full h-full">
       <Swiper
@@ -27,12 +63,32 @@ function HeroSlider() {
         slidesPerView={1}
         autoplay={{ delay: 2000, disableOnInteraction: false }}
         loop={true}
+        preloadImages={false}
+        lazyPreloadPrevNext={2}
         className="w-full h-full"
       >
-        {[familyImage, familyImage1, familyImage2, familyImage3, familyImage4, familyImage5,
-          familyImage6, familyImage7, familyImage8, familyImage1,familyImage, familyImage2].map((img, i) => (
+        {images.map((img, i) => (
           <SwiperSlide key={i}>
-            <img src={img} alt={`slide-${i}`} className="w-full h-full object-cover" />
+            {i === 0 ? (
+              <img
+                src={img}
+                alt={`slide-${i}`}
+                className="w-full h-full object-cover"
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            ) : (
+              <img
+                src={img}
+                alt={`slide-${i}`}
+                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            )}
           </SwiperSlide>
         ))}
       </Swiper>
