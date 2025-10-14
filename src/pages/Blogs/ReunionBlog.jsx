@@ -103,8 +103,8 @@ export default function FamilyReunion() {
   if (loading) {
     return (
       <>
-        <div className="w-screen min-h-screen bg-[#f5f6fa] flex justify-center items-start overflow-y-auto py-6 px-4">
-          <div className="bg-white w-full max-w-5xl rounded-2xl shadow-md p-6 space-y-6">
+        <div className="w-full min-h-screen bg-white py-6 px-4">
+          <div className="w-full p-0 space-y-6">
             {/* Loading skeleton */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
@@ -135,8 +135,8 @@ export default function FamilyReunion() {
   if (error) {
     return (
       <>
-        <div className="w-screen min-h-screen bg-[#f5f6fa] flex justify-center items-start overflow-y-auto py-6 px-4">
-          <div className="bg-white w-full max-w-5xl rounded-2xl shadow-md p-6">
+        <div className="w-full min-h-screen bg-white py-6 px-4">
+          <div className="w-full p-0">
             <div className="flex flex-col items-center justify-center py-12">
               <div className="text-red-500 text-6xl mb-4">⚠️</div>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">
@@ -145,7 +145,7 @@ export default function FamilyReunion() {
               <p className="text-gray-600 mb-6">{error}</p>
               <Link
                 to="/all"
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-[#1A74ED] text-white px-6 py-3 rounded-full hover:bg-[#125fcc] transition"
               >
                 Back to All Posts
               </Link>
@@ -159,8 +159,8 @@ export default function FamilyReunion() {
   if (!post) {
     return (
       <>
-        <div className="w-screen min-h-screen bg-[#f5f6fa] flex justify-center items-start overflow-y-auto py-6 px-4">
-          <div className="bg-white w-full max-w-5xl rounded-2xl shadow-md p-6">
+        <div className="w-full min-h-screen bg-white py-6 px-4">
+          <div className="w-full p-0">
             <div className="flex flex-col items-center justify-center py-12">
               <div className="text-gray-400 text-6xl mb-4">📝</div>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">
@@ -171,7 +171,7 @@ export default function FamilyReunion() {
               </p>
               <Link
                 to="/all"
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-[#1A74ED] text-white px-6 py-3 rounded-full hover:bg-[#125fcc] transition"
               >
                 Back to All Posts
               </Link>
@@ -184,22 +184,22 @@ export default function FamilyReunion() {
 
   return (
     <>
-      <div className="w-screen min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex justify-center items-start overflow-y-auto py-8 px-4">
-        <div className="bg-white w-full max-w-5xl rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+      <div className="w-full min-h-screen bg-white">
+        <div className="w-full overflow-hidden">
           {/* Header with back button and category */}
-          <div className="px-8 py-6">
+          <div className="px-4 md:px-10 lg:px-16 py-6">
             <div className="flex items-center gap-3">
               <Link to="/all">
-                <div className="h-10 w-10 bg-blue-900 backdrop-blur-sm text-white rounded-full flex items-center justify-center text-lg font-bold shadow-lg hover:bg-white/30 transition-all duration-300 cursor-pointer border border-white/30">
+                <div className="h-10 w-10 bg-[#1A74ED] text-white rounded-full flex items-center justify-center text-lg font-bold hover:bg-[#125fcc] transition cursor-pointer">
                   &lt;
                 </div>
               </Link>
               <div className="flex flex-col">
-                <span className="text-blue-900 text-sm font-medium uppercase tracking-wider">
+                <span className="text-[#1A74ED] text-sm font-semibold uppercase tracking-wider">
                   {post.categories || "POST"}
                 </span>
                 {post.publishedAt && (
-                  <span className="text-blue-900 text-xs">
+                  <span className="text-gray-500 text-xs">
                     {new Date(post.publishedAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
@@ -212,33 +212,42 @@ export default function FamilyReunion() {
           </div>
 
           {/* Content */}
-          <div className="px-8 py-8 space-y-8">
+          <div className="px-4 md:px-10 lg:px-16 py-8 space-y-8">
             {/* Featured Image */}
             {post.image && (
-              <div className="relative overflow-hidden rounded-2xl shadow-lg">
+              <div className="relative overflow-hidden">
                 <img
                   src={urlFor(post.image)
-                    .width(1200)
-                    .height(600)
+                    .width(1600)
+                    .height(900)
                     .fit("crop")
+                    .auto("format")
+                    .quality(75)
                     .url()}
                   alt={post.title}
-                  className="w-full h-[400px] md:h-[500px] object-cover transition-transform duration-700 hover:scale-105"
+                  className="w-full h-[42vh] md:h-[56vh] object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(max-width: 768px) 100vw, 1024px"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               </div>
             )}
 
             {/* Title */}
-            <div className="space-y-4">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+            <div className="space-y-2">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight">
                 {post.title}
               </h1>
+              {post.summary && (
+                <p className="text-gray-600 text-base md:text-lg">
+                  {post.summary}
+                </p>
+              )}
             </div>
 
             {/* Content Body */}
             <div className="prose prose-lg max-w-none">
-              <div className="text-gray-700 leading-relaxed space-y-6 text-base md:text-lg">
+              <div className="text-gray-800 leading-relaxed space-y-6 text-base md:text-lg">
                 {post.body && (
                   <div className="whitespace-pre-line">
                     {toPlainText(post.body)}
@@ -253,12 +262,16 @@ export default function FamilyReunion() {
                 <div className="relative">
                   {post.authorImage ? (
                     <img
-                      src={urlFor(post.authorImage).width(80).height(80).url()}
+                      src={urlFor(post.authorImage).width(80).height(80).auto("format").url()}
                       alt={post.authorName}
-                      className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
+                      className="w-16 h-16 rounded-full object-cover border border-gray-200"
+                      loading="lazy"
+                      decoding="async"
+                      width="64"
+                      height="64"
                     />
                   ) : (
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold">
                       {post.authorName
                         ? post.authorName.charAt(0).toUpperCase()
                         : "A"}
@@ -283,13 +296,13 @@ export default function FamilyReunion() {
             <div className="flex flex-wrap gap-4 pt-6">
               <Link
                 to="/all"
-                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-lg hover:shadow-xl"
+                className="inline-flex items-center px-6 py-3 bg-[#1A74ED] text-white font-semibold rounded-full hover:bg-[#125fcc] transition"
               >
                 ← Back to All Posts
               </Link>
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="inline-flex items-center px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                className="inline-flex items-center px-6 py-3 border border-gray-200 text-gray-700 font-medium rounded-full hover:bg-gray-50 transition"
               >
                 ↑ Back to Top
               </button>

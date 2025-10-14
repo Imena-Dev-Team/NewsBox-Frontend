@@ -10,13 +10,7 @@ function urlFor(source) {
   return builder.image(source);
 }
 
-function toPlainText(blocks) {
-  if (!Array.isArray(blocks)) return "";
-  return blocks
-    .filter((block) => block._type === "block" && Array.isArray(block.children))
-    .map((block) => block.children.map((child) => child.text).join(""))
-    .join("\n\n");
-}
+// removed unused toPlainText helper
 
 // Simple placeholder while loading
 const CardSkeleton = () => (
@@ -106,7 +100,7 @@ function Duplicates() {
   };
 
   return (
-    <div className="bg-gray-50 pb-24">
+    <div className="pb-24">
       {pending ? (
         <div className="flex flex-col items-center justify-center min-h-[80vh]">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
@@ -140,32 +134,19 @@ function Duplicates() {
             <h1 className="font-semibold text-lg sm:text-xl mb-4 sm:mb-0">
               All Blogs
             </h1>
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-              {/* Search Input */}
-              <input
-                type="text"
-                placeholder="Search blogs..."
-                className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                // Add onChange and value handlers for search functionality
-              />
-              {/* Filter Dropdown */}
-              <select
-                className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                // Add onChange and value handlers for filter functionality
-              >
-                <option value="">All Categories</option>
-                {/* Map categories here */}
-              </select>
-            </div>
+            
           </div>
+          <p className="text-gray-600 max-w-3xl mb-6">
+            Explore stories, updates, and insights from our community. New posts are added regularly—dive in to stay informed and inspired.
+          </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 justify-items-center mt-8">
             {loading
               ? Array.from({ length: pageSize }).map((_, i) => (
-                  <div key={i} className="w-full max-w-[350px]">
-                    <div className="bg-white rounded-xl shadow-lg p-4 mt-7">
+                  <div key={i} className="w-full max-w-[640px]">
+                    <div className="bg-white rounded-3xl border border-gray-200 p-6 mt-7">
                       {/* Card Image Skeleton */}
-                      <div className="w-full aspect-[4/3] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-2xl mb-4"></div>
+                      <div className="w-full aspect-[4/3] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-3xl mb-5"></div>
 
                       <div className="space-y-2 mb-4">
                         <div className="w-5/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
@@ -185,21 +166,26 @@ function Duplicates() {
               : currentPageContent.map((card, i) => (
                   <div
                     key={i}
-                    className="w-full max-w-[350px] mb-10"
+                    className="w-full max-w-[640px] mb-10 cursor-pointer"
                     onClick={() => handleCardClick(card.slug)}
                   >
-                    <div className="glass-effect rounded-2xl p-6 relative overflow-hidden bg-white shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-blue-200 group">
+                    <div className="rounded-3xl p-7 relative overflow-hidden bg-white border border-gray-200 transition-transform duration-300 hover:-translate-y-1 focus-within:-translate-y-1 group">
                       {/* Image Container */}
-                      <div className="relative mb-6 overflow-hidden rounded-xl aspect-[4/3]">
+                      <div className="relative mb-6 overflow-hidden rounded-3xl aspect-[4/3]">
                         {card.image ? (
                           <img
                             src={urlFor(card.image)
-                              .width(800)
-                              .height(500)
+                              .width(1200)
+                              .height(900)
                               .fit("crop")
+                              .auto("format")
+                              .quality(75)
                               .url()}
                             alt={card.title}
                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                            loading="lazy"
+                            decoding="async"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           />
                         ) : (
                           <div className="w-full h-full bg-gray-200" />
@@ -217,17 +203,17 @@ function Duplicates() {
                         </div>
 
                         {/* Title */}
-                        <h2 className="text-xl font-bold text-gray-800 leading-tight font-heading">
+                        <h2 className="text-2xl font-extrabold text-gray-900 leading-snug font-heading">
                           {card.title}
                         </h2>
 
                         {/* Description */}
-                        <p className="text-gray-600 leading-relaxed text-readable font-body">
+                        <p className="text-gray-700 leading-relaxed font-body">
                           {card.summary || ""}
                         </p>
 
                         {/* Author Info */}
-                        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                        <div className="flex items-center justify-between pt-5 border-t border-gray-200">
                           <div className="flex items-center space-x-3">
                             {card.authorImage ? (
                               <img
@@ -235,9 +221,14 @@ function Duplicates() {
                                   .width(64)
                                   .height(64)
                                   .fit("crop")
+                                  .auto("format")
                                   .url()}
                                 alt={card.authorName}
                                 className="w-10 h-10 rounded-full object-cover"
+                                loading="lazy"
+                                decoding="async"
+                                width="40"
+                                height="40"
                               />
                             ) : (
                               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
@@ -247,7 +238,7 @@ function Duplicates() {
                               </div>
                             )}
                             <div>
-                              <p className="text-sm font-semibold text-gray-800 font-heading">
+                              <p className="text-sm font-semibold text-gray-900 font-heading">
                                 {card.authorName}
                               </p>
                               <p className="text-xs text-gray-500 font-body">
@@ -265,7 +256,7 @@ function Duplicates() {
                             e.stopPropagation();
                             handleCardClick(card.slug);
                           }}
-                          className="mt-4 text-blue-600 font-medium"
+                          className="mt-4 text-blue-600 font-semibold"
                         >
                           Read more
                         </button>
