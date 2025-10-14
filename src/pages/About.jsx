@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { authService } from "../services/apiService";
+import img1 from "../assets/aboutPhotos/image1.jpg";
+import img2 from "../assets/aboutPhotos/image2.jpg";
+import img3 from "../assets/aboutPhotos/image3.jpg";
+import img4 from "../assets/aboutPhotos/image4.jpg";
+import img5 from "../assets/aboutPhotos/image5.jpg";
+import img6 from "../assets/aboutPhotos/image6.jpg";
+import img7 from "../assets/aboutPhotos/image7.jpg";
 
 const About = () => {
   const { user, isAuthenticated } = useAuth();
@@ -23,7 +30,7 @@ const About = () => {
           role: "Elder",
           email: "jean.mukamana@email.com",
           birthday: "1970-05-15",
-          profilePic: null,
+          profilePic: "/assets/aboutPhotos/image1.jpg",
           type: "member",
           year: 2020,
         },
@@ -217,7 +224,7 @@ const About = () => {
       ...node,
       children: [
         {
-          ...level2Nodes[index ],
+          ...level2Nodes[index],
           children: [level3Nodes[index * 4], level3Nodes[index * 4 + 1]],
         },
         {
@@ -255,100 +262,51 @@ const About = () => {
     fetchFamilyMembers();
   }, [selectedYear]);
 
-  const BinaryTreeNode = ({ node, level = 0, position = "center" }) => {
-    const getNodeSize = () => {
-      if (level === 0) return "w-24 h-32";
-      if (level === 1) return "w-20 h-28";
-      return "w-16 h-24";
-    };
-
-    const getImageSize = () => {
-      if (level === 0) return "w-16 h-12";
-      if (level === 1) return "w-14 h-10";
-      return "w-12 h-8";
-    };
-
+  // Create a simple card component for members
+  const MemberCard = ({ member }) => {
     return (
-      <div
-        className={`flex flex-col items-center ${
-          position === "left"
-            ? "items-start"
-            : position === "right"
-            ? "items-end"
-            : "items-center"
-        }`}
-      >
-        {/* Node Rectangle */}
-        <div
-          className={`${getNodeSize()} bg-white border-2 border-gray-300 rounded-lg shadow-sm flex flex-col items-center justify-start p-2 relative`}
-        >
-          {/* Profile Image Rectangle */}
-          <div
-            className={`${getImageSize()} bg-gradient-to-br from-blue-500 to-purple-600 rounded flex items-center justify-center text-white font-bold text-xs mb-2`}
-          >
-            {node.name?.charAt(0)?.toUpperCase() || "M"}
-          </div>
-
-          {/* Name */}
-          <h3 className="font-semibold text-gray-800 text-xs text-center mb-1 leading-tight">
-            {node.name}
-          </h3>
-
-          {/* Title/Role */}
-          {node.role && (
-            <p className="text-xs text-gray-600 text-center leading-tight">
-              {node.role}
-            </p>
+      <div className="rounded-xl border border-gray-200 shadow-sm p-5">
+        <div className="flex items-start gap-4">
+          {member.profilePic ? (
+            <img
+              src={member.profilePic}
+              alt={member.name}
+              className="h-20 w-20 rounded-full object-cover ring-2 ring-blue-100"
+            />
+          ) : (
+            <div className="h-20 w-20 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xl">
+              {member.name?.charAt(0)?.toUpperCase() || "M"}
+            </div>
           )}
-        </div>
-
-        {/* Children */}
-        {node.children && node.children.length > 0 && (
-          <div className="flex justify-center space-x-12 mt-6">
-            {node.children.map((child, index) => (
-              <div key={child.id} className="relative">
-                {/* Dashed Connection Lines */}
-                <div
-                  className="absolute -top-6 left-1/2 w-px h-6 border-l-2 border-dashed border-gray-400"
-                  style={{ transform: "translateX(-50%)" }}
-                ></div>
-                {index === 0 && (
-                  <div
-                    className="absolute -top-6 left-1/2 w-12 h-px border-t-2 border-dashed border-gray-400"
-                    style={{ transform: "translateX(-50%) translateX(-3rem)" }}
-                  ></div>
-                )}
-                {index === 1 && (
-                  <div
-                    className="absolute -top-6 left-1/2 w-12 h-px border-t-2 border-dashed border-gray-400"
-                    style={{ transform: "translateX(-50%) translateX(3rem)" }}
-                  ></div>
-                )}
-
-                <BinaryTreeNode
-                  node={child}
-                  level={level + 1}
-                  position={index === 0 ? "left" : "right"}
-                />
-              </div>
-            ))}
+          <div className="min-w-0">
+            <p className="font-semibold text-gray-900 truncate">
+              {member.name}
+            </p>
+            {member.role && (
+              <p className="text-sm text-gray-600 truncate">{member.role}</p>
+            )}
+            {member.email && (
+              <p className="text-xs text-gray-500 truncate mt-1">
+                {member.email}
+              </p>
+            )}
           </div>
-        )}
+        </div>
       </div>
     );
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="min-h-screen">
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-6 animate-pulse">
+            <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-6 animate-pulse">
               I
             </div>
             <div className="space-y-4">
-              <div className="w-64 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg mx-auto"></div>
-              <div className="w-96 h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded mx-auto"></div>
+              <div className="w-64 h-8 bg-gray-200 animate-pulse rounded-lg mx-auto"></div>
+              <div className="w-96 h-4 bg-gray-200 animate-pulse rounded mx-auto"></div>
             </div>
           </div>
         </div>
@@ -358,7 +316,7 @@ const About = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-bold text-2xl mx-auto mb-4">
             !
@@ -373,14 +331,14 @@ const About = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-3xl mx-auto mb-6 shadow-lg">
+          <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-3xl mx-auto mb-6 shadow-lg">
             I
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold font-heading bg-gradient-to-r from-blue-700 to-purple-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold font-heading text-blue-600 mb-4">
             IMENA Family Tree
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
@@ -412,65 +370,101 @@ const About = () => {
           </div>
         </div>
 
-        {/* Family Tree */}
-        <div className="bg-gray-100 rounded-lg p-8 border border-gray-200 shadow-sm">
+        {/* 2-1-2(+2) Card Layout */}
+        <div className="rounded-lg p-8 border border-gray-200 shadow-sm">
           <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">
-            Family Structure - {selectedYear}
+            Our Core Members - {selectedYear}
           </h2>
 
-          <div className="flex justify-center overflow-x-auto">
-            <div className="min-w-full">
-              {familyMembers.children && familyMembers.children.length > 0 && (
-                <div className="flex justify-center space-x-20">
-                  {familyMembers.children.map((child, index) => (
-                    <BinaryTreeNode
-                      key={child.id}
-                      node={child}
-                      level={0}
-                      position={index === 0 ? "left" : "right"}
-                    />
+          {/* Prepare a flat list: take first 5 derived from the mock tree */}
+          {(() => {
+            const photoPool = [img1, img2, img3, img4, img5, img6, img7];
+            let photoIndex = 0;
+            const pickPhoto = () => {
+              const p = photoPool[photoIndex % photoPool.length];
+              photoIndex += 1;
+              return p;
+            };
+            const topTwo = (familyMembers.children || []).slice(0, 2);
+            const nextThree = [];
+            // pull two children from first top node and one from second if available
+            if (topTwo[0]?.children) {
+              nextThree.push(...topTwo[0].children.slice(0, 2));
+            }
+            if (topTwo[1]?.children) {
+              nextThree.push(topTwo[1].children[0]);
+            }
+            const remainingTwo = [];
+            // try to take grandchildren for a final pair
+            if (topTwo[0]?.children?.[0]?.children) {
+              remainingTwo.push(...topTwo[0].children[0].children.slice(0, 2));
+            }
+            const extraTwo = [];
+            if (topTwo[1]?.children?.[0]?.children) {
+              extraTwo.push(...topTwo[1].children[0].children.slice(0, 2));
+            }
+
+            const cards = {
+              firstRow: topTwo.filter(Boolean),
+              middle: nextThree.filter(Boolean)[0]
+                ? [nextThree.filter(Boolean)[0]]
+                : [],
+              lastRow: remainingTwo.filter(Boolean).slice(0, 2),
+              secondPair: nextThree.filter(Boolean).slice(1, 3),
+              extraTwo: extraTwo.filter(Boolean).slice(0, 2),
+            };
+
+            // Attach profile pictures from pool
+            const attachPhoto = (m) => ({
+              ...m,
+              profilePic: m.profilePic || pickPhoto(),
+            });
+
+            return (
+              <div className="space-y-6">
+                {/* Top row: two cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {cards.firstRow.map((m) => (
+                    <MemberCard key={m.id} member={attachPhoto(m)} />
                   ))}
                 </div>
-              )}
-            </div>
-          </div>
-        </div>
 
-        {/* Legend */}
-        <div className="mt-12 bg-gray-100 rounded-lg p-6 border border-gray-200 shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
-            Legend
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-16 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded flex items-center justify-center text-white font-bold text-xs">
-                E
+                {/* Middle single card */}
+                {cards.middle.length > 0 && (
+                  <div className="max-w-md mx-auto">
+                    <MemberCard member={attachPhoto(cards.middle[0])} />
+                  </div>
+                )}
+
+                {/* Second pair below middle (remaining from nextThree) */}
+                {cards.secondPair.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {cards.secondPair.map((m) => (
+                      <MemberCard key={m.id} member={attachPhoto(m)} />
+                    ))}
+                  </div>
+                )}
+
+                {/* Last row: two cards */}
+                {cards.lastRow.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {cards.lastRow.map((m) => (
+                      <MemberCard key={m.id} member={attachPhoto(m)} />
+                    ))}
+                  </div>
+                )}
+
+                {/* Extra row: two more cards below last two */}
+                {cards.extraTwo.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {cards.extraTwo.map((m) => (
+                      <MemberCard key={m.id} member={attachPhoto(m)} />
+                    ))}
+                  </div>
+                )}
               </div>
-              <span className="text-sm text-gray-700">
-                Elders/Adults (Level 1)
-              </span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-14 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded flex items-center justify-center text-white font-bold text-xs">
-                C
-              </div>
-              <span className="text-sm text-gray-700">Children (Level 2)</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded flex items-center justify-center text-white font-bold text-xs">
-                G
-              </div>
-              <span className="text-sm text-gray-700">
-                Grandchildren (Level 3)
-              </span>
-            </div>
-          </div>
-          <div className="mt-4 text-center">
-            <p className="text-sm text-gray-600">
-              Each year shows different family members in the same binary tree
-              structure
-            </p>
-          </div>
+            );
+          })()}
         </div>
       </div>
     </div>
