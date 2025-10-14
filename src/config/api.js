@@ -5,7 +5,9 @@ export const API_ENDPOINTS = {
   LOGIN: '/api/login',
   PROFILE: '/api/profile',
   PROFILE_CHECK: '/api/profile/check',
+  TODAY_BIRTHDAYS: '/api/birthdays',
   BIRTHDAYS: '/api/birthdays/upcoming',
+  WISHES: '/api/birthdays/wishes',
   UPLOAD_BLOG: '/api/uploadBlog',
   DELETE_BLOG: '/api/deleteBlog'
 };

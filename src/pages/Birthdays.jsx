@@ -34,6 +34,12 @@ const Birthdays = () => {
   const [loadingBirthdays, setLoadingBirthdays] = useState(true);
   const [fetchError, setFetchError] = useState("");
   const [todayBirthdays, setTodayBirthdays] = useState([]);
+  const [todaysSimple, setTodaysSimple] = useState([]);
+  const [todaysMessage, setTodaysMessage] = useState("");
+  const [wishes, setWishes] = useState([]);
+  const [wishesPagination, setWishesPagination] = useState({ currentPage: 1, totalPages: 1, wishesPerPage: 10 });
+  const [wishText, setWishText] = useState("");
+  const [wishSending, setWishSending] = useState(false);
   const [upcomingBirthdays, setUpcomingBirthdays] = useState([]);
 
   useEffect(() => {
@@ -67,6 +73,16 @@ const Birthdays = () => {
         const upcoming = payload.upcomingBirthdays || [];
         setTodayBirthdays(todays);
         setUpcomingBirthdays(upcoming);
+        // fetch today's simple names from public endpoint
+        authService.getTodaysBirthdays().then((r) => {
+          const names = Array.isArray(r?.birthdays) ? r.birthdays.map(b => b.name).filter(Boolean) : [];
+          if (r?.message) setTodaysMessage(r.message);
+          if (names.length) setTodaysSimple(names);
+        }).catch(() => {});
+        // initial wishes load
+        const w = await authService.getWishes(1, 6);
+        setWishes(w.wishes || []);
+        if (w.pagination) setWishesPagination(w.pagination);
       } catch (err) {
         setFetchError(err?.message || "Failed to load birthdays");
         setTodayBirthdays([]);
@@ -77,6 +93,27 @@ const Birthdays = () => {
     };
     fetchBirthdays();
   }, []);
+
+  const loadWishesPage = async (page) => {
+    const w = await authService.getWishes(page, wishesPagination.wishesPerPage || 6);
+    setWishes(w.wishes || []);
+    if (w.pagination) setWishesPagination(w.pagination);
+  };
+
+  const submitWish = async (e) => {
+    e.preventDefault();
+    if (!wishText.trim()) return;
+    try {
+      setWishSending(true);
+      await authService.postWish(wishText.trim(), undefined);
+      setWishText("");
+      await loadWishesPage(1);
+    } catch (_) {
+      // optionally show toast
+    } finally {
+      setWishSending(false);
+    }
+  };
 
 // removed unused isSoon helper
 
@@ -106,8 +143,26 @@ const Birthdays = () => {
                 {loadingBirthdays ? (
                   <div className="text-gray-500">Loading...</div>
                 ) : todayBirthdays.length === 0 ? (
-                  <div className="text-gray-500 bg-white/60 border border-dashed border-blue-200 rounded-xl p-6">
-                    No birthdays today.
+                  <div className="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+                    {todaysSimple.length > 0 ? (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">🎉</span>
+                          <span className="text-slate-800 font-semibold">Today’s Celebrations</span>
+                          <span className="ml-auto text-[11px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Today</span>
+                        </div>
+                        {todaysMessage && (
+                          <p className="text-slate-600 text-sm">{todaysMessage}</p>
+                        )}
+                        <div className="flex flex-wrap gap-2">
+                          {todaysSimple.map((n) => (
+                            <span key={n} className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-sm">{n}</span>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-slate-600"><span className="text-lg">📅</span><span>No birthdays today.</span></div>
+                    )}
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -229,6 +284,67 @@ const Birthdays = () => {
                 )}
               </div>
             </div>
+            {(todayBirthdays.length > 0 || todaysSimple.length > 0) && (
+              <div className="mt-8 px-4">
+                <div className="rounded-3xl border border-pink-100 bg-gradient-to-br from-pink-50 to-purple-50 p-5 md:p-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-xl">🎈</span>
+                    <h3 className="text-slate-800 font-extrabold">Send Your Wishes</h3>
+                  </div>
+                  <form onSubmit={submitWish} className="flex flex-col sm:flex-row gap-3">
+                    <input
+                      type="text"
+                      value={wishText}
+                      onChange={(e) => setWishText(e.target.value)}
+                      placeholder="Write a heartfelt birthday wish..."
+                      className="flex-1 rounded-full border border-pink-200 bg-white/90 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-300"
+                      maxLength={200}
+                    />
+                    <button
+                      disabled={wishSending || !wishText.trim()}
+                      className="px-5 py-3 rounded-full bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {wishSending ? 'Sending...' : 'Send Wish'}
+                    </button>
+                  </form>
+                </div>
+                <div className="mt-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-slate-800 font-bold">Party Wishes</h4>
+                    <div className="flex items-center gap-2 text-sm">
+                      <button
+                        onClick={() => wishesPagination.currentPage > 1 && loadWishesPage(wishesPagination.currentPage - 1)}
+                        disabled={wishesPagination.currentPage <= 1}
+                        className="px-3 py-1.5 rounded-full border border-gray-200 disabled:opacity-50"
+                      >Prev</button>
+                      <span className="text-slate-500">Page {wishesPagination.currentPage} / {wishesPagination.totalPages || 1}</span>
+                      <button
+                        onClick={() => (wishesPagination.currentPage < (wishesPagination.totalPages || 1)) && loadWishesPage(wishesPagination.currentPage + 1)}
+                        disabled={wishesPagination.currentPage >= (wishesPagination.totalPages || 1)}
+                        className="px-3 py-1.5 rounded-full border border-gray-200 disabled:opacity-50"
+                      >Next</button>
+                    </div>
+                  </div>
+                  {wishes.length === 0 ? (
+                    <div className="text-slate-500 text-sm">No wishes yet. Be the first to send one! 🎉</div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {wishes.map((w) => (
+                        <div key={w._id} className="rounded-2xl border border-purple-100 bg-white p-4">
+                          <div className="flex items-start gap-2">
+                            <span className="text-lg">🎊</span>
+                            <div>
+                              <p className="text-slate-800">{w.text}</p>
+                              {w.sender && <p className="text-xs text-slate-500 mt-1">— {w.sender}</p>}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
