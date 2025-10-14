@@ -51,7 +51,6 @@ export default function PaginatedShowcase() {
           }))
         );
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.error("Failed to load stories/testimonials", err);
       } finally {
         if (isMounted) setLoading(false);
@@ -143,10 +142,11 @@ export default function PaginatedShowcase() {
                 Previous
               </button>
 
+              {/* ✅ Fixed map section */}
               <div className="flex items-center gap-2" aria-label="Pagination">
                 {stories.map((p, i) => (
                   <button
-                    key={p.id}
+                    key={p.id || i}
                     onClick={() => goTo(i)}
                     aria-label={`Go to page ${i + 1}`}
                     className={
@@ -183,6 +183,7 @@ export default function PaginatedShowcase() {
           </div>
         </div>
 
+        {/* Testimonials */}
         <div className="mt-10">
           <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
             Testimonials

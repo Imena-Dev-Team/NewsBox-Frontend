@@ -168,6 +168,34 @@ export const authService = {
     } catch (error) {
       throw error.response?.data || error;
     }
+  },
+
+  // Get today's birthdays (public)
+  getTodaysBirthdays: async () => {
+    try {
+      const response = await apiClient.get(API_ENDPOINTS.TODAY_BIRTHDAYS);
+      return response.data; // { message, birthdays: [{ name }] }
+    } catch (error) {
+      return { message: 'Failed to load today\'s birthdays', birthdays: [] };
+    }
+  },
+
+  // Wishes (public)
+  getWishes: async (page = 1, limit = 10) => {
+    try {
+      const response = await apiClient.get(`${API_ENDPOINTS.WISHES}?page=${page}&limit=${limit}`);
+      return response.data; // { wishes: [], pagination: {} }
+    } catch (error) {
+      return { wishes: [], pagination: { currentPage: 1, totalPages: 1, totalWishes: 0, wishesPerPage: limit } };
+    }
+  },
+  postWish: async (text, sender) => {
+    try {
+      const response = await apiClient.post(API_ENDPOINTS.WISHES, { text, sender });
+      return response.data; // { data: { text, sender, _id } }
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   }
 };
 
