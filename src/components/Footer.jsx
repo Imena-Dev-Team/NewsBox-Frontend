@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 function NewsletterFooter() {
   // const [firstName, setFirstName] = useState("");
@@ -52,9 +53,11 @@ function NewsletterFooter() {
               {/* Brand Section */}
               <div className="lg:col-span-1">
                 <div className="flex items-center space-x-3 mb-6">
-                  <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                    H
-                  </div>
+                  <img
+                    src={logo}
+                    alt="Logo"
+                    style={{ height : '70px', width:'72px'}}
+                  />
                   <div>
                     <h3 className="text-xl font-bold text-blue-700 font-heading">
                      IMENA FAMILY
