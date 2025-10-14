@@ -18,7 +18,7 @@ function Header() {
     { name: "About", href: "/about" },
     { name: "Blogs", href: "/all" },
     { name: "Gallery", href: "/gallery" },
-    { name: "Story", href: "/story" },
+    // { name: "Story", href: "/story" },
   ];
 
   useEffect(() => {
@@ -107,7 +107,7 @@ function Header() {
             </div>
 
             <nav className="hidden lg:flex items-center space-x-1">
-              {Links.map((link) => (
+              {Links.filter(link => link.name !== "Story").map((link) => (
                 <Link
                   key={link.name}
                   to={link.href}
@@ -120,6 +120,22 @@ function Header() {
                   <span className="font-medium text-sm">{link.name}</span>
                 </Link>
               ))}
+              {/* Members only */}
+               {isAuthenticated && user?.userType === "member" && (
+                <Link
+                  to="/story"
+                  className={`nav-link px-4 py-2 rounded-md transition-all duration-200 ${
+                    location.pathname === "/story"
+                      ? "text-blue-700 font-semibold"
+                      : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
+                  }`}
+                >
+
+                  <span className="font-medium text-sm">
+                    story
+                  </span>
+                </Link>
+              )}
               {isAuthenticated && user?.userType === "member" && (
                 <Link
                   to="/Birthdays"
@@ -134,6 +150,7 @@ function Header() {
                   </span>
                 </Link>
               )}
+              
             </nav>
 
             <div className="flex items-center space-x-2">
