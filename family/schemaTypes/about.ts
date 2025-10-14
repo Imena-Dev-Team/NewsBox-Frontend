@@ -11,6 +11,18 @@ export default defineType({
       title: 'Name',
       type: 'string',
     }),
+
+    defineField({
+        name: 'familyName',
+        title: 'Family Name',
+        type: 'string',
+      }),
+      defineField({
+        name: 'role',
+        title: 'Role',
+        type: 'string',
+      }),
+    
     defineField({
       name: 'slug',
       title: 'Slug',
@@ -21,6 +33,11 @@ export default defineType({
       },
     }),
     defineField({
+        name: 'year',
+        title: 'Year',
+        type: 'number',
+      }),
+    defineField({
       name: 'image',
       title: 'Image',
       type: 'image',
@@ -29,12 +46,5 @@ export default defineType({
       },
     }),
   
-
-    defineField({
-      name: 'body',
-      title: 'Body',
-      type: 'blockContent',
-    }),
-
   ],
 })
