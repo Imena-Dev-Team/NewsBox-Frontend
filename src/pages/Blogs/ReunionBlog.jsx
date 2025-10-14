@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from 'react-helmet-async';
 import { Link, useParams } from "react-router-dom";
 import { client } from "../../sanityClient";
 import imageUrlBuilder from "@sanity/image-url";
@@ -184,6 +185,12 @@ export default function FamilyReunion() {
 
   return (
     <>
+      <Helmet>
+        <title>{post?.title ? `${post.title} – Imena News` : 'Imena News – Post'}</title>
+        {post?.summary && (
+          <meta name="description" content={post.summary} />
+        )}
+      </Helmet>
       <div className="w-full min-h-screen bg-white">
         <div className="w-full overflow-hidden">
           {/* Header with back button and category */}

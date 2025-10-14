@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/css';
 import 'swiper/css/autoplay';
@@ -152,6 +153,10 @@ export default function Landing() {
 
   return (
     <div className="flex flex-col md:flex-row w-full h-screen font-[poppins] overflow-hidden">
+      <Helmet>
+        <title>IMENA – United in Love</title>
+        <meta name="description" content="Join the Imena family community: stories, news, and connections." />
+      </Helmet>
       <div className="w-full md:w-1/2 flex flex-col justify-center px-6 sm:px-10 lg:px-24 py-8 md:py-24 bg-white flex-1 md:flex-none overflow-auto">
         <h1 className="text-5xl md:text-6xl lg:text-[6rem] font-black mb-4 bg-gradient-to-r from-blue-600 to-blue-600 bg-clip-text text-transparent leading-none">
           IMENA

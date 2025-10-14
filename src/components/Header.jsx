@@ -81,27 +81,23 @@ function Header() {
             : "backdrop-blur-xl saturate-150 bg-white/20 border-b border-white/20"
         }`}
       >
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between py-4">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="flex items-center justify-between py-3 sm:py-4 gap-2">
+            <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                 <img
-                src={logo}
-                alt="Logo"
-                style={{ height : '70px', width:'72px'}}
+                  src={logo}
+                  alt="Logo"
+                  className="hidden sm:block w-12 h-12 sm:w-16 sm:h-16 object-contain"
                 />
-                <div className="hidden sm:block">
+                {/* Branding visible on large screens only */}
+                <div className="hidden lg:block">
                   <h1 className="text-xl font-bold font-heading bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
                     IMENA FAMILY COURTESY
                   </h1>
                   <p className="text-sm text-blue-700/70 font-body">
                     Building bonds, sharing stories
                   </p>
-                </div>
-                <div className="sm:hidden">
-                  <h1 className="text-lg font-bold font-heading bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
-                    IMENA Family
-                  </h1>
                 </div>
               </div>
             </div>
@@ -153,11 +149,11 @@ function Header() {
               
             </nav>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 flex-wrap justify-end">
               {isAuthenticated ? (
                 <>
                   {user?.userType === "member" && (
-                    <div className="flex items-center rounded-full transition-all duration-200 cursor-pointer">
+                    <div className="flex items-center rounded-full transition-all duration-200 cursor-pointer order-1">
                       {(() => {
                         const profile =
                           user?.profileData?.data || user?.profileData;
@@ -173,7 +169,7 @@ function Header() {
                               alt={
                                 profile?.name || user.familyName || "Profile"
                               }
-                              className="w-12 h-12 rounded-full object-cover border-2 border-blue-300 bg-transparent"
+                              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-blue-300 bg-transparent"
                               style={{ display: hasUrl ? "block" : "none" }}
                               onClick={() => {
                                 if (hasUrl) setPreviewSrc(imageUrl);
@@ -187,7 +183,7 @@ function Header() {
                               }}
                             />
                             <div
-                              className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white items-center justify-center font-bold text-lg select-none"
+                              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white items-center justify-center font-bold text-base sm:text-lg select-none"
                               style={{ display: hasUrl ? "none" : "flex" }}
                             >
                               {(
@@ -203,16 +199,10 @@ function Header() {
                   )}
 
                   {/* Show user type indicator */}
-                  <div className="flex items-center px-3 py-1 rounded-full border border-blue-200">
-                    <span className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700">
+                  <div className="flex items-center px-2 sm:px-3 py-1 rounded-full border border-blue-200 order-2">
+                    <span className="inline-flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-semibold text-blue-700 whitespace-nowrap">
                       <span className="inline-block h-2 w-2 rounded-full bg-blue-500"></span>
-                      {user?.userType === "guest"
-                        ? "Guest "
-                        : `${
-                            user?.profileData?.name ||
-                            user?.familyName ||
-                            "Member"
-                          }`}
+                      {user?.userType === "guest" ? "Guest" : (user?.familyName || "Member")}
                     </span>
                   </div>
 
@@ -222,7 +212,7 @@ function Header() {
                       <ProfileDropdown />
                       <button
                         onClick={handleLogout}
-                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/100 text-white hover:bg-blue-700 transition-colors duration-200 shadow-sm overflow-hidden isolate bg-clip-padding backdrop-blur-0 relative transform-gpu"
+                        className="order-3 flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-blue-600/100 text-white hover:bg-blue-700 transition-colors duration-200 overflow-hidden whitespace-nowrap"
                       >
                         <svg
                           className="w-4 h-4 bg-transparent z-10"
@@ -237,7 +227,7 @@ function Header() {
                             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                           />
                         </svg>
-                        <span className=" text-sm leading-none bg-transparent z-10">
+                        <span className="text-sm leading-none bg-transparent z-10">
                           Logout
                         </span>
                       </button>
@@ -245,7 +235,7 @@ function Header() {
                   ) : user?.userType === "guest" ? (
                     <button
                       onClick={handleLogout}
-                      className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/100 text-white hover:bg-blue-700 transition-colors duration-200 shadow-sm overflow-hidden isolate bg-clip-padding backdrop-blur-0 relative transform-gpu"
+                      className="order-3 flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-blue-600/100 text-white hover:bg-blue-700 transition-colors duration-200 overflow-hidden whitespace-nowrap"
                     >
                       <svg
                         className="w-4 h-4 bg-transparent z-10"
@@ -279,7 +269,7 @@ function Header() {
 
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="lg:hidden px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 border border-blue-100"
+                className="order-4 lg:hidden px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 border border-blue-100"
               >
                 <span className="sr-only">Toggle menu</span>
                 {isMenuOpen ? (
@@ -322,12 +312,10 @@ function Header() {
               className="absolute inset-0 bg-black/30"
               onClick={() => setIsMenuOpen(false)}
             ></div>
-            <div className="absolute right-0 top-0 h-screen w-11/12 max-w-sm bg-white/70 backdrop-blur-md border-l border-white/30 shadow-xl transform transition-transform duration-300 translate-x-0">
-              <div className="px-4 py-4 border-b border-white/40 flex items-center justify-between">
+            <div className="absolute right-0 top-0 h-screen w-11/12 max-w-sm bg-white border-l border-gray-100 transform transition-transform duration-300 translate-x-0">
+              <div className="px-4 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-base">
-                    H
-                  </div>
+                  <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
                   <div>
                     <p className="text-sm font-semibold text-gray-900">IMENA</p>
                     <p className="text-xs text-blue-700/70">Family Courtesy</p>
@@ -470,8 +458,16 @@ function Header() {
                       handleLogout();
                       setIsMenuOpen(false);
                     }}
-                    className="mt-2 mx-4 flex items-center justify-center px-4 py-3 border border-gray-200 text-gray-700 rounded-md hover:text-blue-700 hover:border-blue-300 hover:bg-blue-50 transition-colors duration-200"
+                    className="mt-2 mx-4 flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200"
                   >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
                     <span className="font-medium text-base">Logout</span>
                   </button>
                 ) : (
