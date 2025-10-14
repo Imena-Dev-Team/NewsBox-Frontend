@@ -8,13 +8,7 @@ function urlFor(source) {
   return builder.image(source);
 }
 
-function toPlainText(blocks) {
-  if (!Array.isArray(blocks)) return "";
-  return blocks
-    .filter((block) => block._type === "block" && Array.isArray(block.children))
-    .map((block) => block.children.map((child) => child.text).join(""))
-    .join("\n\n");
-}
+// removed unused toPlainText helper
 
 const Card = ({
   title,
@@ -40,22 +34,31 @@ const Card = ({
 
   const displayTitle = title || "";
   const displayImage = image
-    ? urlFor(image).width(800).height(500).fit("crop").url()
+    ? urlFor(image)
+        .width(1200)
+        .height(900)
+        .fit("crop")
+        .auto("format")
+        .quality(75)
+        .url()
     : "";
   const displayExcerpt = summary || "";
   const displayAuthor = authorName || "";
   const displayDate = publishedAt ? new Date(publishedAt).toDateString() : "";
 
   return (
-    <div className="w-full max-w-[380px] mb-10">
-      <div className="glass-effect rounded-2xl p-6 relative overflow-hidden bg-white shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-blue-200 group">
+    <div className="w-full max-w-[640px] mb-10 cursor-pointer">
+      <div className="rounded-3xl p-7 relative overflow-hidden bg-white border border-gray-200 transition-transform duration-300 hover:-translate-y-1 focus-within:-translate-y-1 group">
         {/* Image Container */}
-        <div className="relative mb-6 overflow-hidden rounded-xl aspect-[4/3]">
+        <div className="relative mb-6 overflow-hidden rounded-3xl aspect-[4/3]">
           {displayImage ? (
             <img
               src={displayImage}
               alt={displayTitle}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+              loading="lazy"
+              decoding="async"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           ) : (
             <div className="w-full h-full bg-gray-200" />
@@ -73,17 +76,17 @@ const Card = ({
           </div>
 
           {/* Title */}
-          <h2 className="text-xl font-bold text-gray-800 leading-tight font-heading">
+          <h2 className="text-2xl font-extrabold text-gray-900 leading-snug font-heading">
             {displayTitle}
           </h2>
 
           {/* Description */}
-          <p className="text-gray-600 leading-relaxed text-readable font-body">
+          <p className="text-gray-700 leading-relaxed font-body">
             {displayExcerpt}
           </p>
 
           {/* Author Info */}
-          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between pt-5 border-t border-gray-200">
             <div className="flex items-center space-x-3">
               {authorImage ? (
                 <img
@@ -93,19 +96,24 @@ const Card = ({
                           .width(64)
                           .height(64)
                           .fit("crop")
+                          .auto("format")
                           .url()
                       : ""
                   }
                   alt={displayAuthor}
                   className="w-10 h-10 rounded-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  width="40"
+                  height="40"
                 />
               ) : (
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
                   {displayAuthor ? displayAuthor.slice(0, 2).toUpperCase() : ""}
                 </div>
               )}
               <div>
-                <p className="text-sm font-semibold text-gray-800 font-heading">
+                <p className="text-sm font-semibold text-gray-900 font-heading">
                   {displayAuthor}
                 </p>
                 <p className="text-xs text-gray-500 font-body">{displayDate}</p>
