@@ -117,6 +117,16 @@ const Birthdays = () => {
 
 // removed unused isSoon helper
 
+  const hasBirthdaysToday = (todayBirthdays && todayBirthdays.length > 0) || (todaysSimple && todaysSimple.length > 0);
+  const wishesHeading = (() => {
+    const names = todayBirthdays.length
+      ? todayBirthdays.map((b) => b.name || b.fullName).filter(Boolean)
+      : todaysSimple;
+    const list = names.slice(0, 3).join(', ');
+    const more = Math.max((names.length || 0) - 3, 0);
+    return `Birthday Wishes${list ? ` for ${list}${more ? ` +${more} more` : ''}` : ''}`;
+  })();
+
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       {showProgress && (
@@ -150,7 +160,7 @@ const Birthdays = () => {
                           <span className="text-lg">🎉</span>
                           <span className="text-slate-800 font-semibold">Today’s Celebrations</span>
                           <span className="ml-auto text-[11px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Today</span>
-                        </div>
+                      </div>
                         {todaysMessage && (
                           <p className="text-slate-600 text-sm">{todaysMessage}</p>
                         )}
@@ -284,33 +294,39 @@ const Birthdays = () => {
                 )}
               </div>
             </div>
-            {(todayBirthdays.length > 0 || todaysSimple.length > 0) && (
-              <div className="mt-8 px-4">
-                <div className="rounded-3xl border border-pink-100 bg-gradient-to-br from-pink-50 to-purple-50 p-5 md:p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xl">🎈</span>
-                    <h3 className="text-slate-800 font-extrabold">Send Your Wishes</h3>
-                  </div>
-                  <form onSubmit={submitWish} className="flex flex-col sm:flex-row gap-3">
-                    <input
-                      type="text"
-                      value={wishText}
-                      onChange={(e) => setWishText(e.target.value)}
-                      placeholder="Write a heartfelt birthday wish..."
-                      className="flex-1 rounded-full border border-pink-200 bg-white/90 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-300"
-                      maxLength={200}
-                    />
-                    <button
-                      disabled={wishSending || !wishText.trim()}
-                      className="px-5 py-3 rounded-full bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {wishSending ? 'Sending...' : 'Send Wish'}
-                    </button>
-                  </form>
-                </div>
-                <div className="mt-6">
+            <div className="mt-8 px-4">
+              <div className={`rounded-3xl border ${hasBirthdaysToday ? 'border-pink-100 bg-gradient-to-br from-pink-50 to-purple-50' : 'border-gray-200 bg-gray-50'} p-5 md:p-6`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">🎈</span>
+                  <h3 className="text-slate-800 font-extrabold">Send Your Wishes</h3>
+                  {!hasBirthdaysToday && (
+                    <span className="ml-2 text-xs text-slate-500">(disabled until there is a birthday today)</span>
+                  )}
+                        </div>
+                {!hasBirthdaysToday && (
+                  <p className="text-slate-600 text-sm mb-3">Wishes will appear once someone has a birthday today.</p>
+                )}
+                <form onSubmit={submitWish} className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="text"
+                    value={wishText}
+                    onChange={(e) => setWishText(e.target.value)}
+                    placeholder={hasBirthdaysToday ? 'Write a heartfelt birthday wish...' : 'No birthdays today'}
+                    className={`flex-1 rounded-full px-4 py-3 focus:outline-none ${hasBirthdaysToday ? 'border border-pink-200 bg-white/90 focus:ring-2 focus:ring-pink-300' : 'border border-gray-200 bg-gray-100 cursor-not-allowed text-gray-500'}`}
+                    maxLength={200}
+                    disabled={!hasBirthdaysToday}
+                  />
+                  <button
+                    disabled={!hasBirthdaysToday || wishSending || !wishText.trim()}
+                    className="px-5 py-3 rounded-full bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {wishSending ? 'Sending...' : 'Send Wish'}
+                  </button>
+                </form>
+              </div>
+              <div className="mt-6">
                   <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-slate-800 font-bold">Party Wishes</h4>
+                    <h4 className="text-slate-800 font-bold">{wishesHeading}</h4>
                     <div className="flex items-center gap-2 text-sm">
                       <button
                         onClick={() => wishesPagination.currentPage > 1 && loadWishesPage(wishesPagination.currentPage - 1)}
@@ -325,26 +341,45 @@ const Birthdays = () => {
                       >Next</button>
                     </div>
                   </div>
-                  {wishes.length === 0 ? (
+                  {!hasBirthdaysToday ? (
+                    <div className="text-slate-500 text-sm">Wishes will appear once someone has a birthday today. 🎂</div>
+                  ) : wishes.length === 0 ? (
                     <div className="text-slate-500 text-sm">No wishes yet. Be the first to send one! 🎉</div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {wishes.map((w) => (
-                        <div key={w._id} className="rounded-2xl border border-purple-100 bg-white p-4">
-                          <div className="flex items-start gap-2">
-                            <span className="text-lg">🎊</span>
-                            <div>
-                              <p className="text-slate-800">{w.text}</p>
-                              {w.sender && <p className="text-xs text-slate-500 mt-1">— {w.sender}</p>}
-                            </div>
-                          </div>
+                        <div key={w._id} className="relative rounded-2xl border border-violet-100 bg-white/90 p-5 shadow-sm hover:border-violet-200 transition overflow-hidden">
+                          <div className="absolute -top-2 -right-2 text-3xl opacity-20 select-none">🎉</div>
+                          {(() => {
+                            const sender = w.sender || 'Anonymous';
+                            const initials = sender
+                              .split(' ')
+                              .filter(Boolean)
+                              .map(s => s[0])
+                              .join('')
+                              .slice(0, 2)
+                              .toUpperCase();
+                            return (
+                              <div className="flex items-start gap-3">
+                                <div className="text-2xl leading-none text-violet-400">“</div>
+                                <div className="flex-1">
+                                  <p className="text-slate-800 leading-relaxed">{w.text}</p>
+                                  <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+                                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-violet-100 text-violet-700 font-semibold">
+                                      {initials || 'A'}
+                                    </span>
+                                    <span>— {sender}</span>
+                                  </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                              </div>
+                            );
+                          })()}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
         )}
       </div>
