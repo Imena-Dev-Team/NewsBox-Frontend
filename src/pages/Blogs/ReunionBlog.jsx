@@ -219,7 +219,7 @@ export default function FamilyReunion() {
           </div>
 
           {/* Content */}
-          <div className="px-4 md:px-10 lg:px-16 py-8 space-y-8">
+          <div className="mx-64 md:px-10 lg:px-16 py-8 px-24 space-y-8">
             {/* Featured Image */}
             {post.image && (
               <div className="relative overflow-hidden">
