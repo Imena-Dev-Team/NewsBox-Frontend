@@ -1,278 +1,315 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../context/AuthContext';
-import { useNotificationToast } from '../../context/NotificationContext';
 import { authService } from '../../services/apiService';
-import photo1 from '../../assets/loginPhotos/login1.JPG'
-import photo2 from '../../assets/loginPhotos/login2.JPG'
-import photo3 from '../../assets/loginPhotos/login3.JPG'
+import { useNotificationToast } from '../../context/NotificationContext';
+import { Camera } from "lucide-react";
+import API_BASE_URL from '../../config/api';
+import photo1 from "../../assets/loginPhotos/login1.webp";
+import photo2 from "../../assets/loginPhotos/login2.webp";
+import photo3 from "../../assets/loginPhotos/login3.webp";
+import photo4 from "../../assets/loginPhotos/login4.webp";
+import photo5 from "../../assets/loginPhotos/login5.webp";
+import photo6 from "../../assets/loginPhotos/login6.webp";
 
-const Login = () => {
+const Signup = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { user, updateUser } = useAuth();
   const notify = useNotificationToast();
-  const [familyName, setFamilyName] = useState("");
   const [current, setCurrent] = useState(0);
+  const [formData, setFormData] = useState({ 
+    name: "", 
+    birthday: "", 
+    email: "", 
+    subFam: "",
+    profilePic: null 
+  });
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [loginType, setLoginType] = useState("member"); // "member" or "guest"
+  const [checkingProfile, setCheckingProfile] = useState(true);
+  const allowedSubFamilyNames = ["Hope", "Light", "Wihogora", "SubFamily1"];
 
-  const handleMemberLogin = async (e) => {
-    e.preventDefault();
-    if (!familyName.trim()) {
-      setError("Please enter your family name");
-      return;
-    }
-
-    setLoading(true);
-    setError(""); // Clear previous errors
-
-    try {
-      const response = await authService.loginAsMember(familyName);
-      
-      if (response.token) {
-        // Login successful - clear any errors
-        setError("");
-        
-        try {
-          // Store token temporarily to check profile
-          localStorage.setItem('temp_token', response.token);
-          
-          // Check if user already has a profile
-          const profileCheck = await authService.checkProfile();
-          
-          if (profileCheck.hasProfile) {
-            // User has profile, login normally and go to home
-            login(response.token, {
-              userType: 'member',
-              familyName: familyName,
-              profile: profileCheck.profile,
-              hasProfile: true,
-              profileData: profileCheck.profile,
-              ...response.user
-            });
-            notify.success("Welcome back", "Signed in successfully.");
-            navigate("/home");
-          } else {
-            // User needs to create profile
-            login(response.token, {
-              userType: 'member',
-              familyName: familyName,
-              hasProfile: false,
-              ...response.user
-            });
-            notify.info("Complete Profile", "Please finish setting up your profile.");
-            navigate("/signup");
-          }
-        } catch (profileError) {
-          console.error('Profile check failed:', profileError);
-          // If profile check fails, assume no profile and redirect to signup
-          login(response.token, {
-            userType: 'member',
-            familyName: familyName,
-            hasProfile: false,
-            ...response.user
-          });
-          notify.info("Complete Profile", "Please finish setting up your profile.");
-          navigate("/signup");
-        } finally {
-          // Clean up temporary token
-          localStorage.removeItem('temp_token');
-        }
-      }
-    } catch (err) {
-      // Set persistent error message
-      const errorMessage = err.message || "Invalid family name. Please check your credentials and try again.";
-      setError(errorMessage);
-      notify.error("Sign in failed", errorMessage);
-      console.error("Login error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGuestLogin = async () => {
-    setLoading(true);
-    setError(""); // Clear previous errors
-
-    try {
-      const response = await authService.loginAsGuest();
-      
-      if (response.token) {
-        // Guest login successful - clear any errors
-        setError("");
-        login(response.token, {
-          userType: 'guest',
-          ...response.user
-        });
-        notify.success("Welcome", "Continuing as Guest.");
-        navigate("/home");
-      }
-    } catch (err) {
-      // Set persistent error message
-      const errorMessage = err.message || "Unable to login as guest. Please try again.";
-      setError(errorMessage);
-      notify.error("Guest login failed", errorMessage);
-      console.error("Guest login error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const carouselImages = useMemo(() => ([
-    { url: photo1, text: "Welcome to Our School" },
-    { url: photo2, text: "Empowering Students Every Day" },
-    { url: photo3, text: "A Place to Grow and Learn" },
-  ]), []);
-
-  // Auto change slides
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % carouselImages.length);
-    }, 3000);
-    return () => clearInterval(interval);
+    const checkProfile = async () => {
+      try {
+        if (user?.hasProfile || user?.profileData) {
+          notify.success('Welcome back', 'Profile already completed.');
+          navigate('/home');
+          return;
+        }
+        const profileCheck = await authService.checkProfile();
+        if (profileCheck.hasProfile) {
+          updateUser({
+            hasProfile: true,
+            profileData: profileCheck.profile
+          });
+          notify.success('Welcome back', 'Profile already completed.');
+          navigate('/home');
+          return;
+        }
+        setCheckingProfile(false);
+      } catch (error) {
+        setCheckingProfile(false);
+      }
+    };
+    checkProfile();
+  }, [user, navigate, updateUser, notify]);
+
+  const carouselImages = [
+    { url: photo1, text: "Welcome to Our School – A Place to Learn and Grow" },
+    { url: photo2, text: "Empowering Students Every Day to Reach Their Potential" },
+    { url: photo3, text: "A Safe and Nurturing Learning Environment" },
+    { url: photo4, text: "Where Curiosity Meets Knowledge" },
+    { url: photo5, text: "Building Bright Futures Together" },
+    { url: photo6, text: "Join a Community that Inspires Excellence" }
+  ];
+
+  useEffect(() => {
+    const preload = carouselImages.map(
+      (img) =>
+        new Promise((resolve) => {
+          const image = new Image();
+          image.src = img.url;
+          image.onload = resolve;
+          image.onerror = resolve;
+        })
+    );
+    Promise.all(preload).then(() => {
+      const interval = setInterval(() => {
+        setCurrent((prev) => (prev + 1) % carouselImages.length);
+      }, 3000);
+      return () => clearInterval(interval);
+    });
   }, [carouselImages.length]);
 
-  // Preload next image to avoid lag on transition
-  useEffect(() => {
-    const nextIndex = (current + 1) % carouselImages.length;
-    const next = new Image();
-    next.decoding = 'async';
-    next.src = carouselImages[nextIndex].url;
-  }, [current, carouselImages]);
+  if (checkingProfile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Checking your profile status...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    let newErrors = {};
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.subFam) newErrors.subFam = "Sub Family Name is required";
+    if (!formData.birthday) {
+      newErrors.birthday = "Date of Birth is required";
+    } else {
+      const today = new Date();
+      const birthDate = new Date(formData.birthday);
+      if (birthDate >= today) {
+        newErrors.birthday = "Date of Birth must be in the past";
+      }
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+    }
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+      setLoading(true);
+      try {
+        const profileData = {
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          birthday: formData.birthday,
+          subFam: formData.subFam,
+          profilePic: formData.profilePic || undefined
+        };
+        const response = await authService.createProfile(profileData);
+        if (response?.data) {
+          const data = response.data;
+          const normalizedProfile = {
+            ...data,
+            profilePic: data.profilePicUrl || data.profilePic || null
+          };
+          updateUser({
+            hasProfile: true,
+            profileData: normalizedProfile,
+            profileCompleted: true
+          });
+          setErrors({});
+          notify.success('Profile created', 'Your profile has been saved successfully.');
+          navigate("/home");
+        }
+      } catch (err) {
+        const errorMessage = err.message || 'Failed to create profile. Please try again.';
+        setErrors({ submit: errorMessage });
+        notify.error('Profile error', errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
-      {/* Left Side - Image Carousel */}
-      <div className="md:w-1/2 w-full relative overflow-hidden h-48 sm:h-64 md:h-auto">
-        {carouselImages.map((img, index) => (
-          index === current && (
-            <div
-              key={index}
-              className="absolute inset-0"
-            >
-              <img
-                src={img.url}
-                alt={img.text}
-                className="w-full h-full object-cover"
-                loading={index === 0 ? "eager" : "lazy"}
-                fetchpriority={index === 0 ? "high" : undefined}
-                decoding="async"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-          )
-        ))}
-      </div>
+    <div className="min-h-screen w-full bg-gray-50 flex flex-col md:flex-row">
+      <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center">
+        <div className="max-w-md mx-auto">
+          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-blue-600 bg-clip-text text-transparent">Complete Your Profile</h1>
+          <div className="h-1 w-24 bg-gradient-to-r from-blue-400 to-purple-400 rounded mb-6"></div>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-blue-600 mb-8">
+            Welcome <span className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded-md">{user?.familyName || 'Member'}</span>!
+            <span className="block text-sm font-normal text-blue-600 mt-2">Please complete your profile to continue.</span>
+          </h2>
 
-      {/* Right Side - Login Form */}
-      <div className="md:w-1/2 w-full flex items-center justify-center p-8 bg-gray-50">
-        <div className="max-w-md w-full">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6">Sign In</h1>
-          <p className="text-gray-600 mb-8">
-            Welcome back! Please sign in to your account.
-          </p>
-
-          {/* Error message hidden: handled via toast notifications */}
-
-          {/* Login Type Selector */}
-          <div className="flex mb-6 bg-gray-200 rounded-xl p-0">
-            <button
-              type="button"
-              onClick={() => setLoginType("member")}
-              className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
-                loginType === "member"
-                  ? "bg-blue-600 text-slate-200 shadow"
-                  : "text-gray-600"
-              }`}
-            >
-              Family Member
-            </button>
-            <button
-              type="button"
-              onClick={() => setLoginType("guest")}
-              className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
-                loginType === "guest"
-                  ? "bg-blue-600 text-slate-200 shadow"
-                  : "text-gray-600"
-              }`}
-            >
-              Guest
-            </button>
-          </div>
-
-          {loginType === "member" ? (
-            <form onSubmit={handleMemberLogin} className="space-y-6">
-              {/* Family Name */}
-              <div>
-                <label
-                  htmlFor="familyName"
-                  className="block text-gray-700 font-medium mb-1"
-                >
-                  Family Name
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <div className="flex flex-col items-center">
+                <label htmlFor="profilePic" className="relative cursor-pointer">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                    {(() => {
+                      const pic = formData.profilePic;
+                      const isFile = typeof File !== 'undefined' && pic instanceof File;
+                      const isString = typeof pic === 'string' && pic.length > 0;
+                      if (isFile || isString) {
+                        const src = isFile ? URL.createObjectURL(pic) : pic;
+                        return (
+                          <img
+                            src={src}
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                            onLoad={() => { if (isFile) URL.revokeObjectURL(src); }}
+                          />
+                        );
+                      }
+                      return <span className="text-gray-400 text-sm">No Image</span>;
+                    })()}
+                    <div className="absolute bottom-0 right-0 p-2 rounded-full">
+                      <Camera className="h-5 w-5 text-blue-600" />
+                    </div>
+                  </div>
                 </label>
                 <input
-                  id="familyName"
-                  type="text"
-                  placeholder="Enter your family name (e.g., MFURA)"
-                  className={`w-full p-3 border rounded-xl focus:outline-none focus:ring-2 ${
-                    error ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-400'
-                  }`}
-                  value={familyName}
+                  id="profilePic"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
                   onChange={(e) => {
-                    setFamilyName(e.target.value);
-                    // Clear error when user starts typing
-                    if (error) setError("");
+                    const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+                    setFormData({ ...formData, profilePic: file });
                   }}
                   disabled={loading}
-                  required
                 />
               </div>
-
-              {/* Submit */}
-              <button
-                type="submit"
-                disabled={loading || !familyName.trim()}
-                className="w-full py-3 rounded-xl font-semibold transition bg-blue-600 text-white disabled:opacity-90 disabled:cursor-not-allowed hover:bg-blue-800"
-              >
-                {loading ? "Signing In..." : "Sign In as Member"}
-              </button>
-            </form>
-          ) : (
-            <div className="space-y-6">
-              <div className="text-center p-6 rounded-xl">
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  Guest Access
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Continue as a guest to explore public content.
-                </p>
-                <button
-                  onClick={handleGuestLogin}
-                  disabled={loading}
-                  className="px-6 py-3 rounded-xl font-semibold transition bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700"
-                >
-                  {loading ? "Entering..." : "Continue as Guest"}
-                </button>
-              </div>
+              {errors.profilePic && <p className="text-red-500 text-sm mt-1">{errors.profilePic}</p>}
             </div>
-          )}
 
-          {loginType === "member" && (
-            <p className="text-center mt-6 text-gray-600">
-              Don't have family access?{" "}
-              <button
-                onClick={() => setLoginType("guest")}
-                className="text-blue-600 font-bold hover:underline"
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Your Name</label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter your full name"
+                value={formData.name}
+                onChange={(e) => {
+                  setFormData({ ...formData, name: e.target.value });
+                  if (errors.name) setErrors({ ...errors, name: "" });
+                }}
+                className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 ${
+                  errors.name ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-300'
+                }`}
+                disabled={loading}
+                required
+              />
+              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Sub Family Name</label>
+              <select
+                name="subFam"
+                value={formData.subFam}
+                onChange={(e) => {
+                  setFormData({ ...formData, subFam: e.target.value });
+                  if (errors.subFam) setErrors({ ...errors, subFam: "" });
+                }}
+                className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 ${
+                  errors.subFam ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-300'
+                }`}
+                disabled={loading}
+                required
               >
-                Enter as Guest
-              </button>
-            </p>
-          )}
+                <option value="">Select your sub family</option>
+                {allowedSubFamilyNames.map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+              {errors.subFam && <p className="text-red-500 text-sm mt-1">{errors.subFam}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Date of Birth</label>
+              <input
+                type="date"
+                name="birthday"
+                value={formData.birthday}
+                onChange={(e) => {
+                  setFormData({ ...formData, birthday: e.target.value });
+                  if (errors.birthday) setErrors({ ...errors, birthday: "" });
+                }}
+                className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 ${
+                  errors.birthday ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-300'
+                }`}
+                disabled={loading}
+                required
+              />
+              {errors.birthday && <p className="text-red-500 text-sm mt-1">{errors.birthday}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={(e) => {
+                  setFormData({ ...formData, email: e.target.value });
+                  if (errors.email) setErrors({ ...errors, email: "" });
+                }}
+                className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 ${
+                  errors.email ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-300'
+                }`}
+                disabled={loading}
+                required
+              />
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 rounded-xl font-semibold transition bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Creating Profile...' : 'Complete Profile'}
+            </button>
+          </form>
         </div>
+      </div>
+
+      <div className="hidden md:flex w-full md:w-1/2 relative">
+        {carouselImages.map((img, i) => (
+          <img
+            key={i}
+            src={img.url}
+            alt={img.text}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              i === current ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        ))}
+        <div className="absolute inset-0 flex flex-col justify-end p-10 text-white bg-black/30"></div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Signup;
