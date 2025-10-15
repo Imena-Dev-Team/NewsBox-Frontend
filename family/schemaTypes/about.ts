@@ -35,7 +35,7 @@ export default defineType({
     defineField({
         name: 'year',
         title: 'Year',
-        type: 'number',
+        type: 'string',
       }),
     defineField({
       name: 'image',
