@@ -15,8 +15,8 @@ const About = () => {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedYear, setSelectedYear] = useState("All");
-  const [years, setYears] = useState([]);
+  const [selectedYearRange, setSelectedYearRange] = useState("");
+  const [years, setYears] = useState([]); // start years as numbers
 
   // Mock data removed; content now comes from Sanity
   const mockFamilyTreeByYear = {
@@ -264,14 +264,20 @@ const About = () => {
           name: m.name || "Unnamed",
           role: m.role || "",
           familyName: m.familyName || "",
-          year: typeof m.year === "number" ? m.year : null,
+          year: Number.isFinite(parseInt(m.year, 10))
+            ? parseInt(m.year, 10)
+            : null,
           profilePic: m?.image?.asset?.url || pickPhoto(),
         }));
         setMembers(mapped);
         const uniqueYears = Array.from(
-          new Set(mapped.map((m) => m.year).filter(Boolean))
+          new Set(mapped.map((m) => m.year).filter((y) => Number.isFinite(y)))
         ).sort((a, b) => a - b);
         setYears(uniqueYears);
+        if (uniqueYears.length > 0) {
+          const latest = uniqueYears[uniqueYears.length - 1];
+          setSelectedYearRange(`${latest}-${latest + 1}`);
+        }
         setLoading(false);
       } catch (err) {
         setError("Failed to load members");
@@ -284,9 +290,9 @@ const About = () => {
   // Create a simple card component for members
   const MemberCard = ({ member }) => {
     return (
-      <div className="rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow bg-white">
-        <div className="flex items-stretch gap-4">
-          <div className="w-40 h-48 sm:w-48 sm:h-56 md:w-56 md:h-60 shrink-0 overflow-hidden">
+      <div className="rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow bg-white w-[610px]">
+        <div className="flex items-center">
+          <div className=" w-30 h-72 sm:w-72 sm:h-80 md:w-50 md:h-96 shrink-0 overflow-hidden">
             {member.profilePic ? (
               <img
                 src={member.profilePic}
@@ -294,24 +300,25 @@ const About = () => {
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-blue-600 text-white flex items-center justify-center font-bold text-2xl">
+              <div className="w-full h-full bg-blue-600 text-white p-5 flex items-center justify-center font-bold text-2xl">
                 {member.name?.charAt(0)?.toUpperCase() || "M"}
               </div>
             )}
           </div>
-          <div className="min-w-0 flex-1 text-center mt-[70px] text-xl">
-            <p className="font-semibold text-gray-900 truncate">
+          <div className="min-w-0 flex-1 flex flex-col items-center justify-center text-center text-xl space-y-2 px-2">
+            <p className="font-semibold text-gray-900 truncate max-w-[260px]">
               {member.name}
             </p>
             {member.familyName && (
-              <p className="text-sm text-gray-700 truncate">
+              <p className="text-base text-gray-700 truncate max-w-[260px]">
                 {member.familyName}
               </p>
             )}
             {member.role && (
-              <p className="text-sm text-white rounded-lg border p-2 bg-blue-400 truncate">{member.role}</p>
+              <span className="inline-block px-4 py-1 text-sm text-white rounded-full border bg-blue-700 mt-2">
+                {member.role}
+              </span>
             )}
-           
           </div>
         </div>
       </div>
@@ -378,12 +385,10 @@ const About = () => {
             represents a family member.
           </p>
         </div>
-        {/* Members from Sanity in 2-1-2-2-2 layout */}
-        <div className="rounded-lg p-8 border border-gray-200 shadow-sm">
+        {/* Members from Sanity in 2-1-2-2-2 layout (or 2-2-2-2-2 if Vice Coordinator exists) */}
+        <div className="rounded-lg shadow-sm">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-800 text-center flex-1">
-              Browse Committe Members
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-800 text-center flex-1"></h2>
             {years.length > 0 && (
               <div className="ml-4">
                 <label htmlFor="yearFilter" className="sr-only">
@@ -391,63 +396,165 @@ const About = () => {
                 </label>
                 <select
                   id="yearFilter"
-                  value={String(selectedYear)}
-                  onChange={(e) => setSelectedYear(e.target.value)}
+                  value={String(selectedYearRange)}
+                  onChange={(e) => setSelectedYearRange(e.target.value)}
                   className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="All">All years</option>
-                  {years.map((y) => (
-                    <option key={y} value={String(y)}>
-                      {y}
-                    </option>
-                  ))}
+                  {years.map((y) => {
+                    const label = `${y}-${y + 1}`;
+                    return (
+                      <option key={y} value={label}>
+                        {label}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
             )}
           </div>
           {(() => {
-            const list =
-              selectedYear === "All"
-                ? members
-                : members.filter(
-                    (m) => String(m.year) === String(selectedYear)
-                  );
-            // Ensure we have deterministic groups; pad with empty if needed
-            const safe = (i) => list[i] || null;
-            const firstRow = [safe(0), safe(1)].filter(Boolean);
-            const middle = [safe(2)].filter(Boolean);
-            const secondRow = [safe(3), safe(4)].filter(Boolean);
-            const thirdRow = [safe(5), safe(6)].filter(Boolean);
-            const fourthRow = [safe(7), safe(8)].filter(Boolean);
+            const startOfSelected = Number.parseInt(
+              (selectedYearRange || "").split("-")[0],
+              10
+            );
+            const list = members.filter((m) => m.year === startOfSelected);
+
+            const used = new Set();
+            const textOf = (m) => (m.role || "").toLowerCase();
+            const hasAll = (t, parts) => parts.every((p) => t.includes(p));
+            const hasAny = (t, parts) => parts.some((p) => t.includes(p));
+
+            const pick = (predicate) => {
+              const result = [];
+              for (const m of list) {
+                if (used.has(m.id)) continue;
+                if (predicate(m)) {
+                  result.push(m);
+                  used.add(m.id);
+                }
+              }
+              return result;
+            };
+
+            const grandparents = pick((m) =>
+              hasAny(textOf(m), [
+                "grandpere",
+                "grand pere",
+                "grand-pere",
+                "grandmere",
+                "grand mere",
+                "grand-mere",
+                "grandparent",
+                "grandparents",
+              ])
+            );
+            const viceRecruit = pick((m) => {
+              const t = textOf(m);
+              const vice =
+                hasAny(t, ["vice"]) &&
+                hasAny(t, [
+                  "coordinator",
+                  "coord",
+                  "co-ordinator",
+                  "co ordinator",
+                  "co",
+                ]);
+              const recruitment = hasAny(t, [
+                "recruitment",
+                "recruiter",
+                "recruit",
+              ]);
+              return vice || recruitment;
+            });
+            const wihogora = pick((m) => {
+              const t = textOf(m);
+              return hasAll(t, ["wihogora"]) && hasAny(t, ["pere", "mere"]);
+            });
+            const hope = pick((m) => {
+              const t = textOf(m);
+              return hasAll(t, ["hope"]) && hasAny(t, ["pere", "mere"]);
+            });
+            const light = pick((m) => {
+              const t = textOf(m);
+              return hasAll(t, ["light"]) && hasAny(t, ["pere", "mere"]);
+            });
+
+            const firstRow = grandparents.slice(0, 2);
+            const secondRow = viceRecruit.slice(0, 2);
+            const thirdRow = wihogora.slice(0, 2);
+            const fourthRow = hope.slice(0, 2);
+            const fifthRow = light.slice(0, 2);
+
             return (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="space-y-14 w-full">
+                {/* Row 1 */}
+                {firstRow.length > 0 && (
+                  <h3 className="text-center text-xl font-semibold text-gray-800">
+                    Grandpere & Grandmere
+                  </h3>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-y-14 gap-x-40">
                   {firstRow.map((m) => (
                     <MemberCard key={m.id} member={m} />
                   ))}
                 </div>
-                {middle.length > 0 && (
-                  <div className="max-w-md mx-auto">
-                    <MemberCard key={middle[0].id} member={middle[0]} />
+
+                {/* Row 2 */}
+                {secondRow.length > 0 && (
+                  <h3 className="text-center text-xl font-semibold text-gray-800 mt-4">
+                    Vice Coordinator / Recruitment
+                  </h3>
+                )}
+                {secondRow.length === 1 ? (
+                  <div className="max-w-2xl mx-auto">
+                    <MemberCard key={secondRow[0].id} member={secondRow[0]} />
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-14 gap-x-40">
+                    {secondRow.map((m) => (
+                      <MemberCard key={m.id} member={m} />
+                    ))}
+                    {secondRow.length === 1 && <PlaceholderCard />}
                   </div>
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {secondRow.map((m) => (
-                    <MemberCard key={m.id} member={m} />
-                  ))}
-                  {secondRow.length === 1 && <PlaceholderCard />}
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+                {/* Row 3 */}
+                {thirdRow.length > 0 && (
+                  <h3 className="text-center text-xl font-semibold text-gray-800 mt-4">
+                    Pere Wihogora & Mere Wihogora
+                  </h3>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-14 gap-x-40">
                   {thirdRow.map((m) => (
                     <MemberCard key={m.id} member={m} />
                   ))}
                   {thirdRow.length === 1 && <PlaceholderCard />}
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+                {/* Row 4 */}
+                {fourthRow.length > 0 && (
+                  <h3 className="text-center text-xl font-semibold text-gray-800 mt-4">
+                    Pere Hope & Mere Hope
+                  </h3>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-14 gap-x-40">
                   {fourthRow.map((m) => (
                     <MemberCard key={m.id} member={m} />
                   ))}
                   {fourthRow.length === 1 && <PlaceholderCard />}
+                </div>
+
+                {/* Row 5 */}
+                {fifthRow.length > 0 && (
+                  <h3 className="text-center text-xl font-semibold text-gray-800 mt-4">
+                    Pere Light & Mere Light
+                  </h3>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-14 gap-x-40">
+                  {fifthRow.map((m) => (
+                    <MemberCard key={m.id} member={m} />
+                  ))}
+                  {fifthRow.length === 1 && <PlaceholderCard />}
                 </div>
               </div>
             );
