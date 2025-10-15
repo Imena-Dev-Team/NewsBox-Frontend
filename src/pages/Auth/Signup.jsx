@@ -3,11 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/apiService';
 import { useNotificationToast } from '../../context/NotificationContext';
-import {Camera} from "lucide-react";
+import { Camera } from "lucide-react";
 import API_BASE_URL from '../../config/api';
-import photo1 from '../../assets/signUpPhotos/image1.jpg';
-import photo2 from '../../assets/signUpPhotos/image1.jpg';
-import photo3 from '../../assets/signUpPhotos/image1.jpg';
+import photo1 from "../../assets/loginPhotos/login1.webp";
+import photo2 from "../../assets/loginPhotos/login2.webp";
+import photo3 from "../../assets/loginPhotos/login3.webp";
+import photo4 from "../../assets/loginPhotos/login4.webp";
+import photo5 from "../../assets/loginPhotos/login5.webp";
+import photo6 from "../../assets/loginPhotos/login6.webp";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -25,8 +28,7 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [checkingProfile, setCheckingProfile] = useState(true);
   const allowedSubFamilyNames = ["Hope", "Light", "Wihogora", "SubFamily1"];
-  
-  // Quick profile check
+
   useEffect(() => {
     const checkProfile = async () => {
       try {
@@ -35,7 +37,6 @@ const Signup = () => {
           navigate('/home');
           return;
         }
-        
         const profileCheck = await authService.checkProfile();
         if (profileCheck.hasProfile) {
           updateUser({
@@ -46,28 +47,39 @@ const Signup = () => {
           navigate('/home');
           return;
         }
-        
         setCheckingProfile(false);
       } catch (error) {
-        console.error('Profile check error:', error);
         setCheckingProfile(false);
       }
     };
-    
     checkProfile();
   }, [user, navigate, updateUser, notify]);
 
   const carouselImages = [
-    { url: photo1, text: "Welcome to Our School" },
-    { url: photo2, text: "Empowering Students Every Day" },
-    { url: photo3, text: "A Place to Grow and Learn" },
+    { url: photo1, text: "Welcome to Our School – A Place to Learn and Grow" },
+    { url: photo2, text: "Empowering Students Every Day to Reach Their Potential" },
+    { url: photo3, text: "A Safe and Nurturing Learning Environment" },
+    { url: photo4, text: "Where Curiosity Meets Knowledge" },
+    { url: photo5, text: "Building Bright Futures Together" },
+    { url: photo6, text: "Join a Community that Inspires Excellence" }
   ];
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % carouselImages.length);
-    }, 3000);
-    return () => clearInterval(interval);
+    const preload = carouselImages.map(
+      (img) =>
+        new Promise((resolve) => {
+          const image = new Image();
+          image.src = img.url;
+          image.onload = resolve;
+          image.onerror = resolve;
+        })
+    );
+    Promise.all(preload).then(() => {
+      const interval = setInterval(() => {
+        setCurrent((prev) => (prev + 1) % carouselImages.length);
+      }, 3000);
+      return () => clearInterval(interval);
+    });
   }, [carouselImages.length]);
 
   if (checkingProfile) {
@@ -84,7 +96,6 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
-    
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.subFam) newErrors.subFam = "Sub Family Name is required";
     if (!formData.birthday) {
@@ -101,14 +112,10 @@ const Signup = () => {
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
-    
     setErrors(newErrors);
-
     if (Object.keys(newErrors).length === 0) {
       setLoading(true);
-      
       try {
-        // Build payload. If an image File is present, the service will convert to FormData.
         const profileData = {
           name: formData.name.trim(),
           email: formData.email.trim(),
@@ -116,13 +123,9 @@ const Signup = () => {
           subFam: formData.subFam,
           profilePic: formData.profilePic || undefined
         };
-
         const response = await authService.createProfile(profileData);
-        
-        // Backend returns { data } (no success flag on creation)
         if (response?.data) {
           const data = response.data;
-          // Normalize profilePic url field for consumers
           const normalizedProfile = {
             ...data,
             profilePic: data.profilePicUrl || data.profilePic || null
@@ -132,7 +135,6 @@ const Signup = () => {
             profileData: normalizedProfile,
             profileCompleted: true
           });
-          
           setErrors({});
           notify.success('Profile created', 'Your profile has been saved successfully.');
           navigate("/home");
@@ -157,165 +159,156 @@ const Signup = () => {
             Welcome <span className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded-md">{user?.familyName || 'Member'}</span>!
             <span className="block text-sm font-normal text-blue-600 mt-2">Please complete your profile to continue.</span>
           </h2>
-            
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              
-              <div>
-                <div className="flex flex-col items-center">
-                  <label htmlFor="profilePic" className="relative cursor-pointer">
-                    <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
-                      {(() => {
-                        const pic = formData.profilePic;
-                        const isFile = typeof File !== 'undefined' && pic instanceof File;
-                        const isString = typeof pic === 'string' && pic.length > 0;
-                        if (isFile || isString) {
-                          const src = isFile ? URL.createObjectURL(pic) : pic;
-                          return (
-                            <img
-                              src={src}
-                              alt="Preview"
-                              className="w-full h-full object-cover"
-                              onLoad={() => { if (isFile) URL.revokeObjectURL(src); }}
-                            />
-                          );
-                        }
-                        return <span className="text-gray-400 text-sm">No Image</span>;
-                      })()}
-                      <div className="absolute bottom-0 right-0 p-2 rounded-full">
-                        <Camera className="h-5 w-5 text-blue-600" />
-                      </div>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <div className="flex flex-col items-center">
+                <label htmlFor="profilePic" className="relative cursor-pointer">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden">
+                    {(() => {
+                      const pic = formData.profilePic;
+                      const isFile = typeof File !== 'undefined' && pic instanceof File;
+                      const isString = typeof pic === 'string' && pic.length > 0;
+                      if (isFile || isString) {
+                        const src = isFile ? URL.createObjectURL(pic) : pic;
+                        return (
+                          <img
+                            src={src}
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                            onLoad={() => { if (isFile) URL.revokeObjectURL(src); }}
+                          />
+                        );
+                      }
+                      return <span className="text-gray-400 text-sm">No Image</span>;
+                    })()}
+                    <div className="absolute bottom-0 right-0 p-2 rounded-full">
+                      <Camera className="h-5 w-5 text-blue-600" />
                     </div>
-                  </label>
-                  <input
-                    id="profilePic"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
-                      setFormData({ ...formData, profilePic: file });
-                    }}
-                    disabled={loading}
-                  />
-                </div>
-                {errors.profilePic && <p className="text-red-500 text-sm mt-1">{errors.profilePic}</p>}
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Your Name
+                  </div>
                 </label>
                 <input
-                  type="text"
-                  name="name"
-                  placeholder="Enter your full name"
-                  value={formData.name}
+                  id="profilePic"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
                   onChange={(e) => {
-                    setFormData({ ...formData, name: e.target.value });
-                    if (errors.name) setErrors({ ...errors, name: "" });
+                    const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+                    setFormData({ ...formData, profilePic: file });
                   }}
-                  className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 ${
-                    errors.name ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-300'
-                  }`}
                   disabled={loading}
-                  required
                 />
-                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
               </div>
-              
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Sub Family Name
-                </label>
-                <select
-                  name="subFam"
-                  value={formData.subFam}
-                  onChange={(e) => {
-                    setFormData({ ...formData, subFam: e.target.value });
-                    if (errors.subFam) setErrors({ ...errors, subFam: "" });
-                  }}
-                  className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 ${
-                    errors.subFam ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-300'
-                  }`}
-                  disabled={loading}
-                  required
-                >
-                  <option value="">Select your sub family</option>
-                  {allowedSubFamilyNames.map((name) => (
-                    <option key={name} value={name}>{name}</option>
-                  ))}
-                </select>
-                {errors.subFam && <p className="text-red-500 text-sm mt-1">{errors.subFam}</p>}
-              </div>
+              {errors.profilePic && <p className="text-red-500 text-sm mt-1">{errors.profilePic}</p>}
+            </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Date of Birth
-                </label>
-                <input
-                  type="date"
-                  name="birthday"
-                  value={formData.birthday}
-                  onChange={(e) => {
-                    setFormData({ ...formData, birthday: e.target.value });
-                    if (errors.birthday) setErrors({ ...errors, birthday: "" });
-                  }}
-                  className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 ${
-                    errors.birthday ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-300'
-                  }`}
-                  disabled={loading}
-                  required
-                />
-                {errors.birthday && <p className="text-red-500 text-sm mt-1">{errors.birthday}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={(e) => {
-                    setFormData({ ...formData, email: e.target.value });
-                    if (errors.email) setErrors({ ...errors, email: "" });
-                  }}
-                  className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 ${
-                    errors.email ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-300'
-                  }`}
-                  disabled={loading}
-                  required
-                />
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-              </div>
-
-              <button
-                type="submit"
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Your Name</label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter your full name"
+                value={formData.name}
+                onChange={(e) => {
+                  setFormData({ ...formData, name: e.target.value });
+                  if (errors.name) setErrors({ ...errors, name: "" });
+                }}
+                className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 ${
+                  errors.name ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-300'
+                }`}
                 disabled={loading}
-                className="w-full py-3 rounded-xl font-semibold transition bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'Creating Profile...' : 'Complete Profile'}
-              </button>
-            </form>
-          </div>
-        </div>
+                required
+              />
+              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+            </div>
 
-        <div className="hidden md:flex w-full md:w-1/2 relative">
-          {carouselImages.map((img, i) => (
-            <img
-              key={i}
-              src={img.url}
-              alt={img.text}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-                i === current ? "opacity-100" : "opacity-0"
-              }`}
-            />
-          ))}
-          <div className="absolute inset-0 flex flex-col justify-end p-10 text-white bg-black/30"></div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Sub Family Name</label>
+              <select
+                name="subFam"
+                value={formData.subFam}
+                onChange={(e) => {
+                  setFormData({ ...formData, subFam: e.target.value });
+                  if (errors.subFam) setErrors({ ...errors, subFam: "" });
+                }}
+                className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 ${
+                  errors.subFam ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-300'
+                }`}
+                disabled={loading}
+                required
+              >
+                <option value="">Select your sub family</option>
+                {allowedSubFamilyNames.map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+              {errors.subFam && <p className="text-red-500 text-sm mt-1">{errors.subFam}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Date of Birth</label>
+              <input
+                type="date"
+                name="birthday"
+                value={formData.birthday}
+                onChange={(e) => {
+                  setFormData({ ...formData, birthday: e.target.value });
+                  if (errors.birthday) setErrors({ ...errors, birthday: "" });
+                }}
+                className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 ${
+                  errors.birthday ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-300'
+                }`}
+                disabled={loading}
+                required
+              />
+              {errors.birthday && <p className="text-red-500 text-sm mt-1">{errors.birthday}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={(e) => {
+                  setFormData({ ...formData, email: e.target.value });
+                  if (errors.email) setErrors({ ...errors, email: "" });
+                }}
+                className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 ${
+                  errors.email ? 'border-red-400 focus:ring-red-400' : 'border-gray-300 focus:ring-blue-300'
+                }`}
+                disabled={loading}
+                required
+              />
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 rounded-xl font-semibold transition bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Creating Profile...' : 'Complete Profile'}
+            </button>
+          </form>
         </div>
       </div>
+
+      <div className="hidden md:flex w-full md:w-1/2 relative">
+        {carouselImages.map((img, i) => (
+          <img
+            key={i}
+            src={img.url}
+            alt={img.text}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              i === current ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        ))}
+        <div className="absolute inset-0 flex flex-col justify-end p-10 text-white bg-black/30"></div>
+      </div>
+    </div>
   );
 };
 
