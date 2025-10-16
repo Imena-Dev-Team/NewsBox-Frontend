@@ -9,12 +9,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authService } from '../services/apiService';
 
-import photo1 from "../assets/loginPhotos/login1.webp";
-import photo2 from "../assets/loginPhotos/login2.webp";
-import photo3 from "../assets/loginPhotos/login3.webp";
-import photo4 from "../assets/loginPhotos/login4.webp";
-import photo5 from "../assets/loginPhotos/login5.webp";
-import photo6 from "../assets/loginPhotos/login6.webp";
+
+
+import familyImage2 from "../assets/landingPhotos/family1.webp";
 import familyImage3 from "../assets/landingPhotos/family2.webp";
 import familyImage4 from "../assets/landingPhotos/family3.webp";
 import familyImage0 from "../assets/landingPhotos/family4.webp";
@@ -22,22 +19,21 @@ import familyImage5 from "../assets/landingPhotos/family5.webp";
 import familyImage6 from "../assets/landingPhotos/family6.webp";
 import familyImage7 from "../assets/landingPhotos/family7.webp"; 
 import familyImage8 from "../assets/landingPhotos/family2.webp";
+import landingImage from "../assets/landingPhotos/landing.webp";
 
 function HeroSlider() {
   const images = useMemo(() => [
-    photo1,
-    photo2,
-    photo3,
-    photo4,
-    photo5,
-    photo6,
+    landingImage,
+    familyImage2,
     familyImage3,
     familyImage4,
     familyImage0,
     familyImage5,
     familyImage6,
     familyImage7,
-    familyImage8
+    familyImage8,
+    familyImage2,
+    landingImage
   ], []);
 
   useEffect(() => {
