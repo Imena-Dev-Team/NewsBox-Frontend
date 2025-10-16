@@ -20,6 +20,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [loginType, setLoginType] = useState("member");
+  const [firstRender, setFirstRender] = useState(true);
 
   const handleMemberLogin = async (e) => {
     e.preventDefault();
@@ -122,45 +123,50 @@ const Login = () => {
   }, [carouselImages.length]);
 
   useEffect(() => {
-    const nextIndex = (current + 1) % carouselImages.length;
-    const next = new Image();
-    next.decoding = "async";
-    next.src = carouselImages[nextIndex].url;
-  }, [current, carouselImages]);
+    // Preload images in the background without delaying the first rotation
+    carouselImages.forEach((img) => {
+      const image = new Image();
+      image.src = img.url;
+    });
+  }, [carouselImages]);
 
   return (
     <>
       <Helmet>
-        <title>Login | School Portal</title>
+        <title>Login | Imena Newsbox</title>
         <meta
           name="description"
-          content="Sign in to the School Portal to access learning materials, track progress, and stay connected with our academic community."
+          content="Sign in to Imena Newsbox to access family stories, updates, birthdays, and our community content."
         />
         <meta
           name="keywords"
-          content="school login, student portal, family member access, guest login, education platform"
+          content="imena newsbox login, family portal, member access, guest login, community platform"
         />
-        <link rel="canonical" href="https://www.yourschoolsite.com/login" />
+        <link
+          rel="canonical"
+          href={typeof window !== "undefined" ? `${window.location.origin}/login` : "https://imena.example/login"}
+        />
       </Helmet>
 
       <div className="min-h-screen flex flex-col md:flex-row">
         <div className="md:w-1/2 w-full relative overflow-hidden h-48 sm:h-64 md:h-auto">
-          {carouselImages.map(
-            (img, index) =>
-              index === current && (
-                <div key={index} className="absolute inset-0">
-                  <img
-                    src={img.url}
-                    alt={img.text}
-                    className="w-full h-full object-cover"
-                    loading={index === 0 ? "eager" : "lazy"}
-                    fetchpriority={index === 0 ? "high" : undefined}
-                    decoding="async"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-              )
-          )}
+          {carouselImages.map((img, i) => (
+            <img
+              key={i}
+              src={img.url}
+              alt={img.text}
+              className={`absolute inset-0 w-full h-full object-cover ${
+                firstRender && i === 0 ? "" : "transition-opacity duration-1000"
+              } ${i === current ? "opacity-100" : "opacity-0"}`}
+              loading={i === 0 ? "eager" : "lazy"}
+              fetchpriority={i === 0 ? "high" : undefined}
+              decoding="async"
+              onLoad={() => {
+                if (i === 0 && firstRender) setFirstRender(false);
+              }}
+            />
+          ))}
+          <div className="absolute inset-0" />
         </div>
 
         <div className="md:w-1/2 w-full flex items-center justify-center p-8 bg-gray-50">
