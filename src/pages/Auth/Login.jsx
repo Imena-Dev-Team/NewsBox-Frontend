@@ -213,7 +213,7 @@ const Login = () => {
                   <input
                     id="familyName"
                     type="text"
-                    placeholder="Enter your family name (e.g., MFURA)"
+                    placeholder="Enter your family name"
                     className={`w-full p-3 border rounded-xl focus:outline-none focus:ring-2 ${
                       error
                         ? "border-red-400 focus:ring-red-400"
