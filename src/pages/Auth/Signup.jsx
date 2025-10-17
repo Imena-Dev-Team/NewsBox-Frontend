@@ -27,7 +27,7 @@ const Signup = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [checkingProfile, setCheckingProfile] = useState(true);
-  const allowedSubFamilyNames = ["Hope", "Light", "Wihogora", "SubFamily1"];
+  const allowedSubFamilyNames = ["Hope", "Light", "Wihogora"];
 
   useEffect(() => {
     const checkProfile = async () => {
