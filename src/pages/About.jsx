@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { client } from "../sanityClient";
+import newLogo from "../assets/new.svg";
 import img1 from "../assets/aboutPhotos/image1.jpg";
 import img2 from "../assets/aboutPhotos/image2.jpg";
 import img3 from "../assets/aboutPhotos/image3.jpg";
@@ -151,16 +152,11 @@ const About = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen">
-        <div className="container mx-auto px-4 py-8 max-w-6xl">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-6 animate-pulse">
-              I
-            </div>
-            <div className="space-y-4">
-              <div className="w-64 h-8 bg-gray-200 animate-pulse rounded-lg mx-auto"></div>
-              <div className="w-96 h-4 bg-gray-200 animate-pulse rounded mx-auto"></div>
-            </div>
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+        <div className="container mx-auto px-4 py-10 md:py-12 max-w-6xl">
+          <div className="flex flex-col items-center justify-center py-16">
+            <img src={newLogo} alt="Loading" className="w-20 h-20 animate-spin" />
+            <p className="mt-4 text-gray-600">Loading family tree…</p>
           </div>
         </div>
       </div>
@@ -188,11 +184,9 @@ const About = () => {
       <div className="container mx-auto px-3 sm:px-4 py-8 md:py-12 max-w-6xl">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl flex items-center justify-center text-white font-bold text-2xl sm:text-3xl mx-auto mb-6 shadow-xl">
-            I
-          </div>
+          <img src={newLogo} alt="AERG IMENA" className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4" />
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold font-heading text-blue-700 mb-3">
-            IMENA Family Tree
+            AERG IMENA Family Tree
           </h1>
           <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto mb-8">
             Discover the connections and relationships within our extended
