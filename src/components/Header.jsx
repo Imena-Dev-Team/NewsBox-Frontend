@@ -426,7 +426,7 @@ function Header() {
                             {user.profileData.name}
                           </p>
                           <p className="text-sm text-blue-600">
-                            {user.familyName} Family
+                            {user.familyName} 
                           </p>
                         </div>
                       </div>

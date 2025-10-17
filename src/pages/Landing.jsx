@@ -32,8 +32,8 @@ function HeroSlider() {
     familyImage6,
     familyImage7,
     familyImage8,
-    familyImage2,
-    landingImage
+  
+   
   ], []);
 
   useEffect(() => {
