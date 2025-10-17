@@ -45,7 +45,7 @@ export default defineType({
             if (!value) return true;
             const [start, end] = value.split('-').map((v) => parseInt(v, 10));
             if (!Number.isFinite(start) || !Number.isFinite(end)) return 'Invalid numbers';
-            if (end !== start + 1) return 'End year must be start year + 1';
+            if (end < start) return 'End year must be greater than or equal to start year';
             if (start < 1900 || end > 3000) return 'Year out of range';
             return true;
           }),

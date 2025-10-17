@@ -13,7 +13,7 @@ const About = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedYearRange, setSelectedYearRange] = useState("");
-  const [years, setYears] = useState([]); // start years as numbers
+  const [years, setYears] = useState([]); // array of yearRange strings
 
  
   const quotes = [
@@ -60,24 +60,31 @@ const About = () => {
           return p;
         };
         const mapped = (data || []).map((m) => {
-          const startYear = Number.parseInt(String(m.yearRange || '').split('-')[0], 10);
+          const yr = String(m.yearRange || '');
+          const startYear = Number.parseInt(yr.split('-')[0], 10);
           return {
           id: m._id,
           name: m.name || "Unnamed",
           role: m.role || "",
           familyName: m.familyName || "",
+          yearRange: yr,
           year: Number.isFinite(startYear) ? startYear : null,
           profilePic: m?.image?.asset?.url || pickPhoto(),
           };
         });
         setMembers(mapped);
-        const uniqueYears = Array.from(
-          new Set(mapped.map((m) => m.year).filter((y) => Number.isFinite(y)))
-        ).sort((a, b) => a - b);
-        setYears(uniqueYears);
-        if (uniqueYears.length > 0) {
-          const latest = uniqueYears[uniqueYears.length - 1];
-          setSelectedYearRange(`${latest}-${latest + 1}`);
+        const uniqueYearRanges = Array.from(
+          new Set(mapped.map((m) => m.yearRange).filter((y) => Boolean(y)))
+        );
+        // sort by start year ascending
+        uniqueYearRanges.sort((a, b) => {
+          const as = parseInt(String(a).split('-')[0], 10);
+          const bs = parseInt(String(b).split('-')[0], 10);
+          return (as || 0) - (bs || 0);
+        });
+        setYears(uniqueYearRanges);
+        if (uniqueYearRanges.length > 0) {
+          setSelectedYearRange(uniqueYearRanges[uniqueYearRanges.length - 1]);
         }
         setLoading(false);
       } catch (err) {
@@ -208,24 +215,17 @@ const About = () => {
                   onChange={(e) => setSelectedYearRange(e.target.value)}
                   className="px-3 py-2 border border-blue-200 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
                 >
-                  {years.map((y) => {
-                    const label = `${y}-${y + 1}`;
-                    return (
-                      <option key={y} value={label}>
-                        {label}
-                      </option>
-                    );
-                  })}
+                  {years.map((yr) => (
+                    <option key={yr} value={yr}>
+                      {yr}
+                    </option>
+                  ))}
                 </select>
               </div>
             )}
           </div>
           {(() => {
-            const startOfSelected = Number.parseInt(
-              (selectedYearRange || "").split("-")[0],
-              10
-            );
-            const list = members.filter((m) => m.year === startOfSelected);
+            const list = members.filter((m) => m.yearRange === selectedYearRange);
 
             const used = new Set();
             const textOf = (m) => (m.role || "").toLowerCase();
