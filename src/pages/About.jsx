@@ -95,13 +95,13 @@ const About = () => {
     fetchMembers();
   }, []);
 
-  // Card component for members with minimal blue border, larger size, and a quote
+  // Card component for members with minimal blue border, responsive sizing, and a quote
   const MemberCard = ({ member }) => {
     return (
-      <div className="relative group w-[700px]">
-        <div className="relative rounded-2xl bg-white border border-blue-200">
-          <div className="flex items-stretch">
-            <div className="w-72 h-80 md:h-96 m-4 rounded-xl overflow-hidden ring-4 ring-white shadow-md shrink-0">
+      <div className="relative group w-full max-w-[700px]">
+        <div className="relative rounded-2xl bg-white border border-blue-200 overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-stretch">
+            <div className="w-full h-64 sm:w-72 sm:h-80 md:h-96 m-4 rounded-xl overflow-hidden ring-4 ring-white shadow-md shrink-0">
             {member.profilePic ? (
               <img
                 src={member.profilePic}
@@ -114,9 +114,9 @@ const About = () => {
               </div>
             )}
             </div>
-            <div className="min-w-0 flex-1 flex flex-col justify-center pr-5 py-5">
+            <div className="min-w-0 flex-1 flex flex-col justify-center px-4 pb-4 sm:pr-5 sm:py-5">
               <div className="flex flex-col">
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight break-words">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 leading-tight break-words">
                   {member.name}
                 </h3>
                 {member.role && (
@@ -126,9 +126,9 @@ const About = () => {
                 )}
               </div>
               {member.familyName && (
-                <p className="text-gray-600 mt-1 text-sm sm:text-base break-words">
+                <span className="mt-2 self-start inline-flex items-center rounded-md bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 text-xs sm:text-sm md:text-base font-semibold break-words">
                   {member.familyName}
-                </p>
+                </span>
               )}
               <blockquote className="mt-3 text-sm sm:text-base text-gray-700 italic border-l-4 border-blue-200 pl-3">
                 “{pickQuote(member.id || member.name)}”
@@ -185,16 +185,16 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      <div className="container mx-auto px-4 py-10 md:py-12 max-w-6xl">
+      <div className="container mx-auto px-3 sm:px-4 py-8 md:py-12 max-w-6xl">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl flex items-center justify-center text-white font-bold text-3xl mx-auto mb-6 shadow-xl">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl flex items-center justify-center text-white font-bold text-2xl sm:text-3xl mx-auto mb-6 shadow-xl">
             I
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold font-heading text-blue-700 mb-3">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold font-heading text-blue-700 mb-3">
             IMENA Family Tree
           </h1>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto mb-8">
             Discover the connections and relationships within our extended
             family. Each level represents a generation, and each circle
             represents a family member.
@@ -202,25 +202,30 @@ const About = () => {
         </div>
         {/* Members from Sanity in 2-1-2-2-2 layout (or 2-2-2-2-2 if Vice Coordinator exists) */}
         <div className="rounded-lg">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-800 text-center flex-1"></h2>
+          <div className="mb-6">
             {years.length > 0 && (
-              <div className="ml-4">
-                <label htmlFor="yearFilter" className="sr-only">
-                  Filter by Year
-                </label>
-                <select
-                  id="yearFilter"
-                  value={String(selectedYearRange)}
-                  onChange={(e) => setSelectedYearRange(e.target.value)}
-                  className="px-3 py-2 border border-blue-200 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
-                >
-                  {years.map((yr) => (
-                    <option key={yr} value={yr}>
-                      {yr}
-                    </option>
-                  ))}
-                </select>
+              <div role="tablist" aria-label="Year ranges" className="-mx-2 overflow-x-auto">
+                <div className="flex items-center gap-2 px-2">
+                  {years.map((yr) => {
+                    const active = yr === selectedYearRange;
+                    return (
+                      <button
+                        key={yr}
+                        role="tab"
+                        aria-selected={active}
+                        className={
+                          `whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-colors ` +
+                          (active
+                            ? `bg-blue-600 text-white`
+                            : `bg-white text-blue-700 border border-blue-200 hover:bg-blue-50`)
+                        }
+                        onClick={() => setSelectedYearRange(yr)}
+                      >
+                        {yr}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
@@ -256,6 +261,10 @@ const About = () => {
                 "grandparents",
               ])
             );
+            // Ensure Grandpere appears before Grandmere in the first row
+            const isGrandpere = (m) =>
+              hasAny(textOf(m), ["grandpere", "grand pere", "grand-pere"]);
+            grandparents.sort((a, b) => (isGrandpere(a) ? 0 : 1) - (isGrandpere(b) ? 0 : 1));
             const viceRecruit = pick((m) => {
               const t = textOf(m);
               const vice =
@@ -301,7 +310,7 @@ const About = () => {
                     Grandpere & Grandmere
                   </h3>
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-y-10 sm:gap-y-14 gap-x-6 sm:gap-x-10 md:gap-x-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 w-full place-items-center gap-y-8 sm:gap-y-12 gap-x-4 sm:gap-x-8 md:gap-x-12">
                   {firstRow.map((m) => (
                     <MemberCard key={m.id} member={m} />
                   ))}
@@ -318,7 +327,7 @@ const About = () => {
                     <MemberCard key={secondRow[0].id} member={secondRow[0]} />
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-10 sm:gap-y-14 gap-x-6 sm:gap-x-10 md:gap-x-16">
+                  <div className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-y-8 sm:gap-y-12 gap-x-4 sm:gap-x-8 md:gap-x-12">
                     {secondRow.map((m) => (
                       <MemberCard key={m.id} member={m} />
                     ))}
@@ -332,7 +341,7 @@ const About = () => {
                     Pere Wihogora & Mere Wihogora
                   </h3>
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-10 sm:gap-y-14 gap-x-6 sm:gap-x-10 md:gap-x-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-y-8 sm:gap-y-12 gap-x-4 sm:gap-x-8 md:gap-x-12">
                   {thirdRow.map((m) => (
                     <MemberCard key={m.id} member={m} />
                   ))}
@@ -345,7 +354,7 @@ const About = () => {
                     Pere Hope & Mere Hope
                   </h3>
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-10 sm:gap-y-14 gap-x-6 sm:gap-x-10 md:gap-x-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-y-8 sm:gap-y-12 gap-x-4 sm:gap-x-8 md:gap-x-12">
                   {fourthRow.map((m) => (
                     <MemberCard key={m.id} member={m} />
                   ))}
@@ -358,7 +367,7 @@ const About = () => {
                     Pere Light & Mere Light
                   </h3>
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-10 sm:gap-y-14 gap-x-6 sm:gap-x-10 md:gap-x-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-y-8 sm:gap-y-12 gap-x-4 sm:gap-x-8 md:gap-x-12">
                   {fifthRow.map((m) => (
                     <MemberCard key={m.id} member={m} />
                   ))}
