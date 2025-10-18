@@ -36,5 +36,13 @@ export default defineType({
       type: 'blockContent',
     }),
 
+    defineField({
+      name: 'dateWritten',
+      title: 'Date Written',
+      type: 'date',
+      description: 'The date when this testimonial was written (will display as MM-YYYY badge)',
+      validation: (Rule) => Rule.required(),
+    }),
+
   ],
 })
