@@ -281,13 +281,33 @@ const About = () => {
               const t = textOf(m);
               return hasAll(t, ["wihogora"]) && hasAny(t, ["pere", "mere"]);
             });
+            // Sort wihogora: Pere first, then Mere
+            wihogora.sort((a, b) => {
+              const aIsPere = hasAny(textOf(a), ["pere"]);
+              const bIsPere = hasAny(textOf(b), ["pere"]);
+              return (bIsPere ? 1 : 0) - (aIsPere ? 1 : 0);
+            });
+
             const hope = pick((m) => {
               const t = textOf(m);
               return hasAll(t, ["hope"]) && hasAny(t, ["pere", "mere"]);
             });
+            // Sort hope: Pere first, then Mere
+            hope.sort((a, b) => {
+              const aIsPere = hasAny(textOf(a), ["pere"]);
+              const bIsPere = hasAny(textOf(b), ["pere"]);
+              return (bIsPere ? 1 : 0) - (aIsPere ? 1 : 0);
+            });
+
             const light = pick((m) => {
               const t = textOf(m);
               return hasAll(t, ["light"]) && hasAny(t, ["pere", "mere"]);
+            });
+            // Sort light: Pere first, then Mere
+            light.sort((a, b) => {
+              const aIsPere = hasAny(textOf(a), ["pere"]);
+              const bIsPere = hasAny(textOf(b), ["pere"]);
+              return (bIsPere ? 1 : 0) - (aIsPere ? 1 : 0);
             });
 
             const firstRow = grandparents.slice(0, 2);
