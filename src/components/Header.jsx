@@ -138,35 +138,45 @@ function Header() {
                   <button
                     type="button"
                     onClick={() => setIsMembersOpen((v) => !v)}
-                    onBlur={() => setTimeout(() => setIsMembersOpen(false), 150)}
                     className={`px-4 py-2 rounded-md transition-all duration-200 flex items-center gap-1 ${
-                      location.pathname === "/members"
+                      location.pathname === "/members" || location.pathname === "/Birthdays"
                         ? "text-blue-700 font-semibold"
                         : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
                     }`}
                   >
                     <span className="font-medium text-sm">Members</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg 
+                      className={`w-4 h-4 transition-transform duration-200 ${isMembersOpen ? 'rotate-180' : ''}`} 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
                   {isMembersOpen && (
-                    <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-md shadow-lg py-1 z-50">
-                      <Link
-                        to="/members"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    <>
+                      <div 
+                        className="fixed inset-0 z-40" 
                         onClick={() => setIsMembersOpen(false)}
-                      >
-                        All
-                      </Link>
-                      <Link
-                        to="/Birthdays"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                        onClick={() => setIsMembersOpen(false)}
-                      >
-                        Birthdays
-                      </Link>
-                    </div>
+                      ></div>
+                      <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-md shadow-lg py-1 z-50">
+                        <Link
+                          to="/members"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150"
+                          onClick={() => setIsMembersOpen(false)}
+                        >
+                          All Members
+                        </Link>
+                        <Link
+                          to="/Birthdays"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150"
+                          onClick={() => setIsMembersOpen(false)}
+                        >
+                          Birthdays
+                        </Link>
+                      </div>
+                    </>
                   )}
                 </div>
               )}
