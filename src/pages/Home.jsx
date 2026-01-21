@@ -230,6 +230,42 @@ const Home = () => {
           </div>
         </div>
 
+        {/* Quick Actions Section */}
+        <div className="mt-16 mb-12">
+          {loading ? (
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+              <div className="w-48 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg mb-4"></div>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-br from-blue-50 via-white to-blue-50 rounded-2xl shadow-lg p-6 sm:p-8 border border-blue-100">
+              <button
+                onClick={() => navigate("/resources")}
+                className="group flex items-center justify-center gap-4 p-5 rounded-xl bg-white hover:bg-[#1A74ED] transition-all duration-300 shadow-sm hover:shadow-xl border border-blue-200 hover:border-[#1A74ED] w-full"
+              >
+                <div className="w-14 h-14 bg-gradient-to-br from-[#1A74ED] to-blue-600 group-hover:from-white group-hover:to-white rounded-xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">
+                  <span className="group-hover:scale-125 transition-transform">📚</span>
+                </div>
+                <div className="flex-1 text-left">
+                  <h3 className="font-bold text-gray-900 group-hover:text-white transition-colors text-base sm:text-lg">
+                    View Our Important Resources & Documents
+                  </h3>
+                  <p className="text-sm text-gray-600 group-hover:text-blue-100 transition-colors mt-1">
+                    Access family documents, archives, and essential information
+                  </p>
+                </div>
+                <svg 
+                  className="w-6 h-6 text-[#1A74ED] group-hover:text-white transition-colors" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Featured News Section */}
         <div className="flex flex-col sm:flex-row justify-between items-center mt-16 mb-3">
           {loading ? (
@@ -295,51 +331,7 @@ const Home = () => {
               ))}
         </div>
 
-        {/* Birthday Section - Commented Out */}
-        {/*
-        <div className="mt-16">
-          {loading ? (
-            <div className="flex flex-col lg:flex-row gap-8">
-              // Left Section Skeleton
-              <div className="lg:w-1/2 space-y-6">
-                <div className="w-3/4 h-10 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg"></div>
-                <div className="space-y-2">
-                  <div className="w-full h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                  <div className="w-5/6 h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                </div>
-                <div className="w-[345px] bg-white rounded-xl shadow-lg p-4">
-                  <div className="w-4/5 h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded mb-4"></div>
-                  <div className="w-full aspect-[4/3] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg mb-4"></div>
-                  <div className="space-y-2">
-                    <div className="w-full h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                    <div className="w-5/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                  </div>
-                </div>
-              </div>
-
-              // Right Section Skeleton
-              <div className="lg:w-1/2 flex flex-col gap-7">
-                {[1, 2, 3].map((_, i) => (
-                  <div
-                    key={i}
-                    className={`w-[345px] h-[150px] bg-white rounded-xl shadow-lg p-4 ${
-                      i % 2 === 0 ? "lg:ml-auto" : "lg:mr-auto"
-                    }`}
-                  >
-                    <div className="w-3/4 h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded mb-4"></div>
-                    <div className="space-y-2">
-                      <div className="w-full h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                      <div className="w-5/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <Birthday />
-          )}
-        </div>
-        */}
+       
       </div>
       
     </>

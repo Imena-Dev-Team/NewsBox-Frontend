@@ -20,6 +20,7 @@ import About from "./pages/About";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import PaginatedShowcase from "./pages/Story";
+import Resources from "./pages/Resources";
 
 // ✅ Protects routes for authenticated users
 function PrivateRoute({ children }) {
@@ -96,6 +97,7 @@ function AppRoutes() {
           <Route path="/about" element={<About />} />
           <Route path="/all" element={<Duplicates />} />
           <Route path="/gallery" element={<Gallery />} />
+          <Route path="/resources" element={<Resources />} />
 
           {/* ✅ Protect the story page */}
           <Route
