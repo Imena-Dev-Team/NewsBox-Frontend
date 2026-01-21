@@ -124,9 +124,19 @@ const Card = ({
           {/* Read More Link */}
           <button
             onClick={handleReadMore}
-            className="mt-4 text-blue-600 font-medium"
+            className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white font-semibold shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+            aria-label={`Read more about ${displayTitle}`}
           >
             Read more
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
           </button>
         </div>
       </div>

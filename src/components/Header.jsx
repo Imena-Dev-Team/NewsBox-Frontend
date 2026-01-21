@@ -11,6 +11,7 @@ function Header() {
   const { isAuthenticated, user, logout, updateUser } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isMembersOpen, setIsMembersOpen] = useState(false);
   const [previewSrc, setPreviewSrc] = useState(null);
 
   const Links = [
@@ -133,18 +134,51 @@ function Header() {
                 </Link>
               )}
               {isAuthenticated && user?.userType === "member" && (
-                <Link
-                  to="/Birthdays"
-                  className={`nav-link px-4 py-2 rounded-md transition-all duration-200 ${
-                    location.pathname === "/Birthdays"
-                      ? "text-blue-700 font-semibold"
-                      : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
-                  }`}
-                >
-                  <span className="font-medium text-sm">
-                    Members' Birthdays
-                  </span>
-                </Link>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsMembersOpen((v) => !v)}
+                    className={`px-4 py-2 rounded-md transition-all duration-200 flex items-center gap-1 ${
+                      location.pathname === "/members" || location.pathname === "/Birthdays"
+                        ? "text-blue-700 font-semibold"
+                        : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    <span className="font-medium text-sm">Members</span>
+                    <svg 
+                      className={`w-4 h-4 transition-transform duration-200 ${isMembersOpen ? 'rotate-180' : ''}`} 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {isMembersOpen && (
+                    <>
+                      <div 
+                        className="fixed inset-0 z-40" 
+                        onClick={() => setIsMembersOpen(false)}
+                      ></div>
+                      <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-md shadow-lg py-1 z-50">
+                        <Link
+                          to="/members"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150"
+                          onClick={() => setIsMembersOpen(false)}
+                        >
+                          All Members
+                        </Link>
+                        <Link
+                          to="/Birthdays"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150"
+                          onClick={() => setIsMembersOpen(false)}
+                        >
+                          Birthdays
+                        </Link>
+                      </div>
+                    </>
+                  )}
+                </div>
               )}
               
             </nav>
@@ -357,19 +391,31 @@ function Header() {
                 ))}
 
                 {isAuthenticated && user?.userType === "member" && (
-                  <Link
-                    to="/Birthdays"
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`px-4 py-3 rounded-md transition-all duration-200 ${
-                      location.pathname === "/Birthdays"
-                        ? "text-blue-700 font-semibold"
-                        : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    <span className="font-medium text-base">
-                      Members' Birthdays
-                    </span>
-                  </Link>
+                  <div className="space-y-1">
+                    <p className="px-4 pt-2 text-xs font-semibold text-gray-500">Members</p>
+                    <Link
+                      to="/members"
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`px-4 py-3 rounded-md transition-all duration-200 ${
+                        location.pathname === "/members"
+                          ? "text-blue-700 font-semibold"
+                          : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      <span className="font-medium text-base">All</span>
+                    </Link>
+                    <Link
+                      to="/Birthdays"
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`px-4 py-3 rounded-md transition-all duration-200 ${
+                        location.pathname === "/Birthdays"
+                          ? "text-blue-700 font-semibold"
+                          : "text-gray-700 hover:text-blue-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      <span className="font-medium text-base">Birthdays</span>
+                    </Link>
+                  </div>
                 )}
 
                 {/* Show user profile in mobile for members */}
@@ -426,7 +472,7 @@ function Header() {
                             {user.profileData.name}
                           </p>
                           <p className="text-sm text-blue-600">
-                            {user.familyName} Family
+                            {user.familyName} 
                           </p>
                         </div>
                       </div>

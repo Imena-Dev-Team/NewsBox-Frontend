@@ -23,7 +23,8 @@ export default function PaginatedShowcase() {
           _id,
           "name": title,
           "quote": coalesce(pt::text(body), ""),
-          image{asset->{url}}
+          image{asset->{url}},
+          dateWritten
         }`;
 
         const [storiesData, testimonialsData] = await Promise.all([
@@ -48,6 +49,7 @@ export default function PaginatedShowcase() {
             name: t.name,
             quote: t.quote,
             avatar: t?.image?.asset?.url || "",
+            dateWritten: t.dateWritten,
           }))
         );
       } catch (err) {
@@ -72,6 +74,15 @@ export default function PaginatedShowcase() {
   const goNext = () =>
     !isLast && setPageIndex((i) => Math.min((stories.length || 1) - 1, i + 1));
   const goTo = (i) => setPageIndex(i);
+
+  // Format date for MM-YYYY badge
+  const formatDateForBadge = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}-${year}`;
+  };
 
   return (
     <main className="w-full min-h-screen bg-white text-gray-900">
@@ -196,8 +207,17 @@ export default function PaginatedShowcase() {
             {testimonials.map((t) => (
               <div
                 key={t.id}
-                className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+                className="relative flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
               >
+                {/* Date Badge */}
+                {t.dateWritten && (
+                  <div className="absolute top-3 right-3">
+                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 border border-blue-200">
+                      {formatDateForBadge(t.dateWritten)}
+                    </span>
+                  </div>
+                )}
+                
                 {t.avatar ? (
                   <img
                     src={t.avatar}
@@ -207,7 +227,7 @@ export default function PaginatedShowcase() {
                 ) : (
                   <div className="h-12 w-12 rounded-full bg-gray-200 ring-2 ring-blue-100" />
                 )}
-                <div>
+                <div className="flex-1 pr-16">
                   <p className="text-sm font-semibold text-gray-900">
                     {t.name}
                   </p>

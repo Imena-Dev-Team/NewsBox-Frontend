@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
-import { authService } from "../services/apiService";
 import { client } from "../sanityClient";
+import newLogo from "../assets/new.svg";
 import img1 from "../assets/aboutPhotos/image1.jpg";
 import img2 from "../assets/aboutPhotos/image2.jpg";
 import img3 from "../assets/aboutPhotos/image3.jpg";
@@ -11,244 +10,46 @@ import img6 from "../assets/aboutPhotos/image6.jpg";
 import img7 from "../assets/aboutPhotos/image7.jpg";
 
 const About = () => {
-  const { user, isAuthenticated } = useAuth();
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedYearRange, setSelectedYearRange] = useState("");
-  const [years, setYears] = useState([]); // start years as numbers
+  const [years, setYears] = useState([]); // array of yearRange strings
 
-  // Mock data removed; content now comes from Sanity
-  const mockFamilyTreeByYear = {
-    2020: {
-      id: "root",
-      name: "IMENA Family 2020",
-      type: "family",
-      // Level 1: 2 circles at top
-      children: [
-        {
-          id: "member1",
-          name: "Jean Mukamana",
-          role: "Elder",
-          email: "jean.mukamana@email.com",
-          birthday: "1970-05-15",
-          profilePic: "/assets/aboutPhotos/image1.jpg",
-          type: "member",
-          year: 2020,
-        },
-        {
-          id: "member2",
-          name: "Marie Mukamana",
-          role: "Elder",
-          email: "marie.mukamana@email.com",
-          birthday: "1975-08-22",
-          profilePic: null,
-          type: "member",
-          year: 2020,
-        },
-      ],
-    },
-    2021: {
-      id: "root",
-      name: "IMENA Family 2021",
-      type: "family",
-      // Level 1: 2 circles at top
-      children: [
-        {
-          id: "member3",
-          name: "Pierre Nkurunziza",
-          role: "Elder",
-          email: "pierre.nkurunziza@email.com",
-          birthday: "1968-03-18",
-          profilePic: null,
-          type: "member",
-          year: 2021,
-        },
-        {
-          id: "member4",
-          name: "Grace Nkurunziza",
-          role: "Elder",
-          email: "grace.nkurunziza@email.com",
-          birthday: "1972-11-05",
-          profilePic: null,
-          type: "member",
-          year: 2021,
-        },
-      ],
-    },
-    2022: {
-      id: "root",
-      name: "IMENA Family 2022",
-      type: "family",
-      // Level 1: 2 circles at top
-      children: [
-        {
-          id: "member5",
-          name: "Joseph Uwimana",
-          role: "Elder",
-          email: "joseph.uwimana@email.com",
-          birthday: "1975-01-25",
-          profilePic: null,
-          type: "member",
-          year: 2022,
-        },
-        {
-          id: "member6",
-          name: "Claire Uwimana",
-          role: "Elder",
-          email: "claire.uwimana@email.com",
-          birthday: "1980-04-12",
-          profilePic: null,
-          type: "member",
-          year: 2022,
-        },
-      ],
-    },
-    2023: {
-      id: "root",
-      name: "IMENA Family 2023",
-      type: "family",
-      // Level 1: 2 circles at top
-      children: [
-        {
-          id: "member7",
-          name: "David Mukamana",
-          role: "Adult",
-          email: "david.mukamana@email.com",
-          birthday: "1995-12-10",
-          profilePic: null,
-          type: "member",
-          year: 2023,
-        },
-        {
-          id: "member8",
-          name: "Sarah Nkurunziza",
-          role: "Adult",
-          email: "sarah.nkurunziza@email.com",
-          birthday: "1998-07-14",
-          profilePic: null,
-          type: "member",
-          year: 2023,
-        },
-      ],
-    },
-    2024: {
-      id: "root",
-      name: "IMENA Family 2024",
-      type: "family",
-      // Level 1: 2 circles at top
-      children: [
-        {
-          id: "member9",
-          name: "Paul Nkurunziza",
-          role: "Young Adult",
-          email: "paul.nkurunziza@email.com",
-          birthday: "2001-09-30",
-          profilePic: null,
-          type: "member",
-          year: 2024,
-        },
-        {
-          id: "member10",
-          name: "Esther Uwimana",
-          role: "Young Adult",
-          email: "esther.uwimana@email.com",
-          birthday: "2003-06-08",
-          profilePic: null,
-          type: "member",
-          year: 2024,
-        },
-      ],
-    },
-  };
+ 
+  const quotes = [
+    "Urukundo ni ibanga ryacu",
+    "Shinjagira, Niyo waba ushira",
+    "Imbere heza haraharanirwa",
+    "Mu buzima ntakujenjeka, urumva",
+    "Imbere heza ni ahacu",
+    "Hora ukeye Nka za mfura z'iwacu",
+    "Mu ruhongore harugariye",
+    "Shinga icumu n'ahakomeye ririnjira",
+    "Niriva tuzumana",
+    "Umurava wacu, Intsinzi yacu",
+    
+  ];
 
-  // Generate binary tree structure for each year
-  const generateBinaryTree = (yearData) => {
-    const root = { ...yearData };
-
-    // Level 1: 2 circles at top (already have these)
-    const level1Nodes = root.children;
-
-    // Level 2: 2 more circles coming from each of the top 2
-    const level2Nodes = [];
-    level1Nodes.forEach((node, index) => {
-      const leftChild = {
-        id: `${node.id}_left`,
-        name: `${node.name} Jr.`,
-        role: "Child",
-        email: `${node.name.toLowerCase().replace(" ", ".")}.jr@email.com`,
-        birthday: "2005-01-01",
-        profilePic: null,
-        type: "member",
-        year: node.year,
-      };
-      const rightChild = {
-        id: `${node.id}_right`,
-        name: `${node.name} II`,
-        role: "Child",
-        email: `${node.name.toLowerCase().replace(" ", ".")}.ii@email.com`,
-        birthday: "2007-01-01",
-        profilePic: null,
-        type: "member",
-        year: node.year,
-      };
-      level2Nodes.push(leftChild, rightChild);
-    });
-
-    // Level 3: 2 more circles from each of the level 2 nodes
-    const level3Nodes = [];
-    level2Nodes.forEach((node, index) => {
-      const leftChild = {
-        id: `${node.id}_left`,
-        name: `${node.name} III`,
-        role: "Grandchild",
-        email: `${node.name.toLowerCase().replace(" ", ".")}.iii@email.com`,
-        birthday: "2010-01-01",
-        profilePic: null,
-        type: "member",
-        year: node.year,
-      };
-      const rightChild = {
-        id: `${node.id}_right`,
-        name: `${node.name} IV`,
-        role: "Grandchild",
-        email: `${node.name.toLowerCase().replace(" ", ".")}.iv@email.com`,
-        birthday: "2012-01-01",
-        profilePic: null,
-        type: "member",
-        year: node.year,
-      };
-      level3Nodes.push(leftChild, rightChild);
-    });
-
-    // Build the tree structure
-    root.children = level1Nodes.map((node, index) => ({
-      ...node,
-      children: [
-        {
-          ...level2Nodes[index],
-          children: [level3Nodes[index * 4], level3Nodes[index * 4 + 1]],
-        },
-        {
-          ...level2Nodes[index * 2 + 1],
-          children: [level3Nodes[index * 4 + 2], level3Nodes[index * 4 + 3]],
-        },
-      ],
-    }));
-
-    return root;
+  const pickQuote = (seed) => {
+    let hash = 0;
+    const text = String(seed || "");
+    for (let i = 0; i < text.length; i += 1) {
+      hash = (hash * 31 + text.charCodeAt(i)) >>> 0;
+    }
+    return quotes[hash % quotes.length];
   };
 
   useEffect(() => {
     const fetchMembers = async () => {
       try {
         setLoading(true);
-        const query = `*[_type == "about"]|order(year asc){
+        const query = `*[_type == "about"]|order(yearRange asc){
           _id,
           name,
           familyName,
           role,
-          year,
+          yearRange,
           image{asset->{url}}
         }`;
         const data = await client.fetch(query);
@@ -259,24 +60,32 @@ const About = () => {
           photoIndex += 1;
           return p;
         };
-        const mapped = (data || []).map((m) => ({
+        const mapped = (data || []).map((m) => {
+          const yr = String(m.yearRange || '');
+          const startYear = Number.parseInt(yr.split('-')[0], 10);
+          return {
           id: m._id,
           name: m.name || "Unnamed",
           role: m.role || "",
           familyName: m.familyName || "",
-          year: Number.isFinite(parseInt(m.year, 10))
-            ? parseInt(m.year, 10)
-            : null,
+          yearRange: yr,
+          year: Number.isFinite(startYear) ? startYear : null,
           profilePic: m?.image?.asset?.url || pickPhoto(),
-        }));
+          };
+        });
         setMembers(mapped);
-        const uniqueYears = Array.from(
-          new Set(mapped.map((m) => m.year).filter((y) => Number.isFinite(y)))
-        ).sort((a, b) => a - b);
-        setYears(uniqueYears);
-        if (uniqueYears.length > 0) {
-          const latest = uniqueYears[uniqueYears.length - 1];
-          setSelectedYearRange(`${latest}-${latest + 1}`);
+        const uniqueYearRanges = Array.from(
+          new Set(mapped.map((m) => m.yearRange).filter((y) => Boolean(y)))
+        );
+        // sort by start year ascending
+        uniqueYearRanges.sort((a, b) => {
+          const as = parseInt(String(a).split('-')[0], 10);
+          const bs = parseInt(String(b).split('-')[0], 10);
+          return (as || 0) - (bs || 0);
+        });
+        setYears(uniqueYearRanges);
+        if (uniqueYearRanges.length > 0) {
+          setSelectedYearRange(uniqueYearRanges[uniqueYearRanges.length - 1]);
         }
         setLoading(false);
       } catch (err) {
@@ -287,12 +96,13 @@ const About = () => {
     fetchMembers();
   }, []);
 
-  // Create a simple card component for members
+  // Card component for members with minimal blue border, responsive sizing, and a quote
   const MemberCard = ({ member }) => {
     return (
-      <div className="rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow bg-white w-[610px]">
-        <div className="flex items-center">
-          <div className=" w-30 h-72 sm:w-72 sm:h-80 md:w-50 md:h-96 shrink-0 overflow-hidden">
+      <div className="relative group w-full max-w-[700px]">
+        <div className="relative rounded-2xl bg-white border border-blue-200 overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-stretch">
+            <div className="w-full h-64 sm:w-72 sm:h-80 md:h-96 m-4 rounded-xl overflow-hidden ring-4 ring-white shadow-md shrink-0">
             {member.profilePic ? (
               <img
                 src={member.profilePic}
@@ -304,21 +114,27 @@ const About = () => {
                 {member.name?.charAt(0)?.toUpperCase() || "M"}
               </div>
             )}
-          </div>
-          <div className="min-w-0 flex-1 flex flex-col items-center justify-center text-center text-xl space-y-2 px-2">
-            <p className="font-semibold text-gray-900 truncate max-w-[260px]">
-              {member.name}
-            </p>
-            {member.familyName && (
-              <p className="text-base text-gray-700 truncate max-w-[260px]">
-                {member.familyName}
-              </p>
-            )}
-            {member.role && (
-              <span className="inline-block px-4 py-1 text-sm text-white rounded-full border bg-blue-700 mt-2">
-                {member.role}
-              </span>
-            )}
+            </div>
+            <div className="min-w-0 flex-1 flex flex-col justify-center px-4 pb-4 sm:pr-5 sm:py-5">
+              <div className="flex flex-col">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 leading-tight break-words">
+                  {member.name}
+                </h3>
+                {member.role && (
+                  <span className="mt-1 self-start inline-flex items-center rounded-full bg-blue-50 text-blue-700 border border-blue-200 px-3 py-0.5 text-xs font-semibold">
+                    {member.role}
+                  </span>
+                )}
+              </div>
+              {member.familyName && (
+                <span className="mt-2 self-start inline-flex items-center rounded-md bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 text-xs sm:text-sm md:text-base font-semibold break-words">
+                  {member.familyName}
+                </span>
+              )}
+              <blockquote className="mt-3 text-sm sm:text-base text-gray-700 italic border-l-4 border-blue-200 pl-3">
+                “{pickQuote(member.id || member.name)}”
+              </blockquote>
+            </div>
           </div>
         </div>
       </div>
@@ -336,16 +152,11 @@ const About = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen">
-        <div className="container mx-auto px-4 py-8 max-w-6xl">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-6 animate-pulse">
-              I
-            </div>
-            <div className="space-y-4">
-              <div className="w-64 h-8 bg-gray-200 animate-pulse rounded-lg mx-auto"></div>
-              <div className="w-96 h-4 bg-gray-200 animate-pulse rounded mx-auto"></div>
-            </div>
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+        <div className="container mx-auto px-4 py-10 md:py-12 max-w-6xl">
+          <div className="flex flex-col items-center justify-center py-16">
+            <img src={newLogo} alt="Loading" className="w-20 h-20 animate-spin" />
+            <p className="mt-4 text-gray-600">Loading family tree…</p>
           </div>
         </div>
       </div>
@@ -369,55 +180,51 @@ const About = () => {
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      <div className="container mx-auto px-3 sm:px-4 py-8 md:py-12 max-w-6xl">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-3xl mx-auto mb-6 shadow-lg">
-            I
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-bold font-heading text-blue-600 mb-4">
-            IMENA Family Tree
+          <img src={newLogo} alt="AERG IMENA" className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4" />
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold font-heading text-blue-700 mb-3">
+            AERG IMENA Family Tree
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto mb-8">
             Discover the connections and relationships within our extended
             family. Each level represents a generation, and each circle
             represents a family member.
           </p>
         </div>
         {/* Members from Sanity in 2-1-2-2-2 layout (or 2-2-2-2-2 if Vice Coordinator exists) */}
-        <div className="rounded-lg shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-800 text-center flex-1"></h2>
+        <div className="rounded-lg">
+          <div className="mb-6">
             {years.length > 0 && (
-              <div className="ml-4">
-                <label htmlFor="yearFilter" className="sr-only">
-                  Filter by Year
-                </label>
-                <select
-                  id="yearFilter"
-                  value={String(selectedYearRange)}
-                  onChange={(e) => setSelectedYearRange(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  {years.map((y) => {
-                    const label = `${y}-${y + 1}`;
+              <div role="tablist" aria-label="Year ranges" className="-mx-2 overflow-x-auto">
+                <div className="flex items-center gap-2 px-2">
+                  {years.map((yr) => {
+                    const active = yr === selectedYearRange;
                     return (
-                      <option key={y} value={label}>
-                        {label}
-                      </option>
+                      <button
+                        key={yr}
+                        role="tab"
+                        aria-selected={active}
+                        className={
+                          `whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-colors ` +
+                          (active
+                            ? `bg-blue-600 text-white`
+                            : `bg-white text-blue-700 border border-blue-200 hover:bg-blue-50`)
+                        }
+                        onClick={() => setSelectedYearRange(yr)}
+                      >
+                        {yr}
+                      </button>
                     );
                   })}
-                </select>
+                </div>
               </div>
             )}
           </div>
           {(() => {
-            const startOfSelected = Number.parseInt(
-              (selectedYearRange || "").split("-")[0],
-              10
-            );
-            const list = members.filter((m) => m.year === startOfSelected);
+            const list = members.filter((m) => m.yearRange === selectedYearRange);
 
             const used = new Set();
             const textOf = (m) => (m.role || "").toLowerCase();
@@ -448,6 +255,10 @@ const About = () => {
                 "grandparents",
               ])
             );
+            // Ensure Grandpere appears before Grandmere in the first row
+            const isGrandpere = (m) =>
+              hasAny(textOf(m), ["grandpere", "grand pere", "grand-pere"]);
+            grandparents.sort((a, b) => (isGrandpere(a) ? 0 : 1) - (isGrandpere(b) ? 0 : 1));
             const viceRecruit = pick((m) => {
               const t = textOf(m);
               const vice =
@@ -470,13 +281,33 @@ const About = () => {
               const t = textOf(m);
               return hasAll(t, ["wihogora"]) && hasAny(t, ["pere", "mere"]);
             });
+            // Sort wihogora: Pere first, then Mere
+            wihogora.sort((a, b) => {
+              const aIsPere = hasAny(textOf(a), ["pere"]);
+              const bIsPere = hasAny(textOf(b), ["pere"]);
+              return (bIsPere ? 1 : 0) - (aIsPere ? 1 : 0);
+            });
+
             const hope = pick((m) => {
               const t = textOf(m);
               return hasAll(t, ["hope"]) && hasAny(t, ["pere", "mere"]);
             });
+            // Sort hope: Pere first, then Mere
+            hope.sort((a, b) => {
+              const aIsPere = hasAny(textOf(a), ["pere"]);
+              const bIsPere = hasAny(textOf(b), ["pere"]);
+              return (bIsPere ? 1 : 0) - (aIsPere ? 1 : 0);
+            });
+
             const light = pick((m) => {
               const t = textOf(m);
               return hasAll(t, ["light"]) && hasAny(t, ["pere", "mere"]);
+            });
+            // Sort light: Pere first, then Mere
+            light.sort((a, b) => {
+              const aIsPere = hasAny(textOf(a), ["pere"]);
+              const bIsPere = hasAny(textOf(b), ["pere"]);
+              return (bIsPere ? 1 : 0) - (aIsPere ? 1 : 0);
             });
 
             const firstRow = grandparents.slice(0, 2);
@@ -493,7 +324,7 @@ const About = () => {
                     Grandpere & Grandmere
                   </h3>
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-y-14 gap-x-40">
+                <div className="grid grid-cols-1 md:grid-cols-2 w-full place-items-center gap-y-8 sm:gap-y-12 gap-x-4 sm:gap-x-8 md:gap-x-12">
                   {firstRow.map((m) => (
                     <MemberCard key={m.id} member={m} />
                   ))}
@@ -510,7 +341,7 @@ const About = () => {
                     <MemberCard key={secondRow[0].id} member={secondRow[0]} />
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-14 gap-x-40">
+                  <div className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-y-8 sm:gap-y-12 gap-x-4 sm:gap-x-8 md:gap-x-12">
                     {secondRow.map((m) => (
                       <MemberCard key={m.id} member={m} />
                     ))}
@@ -524,7 +355,7 @@ const About = () => {
                     Pere Wihogora & Mere Wihogora
                   </h3>
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-14 gap-x-40">
+                <div className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-y-8 sm:gap-y-12 gap-x-4 sm:gap-x-8 md:gap-x-12">
                   {thirdRow.map((m) => (
                     <MemberCard key={m.id} member={m} />
                   ))}
@@ -537,7 +368,7 @@ const About = () => {
                     Pere Hope & Mere Hope
                   </h3>
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-14 gap-x-40">
+                <div className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-y-8 sm:gap-y-12 gap-x-4 sm:gap-x-8 md:gap-x-12">
                   {fourthRow.map((m) => (
                     <MemberCard key={m.id} member={m} />
                   ))}
@@ -550,7 +381,7 @@ const About = () => {
                     Pere Light & Mere Light
                   </h3>
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-14 gap-x-40">
+                <div className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-y-8 sm:gap-y-12 gap-x-4 sm:gap-x-8 md:gap-x-12">
                   {fifthRow.map((m) => (
                     <MemberCard key={m.id} member={m} />
                   ))}

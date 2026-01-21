@@ -11,6 +11,7 @@ import Duplicates from "./pages/Blogs/All";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import Birthdays from "./pages/Birthdays";
+import Members from "./pages/Members";
 import Header from "./components/Header";
 import SignUp from "./pages/Auth/Signup";
 import Login from "./pages/Auth/Login";
@@ -114,6 +115,15 @@ function AppRoutes() {
             element={
               <RequireAuth>
                 <Birthdays />
+              </RequireAuth>
+            }
+          />
+
+          <Route
+            path="/members"
+            element={
+              <RequireAuth>
+                <Members />
               </RequireAuth>
             }
           />

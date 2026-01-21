@@ -180,6 +180,19 @@ export const authService = {
     }
   },
 
+  // Get users (members listing) - public
+  getUsers: async (page = 1, limit = 20) => {
+    try {
+      // This endpoint is hosted separately from API_BASE_URL
+      const url = `https://newsbox-backend.onrender.com/api/users?page=${page}&limit=${limit}`;
+      // Use apiClient so the Authorization header from the interceptor is included
+      const response = await apiClient.get(url, { timeout: 10000 });
+      return response.data; // { users, pagination, ... }
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
   // Wishes (public)
   getWishes: async (page = 1, limit = 10) => {
     try {
