@@ -5,6 +5,7 @@ import Card from "../components/Card";
 import Birthday from "../components/birthday_Card";
 import { client } from "../sanityClient";
 import imageUrlBuilder from "@sanity/image-url";
+import logo from "../assets/logo.png";
 
 const builder = imageUrlBuilder(client);
 function urlFor(source) {
@@ -95,7 +96,7 @@ const Home = () => {
       });
     }, 300);
     return () => clearInterval(interval);
-  }, [loading]); 
+  }, [loading]);
   return (
     <>
       <Helmet>
@@ -204,8 +205,8 @@ const Home = () => {
                     <span className="font-extralight text-[#98A0A2] text-xs">
                       {featuredPosts[index]?.publishedAt
                         ? new Date(
-                            featuredPosts[index].publishedAt
-                          ).toLocaleDateString()
+                          featuredPosts[index].publishedAt
+                        ).toLocaleDateString()
                         : "Recently"}
                     </span>
                   </div>
@@ -233,30 +234,32 @@ const Home = () => {
         {/* Quick Actions Section */}
         <div className="mt-16 mb-12">
           {loading ? (
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <div className="w-48 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg mb-4"></div>
+            <div className="bg-white p-6 border border-gray-200 rounded-md">
+              <div className="w-48 h-8 bg-gray-200 animate-pulse rounded"></div>
             </div>
           ) : (
-            <div className="bg-gradient-to-br from-blue-50 via-white to-blue-50 rounded-2xl shadow-lg p-6 sm:p-8 border border-blue-100">
+            <div className="bg-white p-6 border border-gray-200 rounded-md">
               <button
                 onClick={() => navigate("/resources")}
-                className="group flex items-center justify-center gap-4 p-5 rounded-xl bg-white hover:bg-[#1A74ED] transition-all duration-300 shadow-sm hover:shadow-xl border border-blue-200 hover:border-[#1A74ED] w-full"
+                className="flex items-center gap-4 p-4 w-full"
               >
-                <div className="w-14 h-14 bg-gradient-to-br from-[#1A74ED] to-blue-600 group-hover:from-white group-hover:to-white rounded-xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">
-                  <span className="group-hover:scale-125 transition-transform">📚</span>
-                </div>
+                <img
+                  src={logo}
+                  alt="IMENA Logo"
+                  className="w-12 h-12 object-contain"
+                />
                 <div className="flex-1 text-left">
-                  <h3 className="font-bold text-gray-900 group-hover:text-white transition-colors text-base sm:text-lg">
+                  <h3 className="font-medium text-gray-900 text-base sm:text-lg">
                     View Our Important Resources & Documents
                   </h3>
-                  <p className="text-sm text-gray-600 group-hover:text-blue-100 transition-colors mt-1">
+                  <p className="text-sm text-gray-600 mt-1">
                     Access family documents, archives, and essential information
                   </p>
                 </div>
-                <svg 
-                  className="w-6 h-6 text-[#1A74ED] group-hover:text-white transition-colors" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -297,43 +300,43 @@ const Home = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 justify-items-center mt-8">
           {loading
             ? Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="w-full max-w-[350px]">
-                  <div className="bg-white rounded-xl shadow-lg p-4 mt-7">
-                    {/* Card Image Skeleton */}
-                    <div className="w-full aspect-[4/3] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-2xl mb-4"></div>
+              <div key={index} className="w-full max-w-[350px]">
+                <div className="bg-white rounded-xl shadow-lg p-4 mt-7">
+                  {/* Card Image Skeleton */}
+                  <div className="w-full aspect-[4/3] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-2xl mb-4"></div>
 
-                    <div className="space-y-2 mb-4">
-                      <div className="w-5/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                      <div className="w-4/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                    </div>
-
-                    <div className="space-y-2 mb-4">
-                      <div className="w-full h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                      <div className="w-5/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                      <div className="w-4/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
-                    </div>
-
-                    <div className="w-32 h-9 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
+                  <div className="space-y-2 mb-4">
+                    <div className="w-5/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                    <div className="w-4/6 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
                   </div>
+
+                  <div className="space-y-2 mb-4">
+                    <div className="w-full h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                    <div className="w-5/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                    <div className="w-4/6 h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+                  </div>
+
+                  <div className="w-32 h-9 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-full"></div>
                 </div>
-              ))
+              </div>
+            ))
             : posts.map((p, i) => (
-                <Card
-                  key={i}
-                  title={p.title}
-                  image={p.image}
-                  summary={p.summary}
-                  authorName={p.authorName}
-                  authorImage={p.authorImage}
-                  publishedAt={p.publishedAt}
-                  slug={p.slug?.current}
-                />
-              ))}
+              <Card
+                key={i}
+                title={p.title}
+                image={p.image}
+                summary={p.summary}
+                authorName={p.authorName}
+                authorImage={p.authorImage}
+                publishedAt={p.publishedAt}
+                slug={p.slug?.current}
+              />
+            ))}
         </div>
 
-       
+
       </div>
-      
+
     </>
   );
 };
