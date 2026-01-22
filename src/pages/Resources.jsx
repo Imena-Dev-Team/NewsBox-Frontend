@@ -77,10 +77,10 @@ const Resources = () => {
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="mb-6 flex items-center gap-2 text-gray-600 hover:text-[#1A74ED] transition-colors duration-300 group"
+          className="mb-8 flex items-center gap-2 text-gray-600 hover:text-[#1A74ED] transition-colors duration-300"
         >
           <svg
-            className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300"
+            className="w-5 h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -95,8 +95,8 @@ const Resources = () => {
           <span className="font-medium">Back</span>
         </button>
 
-        <div className="mb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+        <div className="mb-12">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-gray-900 mb-3">
             Family Resources
           </h1>
           <p className="text-gray-600 text-lg">
@@ -105,18 +105,18 @@ const Resources = () => {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="bg-white rounded-2xl shadow-lg p-6">
-                <div className="w-16 h-16 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-xl mb-4"></div>
-                <div className="w-3/4 h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded mb-3"></div>
-                <div className="w-full h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded mb-2"></div>
-                <div className="w-5/6 h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded"></div>
+              <div key={index} className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+                <div className="w-24 h-24 bg-gray-200 animate-pulse rounded-2xl mb-6 mx-auto"></div>
+                <div className="w-3/4 h-7 bg-gray-200 animate-pulse rounded mb-4 mx-auto"></div>
+                <div className="w-full h-4 bg-gray-200 animate-pulse rounded mb-2"></div>
+                <div className="w-5/6 h-4 bg-gray-200 animate-pulse rounded"></div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {pdfResources.map((pdf) => (
               <PDFResourceCard
                 key={pdf.id}
@@ -124,8 +124,6 @@ const Resources = () => {
                 description={pdf.description}
                 fileName={pdf.fileName}
                 filePath={pdf.filePath}
-                icon={pdf.icon}
-                color={pdf.color}
                 onView={() => handleViewPDF(pdf)}
                 onDownload={() => handleDownloadPDF(pdf)}
                 onOpenExternal={() => handleOpenExternal(pdf)}
@@ -144,21 +142,7 @@ const Resources = () => {
           />
         )}
 
-        <div className="mt-16 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border border-blue-100">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Need Help?
-              </h2>
-              <p className="text-gray-600">
-                Can't find what you're looking for? Contact the family administrator for assistance.
-              </p>
-            </div>
-            <button className="px-6 py-3 bg-[#1A74ED] text-white rounded-full font-semibold hover:bg-[#125fcc] transition-colors duration-300 shadow-lg hover:shadow-xl">
-              Contact Support
-            </button>
-          </div>
-        </div>
+        
       </div>
     </>
   );

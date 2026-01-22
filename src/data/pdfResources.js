@@ -26,8 +26,8 @@ import amatekaYaAergPdf from '../assets/resources/AMATEKA YA AERG.pdf';
 export const pdfResources = [
   {
     id: 'aerg-document',
-    title: 'AERG Document',
-    description: 'Official AERG documentation and guidelines',
+    title: 'Rwandan Genocide Memorial Sites added to national heritage list',
+    description: 'Official documentation about Rwandan Genocide Memorial Sites being added to the national heritage list',
     fileName: 'AERG Document .pdf',
     filePath: aergDocumentPdf,
     icon: '📄',
@@ -35,8 +35,8 @@ export const pdfResources = [
   },
   {
     id: 'aerg',
-    title: 'AERG',
-    description: 'AERG reference material',
+    title: 'Amateka ya AERG Imena',
+    description: 'Historical records and archives of AERG Imena',
     fileName: 'AERG.pdf',
     filePath: aergPdf,
     icon: '📋',
@@ -44,8 +44,8 @@ export const pdfResources = [
   },
   {
     id: 'amateka-ya-aerg',
-    title: 'AMATEKA YA AERG',
-    description: 'Historical records and archives',
+    title: 'Amateka ya Aerg muri Rusange',
+    description: 'Historical records and archives of AERG in Rusange',
     fileName: 'AMATEKA YA AERG.pdf',
     filePath: amatekaYaAergPdf,
     icon: '📚',
