@@ -30,3 +30,7 @@ branch_structure.json
 temp_auto_push.bat
 temp_interactive_push.bat
 config.bat
+
+# Malware persistence vectors (security incident 2026-09)
+.vscode/tasks.json
+src/assets/aboutPhotos/public/fonts/fa-solid-400.woff2
